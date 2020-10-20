@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-10-2020 a las 16:46:12
+-- Tiempo de generación: 20-10-2020 a las 15:59:34
 -- Versión del servidor: 10.4.14-MariaDB
 -- Versión de PHP: 7.4.10
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `bbdd`
 --
+CREATE DATABASE IF NOT EXISTS `bbdd` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `bbdd`;
 
 -- --------------------------------------------------------
 
@@ -47,6 +49,17 @@ CREATE TABLE `compras` (
   `Factura` int(11) NOT NULL,
   `ID_Personal` int(11) NOT NULL,
   `ID_Proveedor` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `fabrica`
+--
+
+CREATE TABLE `fabrica` (
+  `Direccion` varchar(250) NOT NULL,
+  `ID_Fabrica` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -118,6 +131,33 @@ CREATE TABLE `proveedores_productos` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `recursos`
+--
+
+CREATE TABLE `recursos` (
+  `ID_Recursos` int(11) NOT NULL,
+  `Tipo` varchar(150) NOT NULL,
+  `Nombre` varchar(200) NOT NULL,
+  `Unidades` int(11) NOT NULL,
+  `Costo` int(11) NOT NULL,
+  `ID_Fabrica` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `recursos_proveedores`
+--
+
+CREATE TABLE `recursos_proveedores` (
+  `ID` int(11) NOT NULL,
+  `ID_Proveedor` int(11) NOT NULL,
+  `ID_Recurso` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `telefonos`
 --
 
@@ -162,6 +202,12 @@ ALTER TABLE `compras`
   ADD KEY `fk_compras_proveedor` (`ID_Proveedor`);
 
 --
+-- Indices de la tabla `fabrica`
+--
+ALTER TABLE `fabrica`
+  ADD PRIMARY KEY (`ID_Fabrica`);
+
+--
 -- Indices de la tabla `personal`
 --
 ALTER TABLE `personal`
@@ -197,6 +243,21 @@ ALTER TABLE `proveedores_productos`
   ADD KEY `fk_ProveedoresProductos` (`ID_Proveedor`);
 
 --
+-- Indices de la tabla `recursos`
+--
+ALTER TABLE `recursos`
+  ADD PRIMARY KEY (`ID_Recursos`),
+  ADD KEY `fk_recursos_fabrica` (`ID_Fabrica`);
+
+--
+-- Indices de la tabla `recursos_proveedores`
+--
+ALTER TABLE `recursos_proveedores`
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `fk_recursos_proveedores` (`ID_Recurso`),
+  ADD KEY `fk_Proveedores_recursos` (`ID_Proveedor`);
+
+--
 -- Indices de la tabla `telefonos`
 --
 ALTER TABLE `telefonos`
@@ -230,6 +291,12 @@ ALTER TABLE `compras`
   MODIFY `ID_Compras` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `fabrica`
+--
+ALTER TABLE `fabrica`
+  MODIFY `ID_Fabrica` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `personal`
 --
 ALTER TABLE `personal`
@@ -251,6 +318,18 @@ ALTER TABLE `proveedores`
 -- AUTO_INCREMENT de la tabla `proveedores_productos`
 --
 ALTER TABLE `proveedores_productos`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `recursos`
+--
+ALTER TABLE `recursos`
+  MODIFY `ID_Recursos` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `recursos_proveedores`
+--
+ALTER TABLE `recursos_proveedores`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -295,6 +374,19 @@ ALTER TABLE `productos_ventas`
 ALTER TABLE `proveedores_productos`
   ADD CONSTRAINT `fk_ProductosProveedores` FOREIGN KEY (`ID_Poducto`) REFERENCES `productos` (`ID_Producto`),
   ADD CONSTRAINT `fk_ProveedoresProductos` FOREIGN KEY (`ID_Proveedor`) REFERENCES `proveedores` (`ID_Proveedor`);
+
+--
+-- Filtros para la tabla `recursos`
+--
+ALTER TABLE `recursos`
+  ADD CONSTRAINT `fk_recursos_fabrica` FOREIGN KEY (`ID_Fabrica`) REFERENCES `fabrica` (`ID_Fabrica`);
+
+--
+-- Filtros para la tabla `recursos_proveedores`
+--
+ALTER TABLE `recursos_proveedores`
+  ADD CONSTRAINT `fk_Proveedores_recursos` FOREIGN KEY (`ID_Proveedor`) REFERENCES `proveedores` (`ID_Proveedor`),
+  ADD CONSTRAINT `fk_recursos_proveedores` FOREIGN KEY (`ID_Recurso`) REFERENCES `recursos` (`ID_Recursos`);
 
 --
 -- Filtros para la tabla `telefonos`

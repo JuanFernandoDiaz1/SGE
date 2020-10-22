@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-10-2020 a las 16:51:40
+-- Tiempo de generación: 22-10-2020 a las 18:58:03
 -- Versión del servidor: 10.4.14-MariaDB
 -- Versión de PHP: 7.4.10
 
@@ -66,13 +66,25 @@ CREATE TABLE `escandallo` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `ordenes-productos`
+--
+
+CREATE TABLE `ordenes-productos` (
+  `ID` int(11) NOT NULL,
+  `ID_Poducto` int(11) NOT NULL,
+  `ID_Ordenes` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `ordenesfabrica`
 --
 
 CREATE TABLE `ordenesfabrica` (
-  `ID_orden` int(11) NOT NULL,
   `Unidades` int(11) NOT NULL,
-  `ID_Escandallo` int(11) NOT NULL
+  `ID_Escandallo` int(11) NOT NULL,
+  `ID_orden` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -196,9 +208,18 @@ ALTER TABLE `escandallo`
   ADD KEY `fk_escandallo_producto` (`ID_Producto`);
 
 --
+-- Indices de la tabla `ordenes-productos`
+--
+ALTER TABLE `ordenes-productos`
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `fk_orden_producto` (`ID_Ordenes`),
+  ADD KEY `fk_producto_orden` (`ID_Poducto`);
+
+--
 -- Indices de la tabla `ordenesfabrica`
 --
 ALTER TABLE `ordenesfabrica`
+  ADD PRIMARY KEY (`ID_orden`),
   ADD KEY `fk_orden_escandallo` (`ID_Escandallo`);
 
 --
@@ -276,6 +297,18 @@ ALTER TABLE `escandallo`
   MODIFY `ID_Escandallo` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `ordenes-productos`
+--
+ALTER TABLE `ordenes-productos`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `ordenesfabrica`
+--
+ALTER TABLE `ordenesfabrica`
+  MODIFY `ID_orden` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `personal`
 --
 ALTER TABLE `personal`
@@ -328,6 +361,13 @@ ALTER TABLE `compras`
 ALTER TABLE `escandallo`
   ADD CONSTRAINT `fk_escandallo_personal` FOREIGN KEY (`ID_Personal`) REFERENCES `personal` (`ID_Personal`),
   ADD CONSTRAINT `fk_escandallo_producto` FOREIGN KEY (`ID_Producto`) REFERENCES `productos` (`ID_Producto`);
+
+--
+-- Filtros para la tabla `ordenes-productos`
+--
+ALTER TABLE `ordenes-productos`
+  ADD CONSTRAINT `fk_orden_producto` FOREIGN KEY (`ID_Ordenes`) REFERENCES `ordenesfabrica` (`ID_orden`),
+  ADD CONSTRAINT `fk_producto_orden` FOREIGN KEY (`ID_Poducto`) REFERENCES `productos` (`ID_Producto`);
 
 --
 -- Filtros para la tabla `ordenesfabrica`

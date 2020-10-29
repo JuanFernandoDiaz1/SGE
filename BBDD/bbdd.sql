@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 22-10-2020 a las 18:58:03
+-- Tiempo de generación: 29-10-2020 a las 19:42:38
 -- Versión del servidor: 10.4.14-MariaDB
 -- Versión de PHP: 7.4.10
 
@@ -72,7 +72,8 @@ CREATE TABLE `escandallo` (
 CREATE TABLE `ordenes-productos` (
   `ID` int(11) NOT NULL,
   `ID_Poducto` int(11) NOT NULL,
-  `ID_Ordenes` int(11) NOT NULL
+  `ID_Ordenes` int(11) NOT NULL,
+  `Unidades` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -125,7 +126,8 @@ CREATE TABLE `productos` (
 CREATE TABLE `productos_ventas` (
   `ID` int(11) NOT NULL,
   `ID_Poducto` int(11) NOT NULL,
-  `ID_Venta` int(11) NOT NULL
+  `ID_Venta` int(11) NOT NULL,
+  `Unidades` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -150,7 +152,8 @@ CREATE TABLE `proveedores` (
 CREATE TABLE `proveedores_productos` (
   `ID` int(11) NOT NULL,
   `ID_Poducto` int(11) NOT NULL,
-  `ID_Proveedor` int(11) NOT NULL
+  `ID_Proveedor` int(11) NOT NULL,
+  `Unidades` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------

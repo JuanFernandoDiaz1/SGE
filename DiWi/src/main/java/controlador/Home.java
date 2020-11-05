@@ -13,6 +13,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 public class Home extends JFrame {
 
@@ -50,9 +53,6 @@ public class Home extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		
-		
-		
 		JButton botonTablas = new JButton("Tablas");
 		botonTablas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -68,6 +68,11 @@ public class Home extends JFrame {
 		contentPane.add(botonOperaciones);
 		
 		JButton botonSalir = new JButton("Salir");
+		botonSalir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			
+			}
+		});
 		botonSalir.setBounds(322, 384, 89, 23);
 		contentPane.add(botonSalir);
 		
@@ -86,7 +91,6 @@ public class Home extends JFrame {
 		labelFondo.setIcon(new ImageIcon("img\\fondo.jpg"));
 		labelFondo.setBounds(0, 0, 723, 507);
 		contentPane.add(labelFondo);
-			
 		
 	}
 	

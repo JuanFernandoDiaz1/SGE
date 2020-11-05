@@ -34,7 +34,7 @@ public class Home extends JFrame {
 	 */
 	public Home() {
 		
-		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\juanfernando.diaz.JUANXXIII_23\\Documents\\GitHub\\SGE\\DiWi\\img\\logo-diwi.PNG"));
+		setIconImage(Toolkit.getDefaultToolkit().getImage("img\\logo-diwi.PNG"));
 		setTitle("DiWi");
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -46,7 +46,7 @@ public class Home extends JFrame {
 		contentPane.setLayout(null);
 		
 		JLabel labelDiwi = new JLabel("");
-		labelDiwi.setIcon(new ImageIcon("C:\\Users\\juanfernando.diaz.JUANXXIII_23\\Documents\\GitHub\\SGE\\DiWi\\img\\diwi.png"));
+		labelDiwi.setIcon(new ImageIcon("img\\diwi.png"));
 		labelDiwi.setBounds(0, 11, 188, 63);
 		contentPane.add(labelDiwi);
 		
@@ -64,13 +64,13 @@ public class Home extends JFrame {
 		contentPane.add(botonSalir);
 		
 		JLabel labelCuadro1 = new JLabel("");
-		labelCuadro1.setIcon(new ImageIcon("C:\\Users\\juanfernando.diaz.JUANXXIII_23\\Documents\\GitHub\\SGE\\DiWi\\img\\cuadro1.PNG"));
+		labelCuadro1.setIcon(new ImageIcon("img\\cuadro1.PNG"));
 		labelCuadro1.setBounds(196, 69, 340, 382);
 		contentPane.add(labelCuadro1);
 		
 		
 		JLabel labelFondo = new JLabel("");
-		labelFondo.setIcon(new ImageIcon("C:\\Users\\juanfernando.diaz.JUANXXIII_23\\Documents\\GitHub\\SGE\\DiWi\\img\\fondo.jpg"));
+		labelFondo.setIcon(new ImageIcon("img\\fondo.jpg"));
 		labelFondo.setBounds(0, 0, 723, 496);
 		contentPane.add(labelFondo);
 		

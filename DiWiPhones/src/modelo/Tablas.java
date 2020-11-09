@@ -2,8 +2,6 @@ package modelo;
 
 import javax.swing.JPanel;
 
-import controlador.Home;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -20,7 +18,7 @@ public class Tablas extends JPanel {
 	 */
 	public Tablas() {
 		setLayout(null);
-		setBounds(0, 0, 723, 507);
+		setBounds(0, 0, 729, 535);
 		
 		comboTablas = new JComboBox();
 		comboTablas.setModel(new DefaultComboBoxModel(new String[] {"-Tablas-", "Clientes", "Personal", "Proveedores"}));
@@ -52,6 +50,7 @@ public class Tablas extends JPanel {
 		JButton btnNewButton = new JButton("Volver");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				
 				
 			}
 		});

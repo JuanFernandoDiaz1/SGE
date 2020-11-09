@@ -5,27 +5,31 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import modelo.Operaciones;
 import modelo.Tablas;
 
 import java.awt.Toolkit;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
-public class Home extends JFrame {
+public class VntPrincipal extends JFrame {
 
 	private JPanel contentPane;
+	
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+	public static void cargaVentana(VntPrincipal frame) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Home frame = new Home();
+					VntPrincipal frame = new VntPrincipal();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -37,45 +41,51 @@ public class Home extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Home() {
-		
+	public VntPrincipal() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage("img\\logo-diwi.PNG"));
 		setTitle("DiWi");
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 729, 535);
 		contentPane = new JPanel();
-			
+		setResizable(false);
+		
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JButton botonTablas = new JButton("Tablas");
-		botonTablas.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.setBounds(0, 0, 713, 21);
+		setJMenuBar(menuBar);
+		
+		JMenu menu = new JMenu("Menu");
+		menuBar.add(menu);
+		
+		JMenuItem menuTablas = new JMenuItem("Tablas");
+		menuTablas.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
 				Tablas tablas = new Tablas();
 				nuevoPanel(tablas);
 			}
 		});
-		botonTablas.setBounds(237, 244, 262, 38);
-		contentPane.add(botonTablas);
+		menu.add(menuTablas);
 		
-		JButton botonOperaciones = new JButton("Operaciones");
-		botonOperaciones.setBounds(237, 311, 262, 38);
-		contentPane.add(botonOperaciones);
-		
-		JButton botonSalir = new JButton("Salir");
-		botonSalir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			
+		JMenuItem menuOperaciones = new JMenuItem("Operaciones");
+		menuOperaciones.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				Operaciones operaciones = new Operaciones();
+				nuevoPanel(operaciones);
 			}
 		});
-		botonSalir.setBounds(322, 384, 89, 23);
-		contentPane.add(botonSalir);
+		menu.add(menuOperaciones);
 		
 		JLabel labelDiwi = new JLabel("");
 		labelDiwi.setIcon(new ImageIcon("img\\diwi.png"));
-		labelDiwi.setBounds(0, 11, 188, 63);
+		labelDiwi.setBounds(0, 26, 188, 63);
 		contentPane.add(labelDiwi);
 		
 		JLabel labelCuadro1 = new JLabel("");

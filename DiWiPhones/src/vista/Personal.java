@@ -1,18 +1,18 @@
-package modelo;
+package vista;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class Proveedores extends JPanel {
+public class Personal extends JPanel {
 
 	/**
 	 * Create the panel.
 	 */
-	public Proveedores() {
+	public Personal() {
 		setLayout(null);
 		setBounds(0, 0, 723, 507);
-		JLabel lblNewLabel = new JLabel("Proveedores");
+		JLabel lblNewLabel = new JLabel("Personal");
 		lblNewLabel.setBounds(180, 140, 46, 14);
 		add(lblNewLabel);
 		

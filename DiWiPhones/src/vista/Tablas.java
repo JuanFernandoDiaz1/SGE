@@ -1,4 +1,4 @@
-package modelo;
+package vista;
 
 import javax.swing.JPanel;
 

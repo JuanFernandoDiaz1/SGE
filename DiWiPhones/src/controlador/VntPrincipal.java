@@ -5,8 +5,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import modelo.Operaciones;
-import modelo.Tablas;
+import vista.Operaciones;
+import vista.Tablas;
 
 import java.awt.Toolkit;
 import javax.swing.JLabel;

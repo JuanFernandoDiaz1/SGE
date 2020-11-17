@@ -5,12 +5,22 @@ public class Cliente {
 	private String nombre;
 	private String email;
 	private String direccion;
+	private int telefono;
 	
 	public Cliente() {
 		String dni="";
 		String nombre="";
 		String email="";
 		String direccion="";
+		int telefono=0;
+	}
+
+	public int getTelefono() {
+		return telefono;
+	}
+
+	public void setTelefono(int telefono) {
+		this.telefono = telefono;
 	}
 
 	public String getDni() {

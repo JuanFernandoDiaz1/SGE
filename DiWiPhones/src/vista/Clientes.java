@@ -84,6 +84,19 @@ public class Clientes extends JPanel {
 		JButton btnRefresh = new JButton("");
 		btnRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				if(tableClientes.getSelectedRow()!=-1) {
+					txtNombre.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 0).toString());
+					txtDni.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 1).toString());
+					txtDireccion.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 2).toString());
+					txtEmail.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 3).toString());
+					txtTelefono.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 4).toString());
+				}else {
+					txtNombre.setText("");
+					txtDni.setText("");
+					txtDireccion.setText("");
+					txtEmail.setText("");
+					txtTelefono.setText("");
+				}
 				cargarTabla();
 			}
 		});
@@ -130,6 +143,8 @@ public class Clientes extends JPanel {
 		txtNombre.setBounds(158, 286, 117, 20);
 		add(txtNombre);
 
+		
+		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(84, 41, 549, 210);
 		add(scrollPane);
@@ -171,6 +186,7 @@ public class Clientes extends JPanel {
 		lblFondo.setIcon(new ImageIcon("img\\fondo.jpg"));
 		lblFondo.setBounds(0, 0, 723, 507);
 		add(lblFondo);
+		
 	}
 
 	public void cargarTabla() {
@@ -207,8 +223,8 @@ public class Clientes extends JPanel {
 					JOptionPane.WARNING_MESSAGE);
 		} else {
 			GestionBBDD gest = new GestionBBDD();
-			gest.modificarCliente(cli, tableClientes);
 			gest.modificarTelefono(cli.getTelefono(), "cliente", "dni", "clientes", tableClientes);
+			gest.modificarCliente(cli, tableClientes);
 			cargarTabla();
 			reemplazar();
 		}
@@ -236,5 +252,9 @@ public class Clientes extends JPanel {
 			cli.setTelefono(-1);
 		}
 		return cli;
+	}
+	
+	private void btModificarActionPerformed(java.awt.event.ActionEvent evt) {
+		
 	}
 }

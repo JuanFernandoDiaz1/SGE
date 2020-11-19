@@ -26,7 +26,6 @@ public class TelefonosVista extends JPanel {
 	private JTable tableTelefono;
 	DefaultTableModel modeloTabla = new DefaultTableModel();
 	private JTextField txtTelefono;
-	private JTextField txtDni;
 	private JComboBox comboBox;
 	/**
 	 * Create the panel.
@@ -54,10 +53,25 @@ public class TelefonosVista extends JPanel {
 							JOptionPane.WARNING_MESSAGE);
 				}else {
 
-					gestor.insertTelefono(321321321, "dni", "cliente", "clientes", "11111111");
+					if(comboBox.getSelectedIndex()==1) {
+						int id=gestor.obtenerIdGeneral("cliente", "Clientes", "dni", tableTelefono.getValueAt(tableTelefono.getSelectedRow(), 1).toString());
+						gestor.insertTelefono(tel.getNumero(), id, "cliente", "clientes");
+						reemplazar();
+						cargarTabla("cliente", "dni", "clientes");
+					}else if(comboBox.getSelectedIndex()==2) {
+						int id=gestor.obtenerIdGeneral("personal", "personal", "dni", tableTelefono.getValueAt(tableTelefono.getSelectedRow(), 1).toString());
+						System.out.println(id);
+						gestor.insertTelefono(tel.getNumero(), id, "personal", "personal");
+						reemplazar();
+						cargarTabla("personal", "dni", "personal");
+					}else if(comboBox.getSelectedIndex()==3) {
+						int id=gestor.obtenerIdGeneral("proveedor", "proveedores", "nif", tableTelefono.getValueAt(tableTelefono.getSelectedRow(), 1).toString());
+						System.out.println(id);
+						gestor.insertTelefono(tel.getNumero(), id, "proveedor", "proveedores");
+						reemplazar();
+						cargarTabla("proveedor", "nif", "proveedores");
+					}
 					
-					//gestor.insertTel("cliente", 555555555, 11);
-					reemplazar();
 				}
 
 			}
@@ -70,8 +84,7 @@ public class TelefonosVista extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Modificar este Proveedor?");
 				if (JOptionPane.OK_OPTION == valor) {
-					/*modificarProveedor();
-					cargarTabla();*/
+					modificarTelefono();
 				}
 			}
 		});
@@ -91,15 +104,10 @@ public class TelefonosVista extends JPanel {
 		});
 		btnEliminar.setBounds(426, 360, 89, 23);
 		add(btnEliminar);
-		
-		txtDni = new JTextField();
-		txtDni.setColumns(10);
-		txtDni.setBounds(436, 308, 126, 20);
-		add(txtDni);
 
 		txtTelefono = new JTextField();
 		txtTelefono.setColumns(10);
-		txtTelefono.setBounds(208, 308, 80, 20);
+		txtTelefono.setBounds(337, 309, 80, 21);
 		add(txtTelefono);
 
 		
@@ -134,12 +142,8 @@ public class TelefonosVista extends JPanel {
 		add(comboBox);
 
 		JLabel lblTel = new JLabel("Telefono: ");
-		lblTel.setBounds(154, 311, 55, 14);
+		lblTel.setBounds(283, 312, 55, 18);
 		add(lblTel);
-		
-		JLabel lblDni = new JLabel("DNI:");
-		lblDni.setBounds(391, 311, 46, 14);
-		add(lblDni);
 		
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setIcon(new ImageIcon("img\\diwi.png"));
@@ -152,19 +156,8 @@ public class TelefonosVista extends JPanel {
 		add(lblFondo);
 		
 		ListSelectionModel model = tableTelefono.getSelectionModel();
-		model.addListSelectionListener(new ListSelectionListener() {
 		
-		@Override
-		public void valueChanged(ListSelectionEvent arg0) {
-			if(tableTelefono.getSelectedRow()!=-1) {
-				txtDni.setText(tableTelefono.getValueAt(tableTelefono.getSelectedRow(), 1).toString());
-				txtTelefono.setText(tableTelefono.getValueAt(tableTelefono.getSelectedRow(), 0).toString());
-			}else {
-				txtTelefono.setText("");
-				txtDni.setText("");
-			}
-		}
-	});
+		
 	}
 	
 
@@ -178,30 +171,43 @@ public class TelefonosVista extends JPanel {
 	
 	public void reemplazar() {
 		txtTelefono.setText("");
-		txtDni.setText("");
 	}
 	
 	public void modificarTelefono() {
 		Telefono tel = new Telefono();
 		tel=pideDatosTelefono();
-		
-		if (tableTelefono.getSelectedRow() == -1) {//
-			JOptionPane.showMessageDialog(null, "Selecciona un proveedor para modificar", "Error",
+		GestionBBDD gestor = new GestionBBDD();
+		if(comboBox.getSelectedIndex()==0){
+			JOptionPane.showMessageDialog(null, "Seleciona Cliente/Personal/Proveedor", "Error",
 					JOptionPane.WARNING_MESSAGE);
-		} else if (tel.getDni().compareTo("")==0||tel.getTitular().compareTo("") == 0) {
-			JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error",
-					JOptionPane.WARNING_MESSAGE);
-		} else if (tel.getNumero() < 100000000
+		}else if (tel.getNumero() < 100000000
 				|| tel.getNumero() > 999999999) { 
 			JOptionPane.showMessageDialog(null,
 					"Introduce un telefono valido", "Error",
 					JOptionPane.WARNING_MESSAGE);
-		} else {
-			GestionBBDD gest = new GestionBBDD();
-			//modificar
-			//
-			//cargarTabla();
-			reemplazar();
+		} else if(tableTelefono.getSelectedRow()==-1){
+			JOptionPane.showMessageDialog(null,
+					"Selecciona un numero para modificar", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}else {
+
+			if(comboBox.getSelectedIndex()==1) {
+				int id=gestor.obtenerIdGeneral("cliente", "Clientes", "dni", tableTelefono.getValueAt(tableTelefono.getSelectedRow(), 1).toString());
+				gestor.modificarTelefonoV2(tel, tableTelefono, "cliente", id);
+				reemplazar();
+				cargarTabla("cliente", "dni", "clientes");
+			}else if(comboBox.getSelectedIndex()==2) {
+				int id=gestor.obtenerIdGeneral("personal", "personal", "dni", tableTelefono.getValueAt(tableTelefono.getSelectedRow(), 1).toString());
+				gestor.modificarTelefonoV2(tel, tableTelefono, "personal", id);
+				reemplazar();
+				cargarTabla("personal", "dni", "personal");
+			}else if(comboBox.getSelectedIndex()==3) {
+				int id=gestor.obtenerIdGeneral("proveedor", "proveedores", "nif", tableTelefono.getValueAt(tableTelefono.getSelectedRow(), 1).toString());
+				System.out.println(id);
+				gestor.modificarTelefonoV2(tel, tableTelefono, "proveedor", id);
+				reemplazar();
+				cargarTabla("proveedor", "nif", "proveedores");
+			}
 		}
 	}
 	public void eliminarProveedor() {

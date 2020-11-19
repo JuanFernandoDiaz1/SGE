@@ -12,6 +12,7 @@ import javax.swing.JTable;
 
 import modelo.Cliente;
 import modelo.Personal;
+import modelo.Proveedor;
 
 public class GestionBBDD {
 
@@ -71,6 +72,31 @@ public class GestionBBDD {
 		}
 		return personal;
 	}
+	public ArrayList<Proveedor> consultaProveedor() {
+		ArrayList<Proveedor> proveedores = new ArrayList<Proveedor>();
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			ResultSet registro = consulta.executeQuery("select nombre, direccion, email, numero "
+					+ "from proveedores inner join telefonos on " + "telefonos.id_proveedor = proveedores.id_proveedor");
+			
+			while (registro.next()) {
+				Proveedor proveedor = new Proveedor();
+				proveedor.setNombre(registro.getString("Nombre"));
+				proveedor.setDireccion(registro.getString("Direccion"));
+				proveedor.setEmail(registro.getString("Email"));
+				proveedor.setTelefono(registro.getInt("numero"));
+				proveedores.add(proveedor);
+
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		return proveedores;
+	}
 
 	public void insertCliente(String nombre, String dni, String direccion, String email) {
 		try {
@@ -84,6 +110,31 @@ public class GestionBBDD {
 			System.out.println("Error en la BBDD");
 		}
 	}
+	public void insertPersonal(String nombre, String dni, String direccion, String email) {
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+
+			Statement consulta = conexion.createStatement();
+			consulta.executeUpdate("insert into personal (nombre, dni, direccion, email) values ('" + nombre + "', '"
+					+ dni + "', '" + direccion + "', '" + email + "')");
+			conexion.close();
+		} catch (SQLException e) {
+			System.out.println("Error en la BBDD");
+		}
+	}
+	public void insertProveedor(String nombre, String direccion, String email) {
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+
+			Statement consulta = conexion.createStatement();
+			consulta.executeUpdate("insert into proveedores (nombre, direccion, email) values ('" + nombre + "', '"
+					+ "', '" + direccion + "', '" + email + "')");
+			conexion.close();
+		} catch (SQLException e) {
+			System.out.println("Error en la BBDD");
+		}
+	}
+	
 
 	public int obtenerIdCliente() {
 		int id = 0;
@@ -97,6 +148,48 @@ public class GestionBBDD {
 			// si existe lo que estamos buscando
 			if (registro.next()) {
 				id = registro.getInt("id_cliente");
+			} else {
+				System.out.println("Error");
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		return id;
+	}
+	public int obtenerIdPersonal() {
+		int id = 0;
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			ResultSet registro = consulta
+					.executeQuery("select id_personal " + "from personal order by id_personal desc limit 1");
+
+			if (registro.next()) {
+				id = registro.getInt("id_personal");
+			} else {
+				System.out.println("Error");
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		return id;
+	}
+	public int obtenerIdProveedor() {
+		int id = 0;
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			ResultSet registro = consulta
+					.executeQuery("select id_proveedor " + "from proveedor order by id_proveedor desc limit 1");
+
+			if (registro.next()) {
+				id = registro.getInt("id_proveedor");
 			} else {
 				System.out.println("Error");
 			}
@@ -166,6 +259,28 @@ public class GestionBBDD {
 			e.printStackTrace();
 		}
 	}
+	//Juan
+	public void modificarProveedor(Proveedor proveedor, JTable tabla) {
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			int valor = consulta.executeUpdate("update personal set nombre = '" + proveedor.getNombre() + "', direccion='" + proveedor.getDireccion() + "', email= '" + proveedor.getEmail() + "'"
+					+ " where dni = '" + tabla.getValueAt(tabla.getSelectedRow(), 1).toString() + "'");
+
+			if (valor == 1) {
+				JOptionPane.showMessageDialog(null, "Proveedor modificado correctamente");
+
+			} else {
+				JOptionPane.showMessageDialog(null, "No existe el Proveedor que desea modificar", "Error",
+						JOptionPane.WARNING_MESSAGE);
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void modificarTelefono(int telefono, String tipo, String documento, String entidad, JTable tabla) {
 		try {
@@ -223,6 +338,28 @@ public class GestionBBDD {
 				JOptionPane.showMessageDialog(null, "Empleado borrado correctamente");
 			} else {
 				JOptionPane.showMessageDialog(null, "No existe el cliente", "Error", JOptionPane.WARNING_MESSAGE);
+			}
+
+			conexion.close();
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
+		}
+	}
+	//Juan
+	public void borrarProveedor(JTable tabla) {
+		Connection conexion;
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			int valor = consulta.executeUpdate("delete from proveedor where dni ='"
+					+ tabla.getValueAt(tabla.getSelectedRow(), 1).toString() + "'");
+			
+			if (valor == 1) {
+				JOptionPane.showMessageDialog(null, "Empleado borrado correctamente");
+			} else {
+				JOptionPane.showMessageDialog(null, "No existe el proveedor", "Error", JOptionPane.WARNING_MESSAGE);
 			}
 
 			conexion.close();

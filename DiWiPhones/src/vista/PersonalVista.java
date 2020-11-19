@@ -58,9 +58,9 @@ public class PersonalVista extends JPanel {
 				} else {
 
 					int telefono = Integer.parseInt(txtTelefono.getText());
-					gestor.insertCliente(txtNombre.getText(), txtDni.getText(), txtDireccion.getText(),
+					gestor.insertPersonal(txtNombre.getText(), txtDni.getText(), txtDireccion.getText(),
 							txtEmail.getText());
-					int id = gestor.obtenerIdCliente();
+					int id = gestor.obtenerIdPersonal();
 					gestor.insertTel("personal", telefono, id);
 					cargarTabla();
 					reemplazar();

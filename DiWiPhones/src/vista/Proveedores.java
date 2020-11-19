@@ -27,6 +27,7 @@ public class Proveedores extends JPanel {
 	private JTextField txtEmail;
 	private JTextField txtDireccion;
 	private JTextField txtTelefono;
+	private JTextField txtNif;
 	/**
 	 * Create the panel.
 	 */
@@ -39,7 +40,7 @@ public class Proveedores extends JPanel {
 				GestionBBDD gestor = new GestionBBDD();
 				Proveedor proveedor = new Proveedor();
 				proveedor=pideDatosProveedor();
-				if (proveedor.getNombre().compareTo("") == 0 || proveedor.getDireccion().compareTo("") == 0 || proveedor.getEmail().compareTo("") == 0) {
+				if (proveedor.getNif().compareTo("")==0||proveedor.getNombre().compareTo("") == 0 || proveedor.getDireccion().compareTo("") == 0 || proveedor.getEmail().compareTo("") == 0) {
 					JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error",
 							JOptionPane.WARNING_MESSAGE);
 				
@@ -51,7 +52,7 @@ public class Proveedores extends JPanel {
 				} else {
 
 					int telefono = Integer.parseInt(txtTelefono.getText());
-					gestor.insertProveedor(txtNombre.getText(), txtDireccion.getText(),
+					gestor.insertProveedor(txtNombre.getText(), txtNif.getText(),txtDireccion.getText(),
 							txtEmail.getText());
 					int id = gestor.obtenerIdProveedor();
 					gestor.insertTel("proveedor", telefono, id);
@@ -98,13 +99,18 @@ public class Proveedores extends JPanel {
 		});
 		btnEliminar.setBounds(429, 381, 89, 23);
 		add(btnEliminar);
-		//btnRefresh.setIcon(new ImageIcon("")); Icono Recarga
+		btnRefresh.setIcon(new ImageIcon("img/actualizado.png"));
 		btnRefresh.setBounds(22, 11, 40, 35);
 		add(btnRefresh);
+		
+		txtNif = new JTextField();
+		txtNif.setColumns(10);
+		txtNif.setBounds(367, 286, 126, 20);
+		add(txtNif);
 
 		txtTelefono = new JTextField();
 		txtTelefono.setColumns(10);
-		txtTelefono.setBounds(367, 286, 126, 20);
+		txtTelefono.setBounds(560, 286, 80, 20);
 		add(txtTelefono);
 
 		txtEmail = new JTextField();
@@ -132,7 +138,7 @@ public class Proveedores extends JPanel {
 		tableProveedor = new JTable();
 		scrollPane.setViewportView(tableProveedor);
 
-		modeloTabla.setColumnIdentifiers(new Object[] { "Nombre", "Direccion", "Email", "telefono" });
+		modeloTabla.setColumnIdentifiers(new Object[] { "Nombre","NIF", "Direccion", "Email", "telefono" });
 		tableProveedor.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 		cargarTabla();
@@ -150,11 +156,15 @@ public class Proveedores extends JPanel {
 		add(lblDireccion);
 
 		JLabel lblTel = new JLabel("Telefono: ");
-		lblTel.setBounds(315, 289, 55, 14);
+		lblTel.setBounds(506, 289, 55, 14);
 		add(lblTel);
 		
+		JLabel lblNif_1 = new JLabel("NIF:");
+		lblNif_1.setBounds(322, 289, 46, 14);
+		add(lblNif_1);
+		
 		JLabel lblLogo = new JLabel("");
-		//lblLogo.setIcon(new ImageIcon("")); icono logo 
+		lblLogo.setIcon(new ImageIcon("img\\diwi.png"));
 		lblLogo.setBounds(494, 394, 199, 54);
 		add(lblLogo);
 
@@ -170,14 +180,16 @@ public class Proveedores extends JPanel {
 		public void valueChanged(ListSelectionEvent arg0) {
 			if(tableProveedor.getSelectedRow()!=-1) {
 				txtNombre.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 0).toString());
-				txtDireccion.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 1).toString());
-				txtEmail.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 2).toString());
-				txtTelefono.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 3).toString());
+				txtNif.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 1).toString());
+				txtDireccion.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 2).toString());
+				txtEmail.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 3).toString());
+				txtTelefono.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 4).toString());
 			}else {
 				txtNombre.setText("");
 				txtDireccion.setText("");
 				txtEmail.setText("");
 				txtTelefono.setText("");
+				txtNif.setText("");
 			}
 		}
 	});
@@ -188,7 +200,7 @@ public class Proveedores extends JPanel {
 		GestionBBDD gestor = new GestionBBDD();
 		modeloTabla.setRowCount(0);
 		for (Proveedor c : gestor.consultaProveedor()) {
-			modeloTabla.addRow(new Object[] { c.getNombre(), c.getDireccion(), c.getEmail(), c.getTelefono() });
+			modeloTabla.addRow(new Object[] { c.getNombre(),c.getNif(), c.getDireccion(), c.getEmail(), c.getTelefono() });
 		}
 	}
 	
@@ -197,6 +209,7 @@ public class Proveedores extends JPanel {
 		txtEmail.setText("");
 		txtTelefono.setText("");
 		txtDireccion.setText("");
+		txtNif.setText("");
 	}
 	
 	public void modificarProveedor() {
@@ -206,7 +219,7 @@ public class Proveedores extends JPanel {
 		if (tableProveedor.getSelectedRow() == -1) {//
 			JOptionPane.showMessageDialog(null, "Selecciona un proveedor para modificar", "Error",
 					JOptionPane.WARNING_MESSAGE);
-		} else if (proveedor.getNombre().compareTo("") == 0|| proveedor.getDireccion().compareTo("") == 0 || 
+		} else if (proveedor.getNif().compareTo("")==0||proveedor.getNombre().compareTo("") == 0|| proveedor.getDireccion().compareTo("") == 0 || 
 				proveedor.getEmail().compareTo("") == 0) {
 			JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error",
 					JOptionPane.WARNING_MESSAGE);
@@ -217,7 +230,7 @@ public class Proveedores extends JPanel {
 					JOptionPane.WARNING_MESSAGE);
 		} else {
 			GestionBBDD gest = new GestionBBDD();
-			gest.modificarTelefono(proveedor.getTelefono(), "proveedor", "dni", "proveedor", tableProveedor);
+			gest.modificarTelefono(proveedor.getTelefono(), "proveedor", "nif", "proveedores", tableProveedor);
 			gest.modificarProveedor(proveedor, tableProveedor);
 			cargarTabla();
 			reemplazar();
@@ -229,7 +242,7 @@ public class Proveedores extends JPanel {
 					JOptionPane.WARNING_MESSAGE);
 		}else {
 			GestionBBDD gest = new GestionBBDD();
-			gest.borrarTel("proveedor", "dni", "proveedor", tableProveedor);
+			gest.borrarTel("proveedor", "nif", "proveedores", tableProveedor);
 			gest.borrarProveedor(tableProveedor);
 			cargarTabla();
 		}
@@ -239,6 +252,7 @@ public class Proveedores extends JPanel {
 		proveedor.setNombre(txtNombre.getText());
 		proveedor.setDireccion(txtDireccion.getText());
 		proveedor.setEmail(txtEmail.getText());
+		proveedor.setNif(txtNif.getText());
 		try {
 			proveedor.setTelefono(Integer.parseInt(txtTelefono.getText()));
 		} catch (NumberFormatException e) {
@@ -246,5 +260,4 @@ public class Proveedores extends JPanel {
 		}
 		return proveedor;
 	}
-
 }

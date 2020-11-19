@@ -21,7 +21,7 @@ public class Tablas extends JPanel {
 		setBounds(0, 0, 729, 535);
 		
 		comboTablas = new JComboBox();
-		comboTablas.setModel(new DefaultComboBoxModel(new String[] {"-Tablas-", "Clientes", "Personal", "Proveedores"}));
+		comboTablas.setModel(new DefaultComboBoxModel(new String[] {"-Tablas-", "Clientes", "Personal", "Proveedores", "Telefonos"}));
 		comboTablas.setBounds(234, 248, 262, 38);
 		add(comboTablas);
 		
@@ -38,7 +38,10 @@ public class Tablas extends JPanel {
 				}else if(comboTablas.getSelectedItem().toString().compareToIgnoreCase("Proveedores")==0){
 					Proveedores proveedores = new Proveedores();
 					nuevoPanel(proveedores);
-				}else {
+				}else if(comboTablas.getSelectedItem().toString().compareToIgnoreCase("Telefonos")==0) {
+					TelefonosVista telefonos = new TelefonosVista();
+					nuevoPanel(telefonos);
+				}else{
 					JOptionPane.showMessageDialog(null, "Selecciona una tabla");
 
 				}

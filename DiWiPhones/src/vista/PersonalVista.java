@@ -105,7 +105,7 @@ public class PersonalVista extends JPanel {
 		});
 		btnEliminar.setBounds(429, 381, 89, 23);
 		add(btnEliminar);
-		//btnRefresh.setIcon(new ImageIcon("")); Icono Recarga
+		btnRefresh.setIcon(new ImageIcon("img/actualizado.png"));
 		btnRefresh.setBounds(22, 11, 40, 35);
 		add(btnRefresh);
 
@@ -170,7 +170,7 @@ public class PersonalVista extends JPanel {
 		add(lblTel);
 		
 		JLabel lblLogo = new JLabel("");
-		//lblLogo.setIcon(new ImageIcon("")); icono logo 
+		lblLogo.setIcon(new ImageIcon("img/diwi.png")); 
 		lblLogo.setBounds(494, 394, 199, 54);
 		add(lblLogo);
 

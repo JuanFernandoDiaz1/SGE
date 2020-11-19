@@ -13,6 +13,7 @@ import javax.swing.JTable;
 import modelo.Cliente;
 import modelo.Personal;
 import modelo.Proveedor;
+import modelo.Telefono;
 
 public class GestionBBDD {
 
@@ -46,6 +47,7 @@ public class GestionBBDD {
 		}
 		return clientes;
 	}
+	
 	public ArrayList<Personal> consultaPersonal() {
 		ArrayList<Personal> personal = new ArrayList<Personal>();
 		try {
@@ -72,17 +74,19 @@ public class GestionBBDD {
 		}
 		return personal;
 	}
+	
 	public ArrayList<Proveedor> consultaProveedor() {
 		ArrayList<Proveedor> proveedores = new ArrayList<Proveedor>();
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
-			ResultSet registro = consulta.executeQuery("select nombre, direccion, email, numero "
+			ResultSet registro = consulta.executeQuery("select nombre, nif, direccion, email, numero "
 					+ "from proveedores inner join telefonos on " + "telefonos.id_proveedor = proveedores.id_proveedor");
 			
 			while (registro.next()) {
 				Proveedor proveedor = new Proveedor();
 				proveedor.setNombre(registro.getString("Nombre"));
+				proveedor.setNif(registro.getString("nif"));
 				proveedor.setDireccion(registro.getString("Direccion"));
 				proveedor.setEmail(registro.getString("Email"));
 				proveedor.setTelefono(registro.getInt("numero"));
@@ -98,6 +102,35 @@ public class GestionBBDD {
 		return proveedores;
 	}
 
+	public ArrayList<Telefono> consultaTelefono(String tipo, String documento, String entidad) {
+		ArrayList<Telefono> telefonos = new ArrayList<Telefono>();
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("select numero, nombre, "+ documento
+					+ " from telefonos inner join "+ entidad +" on " + "telefonos.id_"+ tipo +" = "+entidad+".id_"+tipo);
+
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				Telefono tel = new Telefono();
+				// guardamos los campos en el objeto modelo
+				tel.setDni(registro.getString(documento));
+				tel.setTitular(registro.getString("Nombre"));
+				tel.setNumero(registro.getInt("numero"));
+				// añadimos modelos al arrayList
+				telefonos.add(tel);
+
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		return telefonos;
+	}
+	
 	public void insertCliente(String nombre, String dni, String direccion, String email) {
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
@@ -110,6 +143,7 @@ public class GestionBBDD {
 			System.out.println("Error en la BBDD");
 		}
 	}
+	
 	public void insertPersonal(String nombre, String dni, String direccion, String email) {
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
@@ -122,16 +156,30 @@ public class GestionBBDD {
 			System.out.println("Error en la BBDD");
 		}
 	}
-	public void insertProveedor(String nombre, String direccion, String email) {
+	
+	public void insertProveedor(String nombre, String nif, String direccion, String email) {
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 
 			Statement consulta = conexion.createStatement();
-			consulta.executeUpdate("insert into proveedores (nombre, direccion, email) values ('" + nombre + "', '"
+			consulta.executeUpdate("insert into proveedores (nombre, nif, direccion, email) values ('" + nombre + "', '"+nif
 					+ "', '" + direccion + "', '" + email + "')");
 			conexion.close();
 		} catch (SQLException e) {
 			System.out.println("Error en la BBDD");
+		}
+	}
+	
+	public void insertTelefono(int numero, String documento, String tipo, String entidad, String numeroDoc) {
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+
+			Statement consulta = conexion.createStatement();
+			consulta.executeUpdate(
+					"insert into telefonos (numero, id_" + tipo + ") values (" + numero + ", " + "(select id_"+tipo+ " from "+entidad +" where " +documento+"="+numeroDoc+"))");
+			conexion.close();
+		} catch (SQLException e) {
+			System.out.println("Error en la telefono");
 		}
 	}
 	
@@ -186,7 +234,7 @@ public class GestionBBDD {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 			ResultSet registro = consulta
-					.executeQuery("select id_proveedor " + "from proveedor order by id_proveedor desc limit 1");
+					.executeQuery("select id_proveedor from proveedores order by id_proveedor desc limit 1");
 
 			if (registro.next()) {
 				id = registro.getInt("id_proveedor");
@@ -265,8 +313,8 @@ public class GestionBBDD {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 
-			int valor = consulta.executeUpdate("update personal set nombre = '" + proveedor.getNombre() + "', direccion='" + proveedor.getDireccion() + "', email= '" + proveedor.getEmail() + "'"
-					+ " where dni = '" + tabla.getValueAt(tabla.getSelectedRow(), 1).toString() + "'");
+			int valor = consulta.executeUpdate("update proveedores set nombre = '" + proveedor.getNombre() + "', nif='"+proveedor.getNif()+"', direccion='" + proveedor.getDireccion() + "', email= '" + proveedor.getEmail() + "'"
+					+ " where nif = '" + tabla.getValueAt(tabla.getSelectedRow(), 1).toString() + "'");
 
 			if (valor == 1) {
 				JOptionPane.showMessageDialog(null, "Proveedor modificado correctamente");
@@ -353,7 +401,7 @@ public class GestionBBDD {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 
-			int valor = consulta.executeUpdate("delete from proveedor where dni ='"
+			int valor = consulta.executeUpdate("delete from proveedores where nif ='"
 					+ tabla.getValueAt(tabla.getSelectedRow(), 1).toString() + "'");
 			
 			if (valor == 1) {

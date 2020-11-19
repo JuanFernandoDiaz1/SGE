@@ -1,35 +1,43 @@
 package modelo;
 
 public class Proveedor {
-	private String Nombre;
-	private String Direccion;
-	private String Email;
-	private int Telefono;
-	
-	public int getTelefono() {
-		return Telefono;
-	}
-	public void setTelefono(int telefono) {
-		Telefono = telefono;
-	}
+	private String nombre;
+	private String direccion;
+	private String email;
+	private int telefono;
+	private String nif;
 	public String getNombre() {
-		return Nombre;
+		return nombre;
 	}
 	public void setNombre(String nombre) {
-		Nombre = nombre;
+		this.nombre = nombre;
 	}
 	public String getDireccion() {
-		return Direccion;
+		return direccion;
 	}
 	public void setDireccion(String direccion) {
-		Direccion = direccion;
+		this.direccion = direccion;
 	}
 	public String getEmail() {
-		return Email;
+		return email;
 	}
 	public void setEmail(String email) {
-		Email = email;
+		this.email = email;
 	}
+	public int getTelefono() {
+		return telefono;
+	}
+	public void setTelefono(int telefono) {
+		this.telefono = telefono;
+	}
+	public String getNif() {
+		return nif;
+	}
+	public void setNif(String nif) {
+		this.nif = nif;
+	}
+	
+	
 	
 
 }

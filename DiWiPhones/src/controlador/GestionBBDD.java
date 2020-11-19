@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 import modelo.Cliente;
+import modelo.Personal;
 
 public class GestionBBDD {
 
@@ -43,6 +44,32 @@ public class GestionBBDD {
 					JOptionPane.WARNING_MESSAGE);
 		}
 		return clientes;
+	}
+	public ArrayList<Personal> consultaPersonal() {
+		ArrayList<Personal> personal = new ArrayList<Personal>();
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			ResultSet registro = consulta.executeQuery("select dni, nombre, direccion, email, numero "
+					+ "from personal inner join telefonos on " + "telefonos.id_personal = personal.id_personal");
+			
+			while (registro.next()) {
+				Personal empleado = new Personal();
+				empleado.setDni(registro.getString("DNI"));
+				empleado.setNombre(registro.getString("Nombre"));
+				empleado.setDireccion(registro.getString("Direccion"));
+				empleado.setEmail(registro.getString("Email"));
+				empleado.setTelefono(registro.getInt("numero"));
+				personal.add(empleado);
+
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		return personal;
 	}
 
 	public void insertCliente(String nombre, String dni, String direccion, String email) {
@@ -117,6 +144,28 @@ public class GestionBBDD {
 			e.printStackTrace();
 		}
 	}
+	public void modificarPersonal(Personal persona, JTable tabla) {
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			int valor = consulta.executeUpdate("update personal set nombre = '" + persona.getNombre() + "', DNI='"
+					+ persona.getDni() + "', direccion='" + persona.getDireccion() + "', email= '" + persona.getEmail() + "'"
+					+ " where dni = '" + tabla.getValueAt(tabla.getSelectedRow(), 1).toString() + "'");
+
+			if (valor == 1) {
+				JOptionPane.showMessageDialog(null, "Cliente modificado correctamente");
+
+			} else {
+				JOptionPane.showMessageDialog(null, "No existe el cliente que desea modificar", "Error",
+						JOptionPane.WARNING_MESSAGE);
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void modificarTelefono(int telefono, String tipo, String documento, String entidad, JTable tabla) {
 		try {
@@ -151,6 +200,27 @@ public class GestionBBDD {
 			
 			if (valor == 1) {
 				JOptionPane.showMessageDialog(null, "Cliente borrado correctamente");
+			} else {
+				JOptionPane.showMessageDialog(null, "No existe el cliente", "Error", JOptionPane.WARNING_MESSAGE);
+			}
+
+			conexion.close();
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
+		}
+	}
+	public void borrarPersonal(JTable tabla) {
+		Connection conexion;
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			int valor = consulta.executeUpdate("delete from personal where dni ='"
+					+ tabla.getValueAt(tabla.getSelectedRow(), 1).toString() + "'");
+			
+			if (valor == 1) {
+				JOptionPane.showMessageDialog(null, "Empleado borrado correctamente");
 			} else {
 				JOptionPane.showMessageDialog(null, "No existe el cliente", "Error", JOptionPane.WARNING_MESSAGE);
 			}

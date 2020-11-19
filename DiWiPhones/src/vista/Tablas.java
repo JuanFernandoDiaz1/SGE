@@ -33,7 +33,7 @@ public class Tablas extends JPanel {
 					Clientes clientes = new Clientes();
 					nuevoPanel(clientes);
 				}else if(comboTablas.getSelectedItem().toString().compareToIgnoreCase("Personal")==0){
-					Personal personal = new Personal();
+					PersonalVista personal = new PersonalVista();
 					nuevoPanel(personal);
 				}else if(comboTablas.getSelectedItem().toString().compareToIgnoreCase("Proveedores")==0){
 					Proveedores proveedores = new Proveedores();

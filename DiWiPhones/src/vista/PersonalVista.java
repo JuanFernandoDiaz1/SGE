@@ -1,57 +1,57 @@
 package vista;
 
-import javax.swing.JPanel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollBar;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-
-import controlador.GestionBBDD;
-import modelo.Cliente;
-
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
-public class Clientes extends JPanel {
-	private JTable tableClientes;
+import controlador.GestionBBDD;
+import modelo.Personal;
+
+public class PersonalVista extends JPanel {
+	private JTable tablePersonal;
 	DefaultTableModel modeloTabla = new DefaultTableModel();
 	private JTextField txtNombre;
 	private JTextField txtDni;
 	private JTextField txtEmail;
 	private JTextField txtDireccion;
 	private JTextField txtTelefono;
-
+	
 	/**
 	 * Create the panel.
 	 */
-	public Clientes() {
+	public PersonalVista() {
 		setLayout(null);
 		setBounds(0, 0, 723, 507);
-
 		JButton btnInsert = new JButton("Insertar");
 		btnInsert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				GestionBBDD gestor = new GestionBBDD();
-				Cliente cli = new Cliente();
-				cli=pideDatosCliente();
-				if (cli.getNombre().compareTo("") == 0 || cli.getDni().compareTo("") == 0
-						|| cli.getDireccion().compareTo("") == 0 || cli.getEmail().compareTo("") == 0) {
+				Personal persona = new Personal();
+				persona=pideDatosPersonal();
+				if (persona.getNombre().compareTo("") == 0 || persona.getDni().compareTo("") == 0
+						|| persona.getDireccion().compareTo("") == 0 || persona.getEmail().compareTo("") == 0) {
 					JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error",
 							JOptionPane.WARNING_MESSAGE);
-				} else if(cli.getDni().length()<8) {
+				} else if(persona.getDni().length()<8) {
 					JOptionPane.showMessageDialog(null,
 							"Introduce un DNI valido", "Error",
 							JOptionPane.WARNING_MESSAGE);
-				} else if (cli.getTelefono() < 100000000
-						|| cli.getTelefono() > 999999999) { 
+				} else if (persona.getTelefono() < 100000000
+						|| persona.getTelefono() > 999999999) { 
 					JOptionPane.showMessageDialog(null,
 							"Introduce un telefono valido", "Error",
 							JOptionPane.WARNING_MESSAGE);
@@ -61,7 +61,7 @@ public class Clientes extends JPanel {
 					gestor.insertCliente(txtNombre.getText(), txtDni.getText(), txtDireccion.getText(),
 							txtEmail.getText());
 					int id = gestor.obtenerIdCliente();
-					gestor.insertTel("cliente", telefono, id);
+					gestor.insertTel("personal", telefono, id);
 					cargarTabla();
 					reemplazar();
 				}
@@ -74,9 +74,9 @@ public class Clientes extends JPanel {
 		JButton btnModificar = new JButton("Modificar");
 		btnModificar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Modificar el modelo?");
+				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Modificar este empleado?");
 				if (JOptionPane.OK_OPTION == valor) {
-					modificarCliente();
+					modificarPersonal();
 					cargarTabla();
 				}
 			}
@@ -87,36 +87,25 @@ public class Clientes extends JPanel {
 		JButton btnRefresh = new JButton("");
 		btnRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(tableClientes.getSelectedRow()!=-1) {
-					txtNombre.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 0).toString());
-					txtDni.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 1).toString());
-					txtDireccion.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 2).toString());
-					txtEmail.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 3).toString());
-					txtTelefono.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 4).toString());
-				}else {
-					txtNombre.setText("");
-					txtDni.setText("");
-					txtDireccion.setText("");
-					txtEmail.setText("");
-					txtTelefono.setText("");
-				}
+				/**/
 				cargarTabla();
 			}
 		});
 		
+		
 		JButton btnEliminar = new JButton("Eliminar");
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Eliminar el cliente?");
+				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quieres eliminar este empleado?");
 				if (JOptionPane.OK_OPTION == valor) {
-					eliminarCliente();
+					eliminarPersonal();
 					cargarTabla();
 				}
 			}
 		});
 		btnEliminar.setBounds(429, 381, 89, 23);
 		add(btnEliminar);
-		btnRefresh.setIcon(new ImageIcon("C:\\Users\\juanfernando.diaz.JUANXXIII_23\\Documents\\GitHub\\SGE\\DiWiPhones\\img\\actualizado.png"));
+		//btnRefresh.setIcon(new ImageIcon("")); Icono Recarga
 		btnRefresh.setBounds(22, 11, 40, 35);
 		add(btnRefresh);
 
@@ -152,11 +141,11 @@ public class Clientes extends JPanel {
 		scrollPane.setBounds(84, 41, 549, 210);
 		add(scrollPane);
 
-		tableClientes = new JTable();
-		scrollPane.setViewportView(tableClientes);
+		tablePersonal = new JTable();
+		scrollPane.setViewportView(tablePersonal);
 
 		modeloTabla.setColumnIdentifiers(new Object[] { "Nombre", "DNI", "Direccion", "Email", "telefono" });
-		tableClientes.setModel(modeloTabla);
+		tablePersonal.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 		cargarTabla();
 		
@@ -164,24 +153,24 @@ public class Clientes extends JPanel {
 		lblNombre.setBounds(94, 288, 65, 17);
 		add(lblNombre);
 
-		JLabel lblDni = new JLabel("DNI:");
+		JLabel lblDni = new JLabel("DNI: ");
 		lblDni.setBounds(322, 286, 32, 20);
 		add(lblDni);
 
-		JLabel lblEmail = new JLabel("Email:");
+		JLabel lblEmail = new JLabel("Email: ");
 		lblEmail.setBounds(322, 325, 40, 20);
 		add(lblEmail);
 
-		JLabel lblDireccion = new JLabel("Direccion:");
+		JLabel lblDireccion = new JLabel("Direccion: ");
 		lblDireccion.setBounds(94, 326, 63, 14);
 		add(lblDireccion);
 
-		JLabel lblTel = new JLabel("Telefono:");
+		JLabel lblTel = new JLabel("Telefono: ");
 		lblTel.setBounds(474, 289, 55, 14);
 		add(lblTel);
 		
 		JLabel lblLogo = new JLabel("");
-		lblLogo.setIcon(new ImageIcon("C:\\Users\\juanfernando.diaz.JUANXXIII_23\\Documents\\GitHub\\SGE\\DiWiPhones\\img\\diwi.png"));
+		//lblLogo.setIcon(new ImageIcon("")); icono logo 
 		lblLogo.setBounds(494, 394, 199, 54);
 		add(lblLogo);
 
@@ -190,17 +179,17 @@ public class Clientes extends JPanel {
 		lblFondo.setBounds(0, 0, 723, 507);
 		add(lblFondo);
 		
-		ListSelectionModel model = tableClientes.getSelectionModel();
+		ListSelectionModel model = tablePersonal.getSelectionModel();
 		model.addListSelectionListener(new ListSelectionListener() {
 		
 		@Override
 		public void valueChanged(ListSelectionEvent arg0) {
-			if(tableClientes.getSelectedRow()!=-1) {
-				txtNombre.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 0).toString());
-				txtDni.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 1).toString());
-				txtDireccion.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 2).toString());
-				txtEmail.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 3).toString());
-				txtTelefono.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 4).toString());
+			if(tablePersonal.getSelectedRow()!=-1) {
+				txtNombre.setText(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 0).toString());
+				txtDni.setText(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 1).toString());
+				txtDireccion.setText(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 2).toString());
+				txtEmail.setText(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 3).toString());
+				txtTelefono.setText(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 4).toString());
 			}else {
 				txtNombre.setText("");
 				txtDni.setText("");
@@ -210,13 +199,13 @@ public class Clientes extends JPanel {
 			}
 		}
 	});
-		
 	}
+	
 
 	public void cargarTabla() {
 		GestionBBDD gestor = new GestionBBDD();
 		modeloTabla.setRowCount(0);
-		for (Cliente c : gestor.consulta()) {
+		for (Personal c : gestor.consultaPersonal()) {
 			modeloTabla.addRow(new Object[] { c.getNombre(), c.getDni(), c.getDireccion(), c.getEmail(), c.getTelefono() });
 		}
 	}
@@ -229,54 +218,52 @@ public class Clientes extends JPanel {
 		txtDni.setText("");
 	}
 	
-	public void modificarCliente() {
-		Cliente cli = new Cliente();
-		cli=pideDatosCliente();
+	public void modificarPersonal() {
+		Personal persona = new Personal();
+		persona=pideDatosPersonal();
 		
-		if (tableClientes.getSelectedRow() == -1) {//
-			JOptionPane.showMessageDialog(null, "Selecciona un cliente para modificar", "Error",
+		if (tablePersonal.getSelectedRow() == -1) {//
+			JOptionPane.showMessageDialog(null, "Selecciona un empleado para modificar", "Error",
 					JOptionPane.WARNING_MESSAGE);
-		} else if (cli.getNombre().compareTo("") == 0 || cli.getDni().compareTo("") == 0
-				|| cli.getDireccion().compareTo("") == 0 || cli.getEmail().compareTo("") == 0) {
+		} else if (persona.getNombre().compareTo("") == 0 || persona.getDni().compareTo("") == 0
+				|| persona.getDireccion().compareTo("") == 0 || persona.getEmail().compareTo("") == 0) {
 			JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error",
 					JOptionPane.WARNING_MESSAGE);
-		} else if (cli.getTelefono() < 100000000
-				|| cli.getTelefono() > 999999999) { 
+		} else if (persona.getTelefono() < 100000000
+				|| persona.getTelefono() > 999999999) { 
 			JOptionPane.showMessageDialog(null,
 					"Introduce un telefono valido", "Error",
 					JOptionPane.WARNING_MESSAGE);
 		} else {
 			GestionBBDD gest = new GestionBBDD();
-			gest.modificarTelefono(cli.getTelefono(), "cliente", "dni", "clientes", tableClientes);
-			gest.modificarCliente(cli, tableClientes);
+			gest.modificarTelefono(persona.getTelefono(), "personal", "dni", "personal", tablePersonal);
+			gest.modificarPersonal(persona, tablePersonal);
 			cargarTabla();
 			reemplazar();
 		}
 	}
-	public void eliminarCliente() {
-		if (tableClientes.getSelectedRow() == -1) {//
-			JOptionPane.showMessageDialog(null, "Selecciona un cliente para eliminar", "Error",
+	public void eliminarPersonal() {
+		if (tablePersonal.getSelectedRow() == -1) {//
+			JOptionPane.showMessageDialog(null, "Selecciona un empleado para eliminar", "Error",
 					JOptionPane.WARNING_MESSAGE);
 		}else {
 			GestionBBDD gest = new GestionBBDD();
-			gest.borrarTel("cliente", "dni", "clientes", tableClientes);
-			gest.borrarCliente(tableClientes);
+			gest.borrarTel("personal", "dni", "personal", tablePersonal);
+			gest.borrarPersonal(tablePersonal);
 			cargarTabla();
 		}
 	}
-	public Cliente pideDatosCliente() {
-		Cliente cli = new Cliente();
-		cli.setNombre(txtNombre.getText());
-		cli.setDni(txtDni.getText());
-		cli.setDireccion(txtDireccion.getText());
-		cli.setEmail(txtEmail.getText());
+	public Personal pideDatosPersonal() {
+		Personal persona = new Personal();
+		persona.setNombre(txtNombre.getText());
+		persona.setDni(txtDni.getText());
+		persona.setDireccion(txtDireccion.getText());
+		persona.setEmail(txtEmail.getText());
 		try {
-			cli.setTelefono(Integer.parseInt(txtTelefono.getText()));
+			persona.setTelefono(Integer.parseInt(txtTelefono.getText()));
 		} catch (NumberFormatException e) {
-			cli.setTelefono(-1);
+			persona.setTelefono(-1);
 		}
-		return cli;
+		return persona;
 	}
-	
-
 }

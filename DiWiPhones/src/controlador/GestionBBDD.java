@@ -447,6 +447,27 @@ public class GestionBBDD {
 			e.printStackTrace();
 		}
 	}
+	public void modificarProducto(Productos p, JTable tabla) {
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			int valor = consulta.executeUpdate("update productos set nombre = '" + p.getNombre() + "', descripcion = '"+p.getDescripcion()+
+					"' , precio = " +p.getPrecio()+", Stock = "+p.getStock()+", id_proveedor =  (Select id_proveedor from proveedores "
+					+ "where NIF ='"+p.getProveedor()+"') where nombre='"+tabla.getValueAt(tabla.getSelectedRow(), 0)+"' and descripcion='"+ tabla.getValueAt(tabla.getSelectedRow(), 1)+"'");
+
+			if (valor == 1) {
+				JOptionPane.showMessageDialog(null, "Producto modificado correctamente");
+
+			} else {
+				JOptionPane.showMessageDialog(null, "Error con el producto", "Error", JOptionPane.WARNING_MESSAGE);
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void borrarCliente(JTable tabla) {
 		Connection conexion;
@@ -528,10 +549,25 @@ public class GestionBBDD {
 			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
 		}
 	}
+	public void borrarProducto(JTable tabla) {
+		Connection conexion;
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			int valor = consulta.executeUpdate("delete from productos where nombre='"+tabla.getValueAt(tabla.getSelectedRow(),  0).toString()+"'" );
+
+			conexion.close();
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
+		}
+	}
+	
 	public DefaultComboBoxModel cargaProveedores() {
 		Connection conexion;
 		DefaultComboBoxModel listaModelo = new DefaultComboBoxModel();
-		listaModelo.addElement("Provedores");
+		listaModelo.addElement("Proveedores");
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
@@ -545,6 +581,29 @@ public class GestionBBDD {
 			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
 		}
 		return listaModelo;
+	}
+	
+	public void comprobarProductos(Productos p) {
+		
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("select nombre from productos where nombre='"+p.getNombre()+"'");
+
+			// si existe lo que estamos buscando
+			if (registro.next()) {
+				JOptionPane.showMessageDialog(null, "No introduzcas dos nombres iguales", "Error", JOptionPane.WARNING_MESSAGE);
+			} else {
+				insertProductos(p);
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		
 	}
 	
 

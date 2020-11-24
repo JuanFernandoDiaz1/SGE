@@ -32,69 +32,67 @@ public class ProductosVista extends JPanel {
 	private JTextField txtStock;
 	private JComboBox comboBox;
 	GestionBBDD gestor = new GestionBBDD();
+
 	/**
 	 * Create the panel.
 	 */
 	public ProductosVista() {
 		setLayout(null);
 		setBounds(0, 0, 723, 507);
-		
+
 		JButton btnInsert = new JButton("Insertar");
 		btnInsert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Productos productos = recogerDatos();
-				if(productos.getNombre().compareTo("") == 0 || productos.getDescripcion().compareTo("") == 0) {
+				if (productos.getNombre().compareTo("") == 0 || productos.getDescripcion().compareTo("") == 0) {
 					JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error",
 							JOptionPane.WARNING_MESSAGE);
-				}else if(productos.getPrecio() <= 0 || productos.getStock() <= 0) {
-					JOptionPane.showMessageDialog(null, "Los campos Precio y Stock no pueden ser 0 o negativos", "Error",
-							JOptionPane.WARNING_MESSAGE);
-				}else {
-					gestor.insertProductos(productos);
+				} else if (productos.getPrecio() <= 0 || productos.getStock() <= 0) {
+					JOptionPane.showMessageDialog(null, "Los campos Precio y Stock no pueden ser 0 o negativos",
+							"Error", JOptionPane.WARNING_MESSAGE);
+				} else {
+					gestor.comprobarProductos(productos);
 					cargarTabla();
 				}
-				
+
 			}
 		});
 		btnInsert.setBounds(199, 381, 89, 23);
 		add(btnInsert);
-		
+
 		JButton btnModificar = new JButton("Modificar");
 		btnModificar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Modificar el modelo?");
 				if (JOptionPane.OK_OPTION == valor) {
-					//modificarCliente();
+					gestor.modificarProducto(recogerDatos(), tableProductos);
+					cargarTabla();
 				}
 			}
 		});
 		btnModificar.setBounds(315, 381, 89, 23);
 		add(btnModificar);
-		
+
 		JButton btnRefresh = new JButton("");
 		btnRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(tableProductos.getSelectedRow()!=-1) {
-					txtNombre.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 0).toString());
-					txtDescripcion.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 1).toString());
-					txtStock.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 2).toString());
-					txtPrecio.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 3).toString());			
-				}else {
-					txtNombre.setText("");
-					txtDescripcion.setText("");
-					txtStock.setText("");
-					txtPrecio.setText("");
-				}
-				
+
+				txtNombre.setText("");
+				txtDescripcion.setText("");
+				txtStock.setText("");
+				txtPrecio.setText("");
+				comboBox.setSelectedIndex(0);
+				cargarTabla();
 			}
 		});
-		
+
 		JButton btnEliminar = new JButton("Eliminar");
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Eliminar el cliente?");
 				if (JOptionPane.OK_OPTION == valor) {
-					//eliminarCliente();
+					gestor.borrarProducto(tableProductos);
+					cargarTabla();
 				}
 			}
 		});
@@ -125,7 +123,6 @@ public class ProductosVista extends JPanel {
 		txtNombre.setBounds(141, 286, 117, 20);
 		add(txtNombre);
 
-		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(84, 41, 549, 210);
 		add(scrollPane);
@@ -133,11 +130,11 @@ public class ProductosVista extends JPanel {
 		tableProductos = new JTable();
 		scrollPane.setViewportView(tableProductos);
 
-		modeloTabla.setColumnIdentifiers(new Object[] { "Nombre", "Descripcion", "Precio", "Stock","Proveedor" });
+		modeloTabla.setColumnIdentifiers(new Object[] { "Nombre", "Descripcion", "Precio", "Stock", "Proveedor" });
 		tableProductos.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 		cargarTabla();
-		
+
 		JLabel lblNombre = new JLabel("Nombre: ");
 		lblNombre.setBounds(84, 288, 65, 17);
 		add(lblNombre);
@@ -153,13 +150,12 @@ public class ProductosVista extends JPanel {
 		JLabel lblPrecio = new JLabel("Precio:");
 		lblPrecio.setBounds(84, 326, 63, 14);
 		add(lblPrecio);
-		
+
 		comboBox = new JComboBox();
 		comboBox.setBounds(507, 286, 126, 21);
 		add(comboBox);
-		comboBox.setModel(gestor.cargaProveedores());		
-			
-		
+		comboBox.setModel(gestor.cargaProveedores());
+
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setIcon(new ImageIcon("img/diwi.png"));
 		lblLogo.setBounds(494, 394, 199, 54);
@@ -169,28 +165,29 @@ public class ProductosVista extends JPanel {
 		lblFondo.setIcon(new ImageIcon("img\\fondo.jpg"));
 		lblFondo.setBounds(0, 0, 723, 507);
 		add(lblFondo);
-		
-		
+
 		ListSelectionModel model = tableProductos.getSelectionModel();
 		model.addListSelectionListener(new ListSelectionListener() {
-		
-		@Override
-		public void valueChanged(ListSelectionEvent arg0) {
-			if(tableProductos.getSelectedRow()!=-1) {
-				txtNombre.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 0).toString());
-				txtDescripcion.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 1).toString());
-				txtStock.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 2).toString());
-				txtPrecio.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 3).toString());
-				comboBox.setSelectedItem(tableProductos.getValueAt(tableProductos.getSelectedRow(),4).toString());
+
+			@Override
+			public void valueChanged(ListSelectionEvent arg0) {
+				if (tableProductos.getSelectedRow() != -1) {
+					txtNombre.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 0).toString());
+					txtDescripcion.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 1).toString());
+					txtStock.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 2).toString());
+					txtPrecio.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 3).toString());
+					comboBox.setSelectedItem(tableProductos.getValueAt(tableProductos.getSelectedRow(), 4).toString());
+				}
 			}
-		}
-	});}
+		});
+	}
+
 	public Productos recogerDatos() {
 		Productos productos = new Productos();
-		if(comboBox.getSelectedIndex()==0) {
+		if (comboBox.getSelectedIndex() == 0) {
 			JOptionPane.showMessageDialog(null, "Selecciona una opcion");
-		}else {
-			productos.setProveedor((String)comboBox.getSelectedItem());
+		} else {
+			productos.setProveedor((String) comboBox.getSelectedItem());
 		}
 		productos.setNombre(txtNombre.getText());
 		productos.setDescripcion(txtDescripcion.getText());
@@ -198,12 +195,13 @@ public class ProductosVista extends JPanel {
 		productos.setStock(Integer.parseInt(txtStock.getText()));
 		return productos;
 	}
+
 	public void cargarTabla() {
 		modeloTabla.setRowCount(0);
 		for (Productos p : gestor.consultaProductos()) {
-			modeloTabla.addRow(new Object[] { p.getNombre(), p.getDescripcion(), p.getPrecio(), p.getStock(), p.getProveedor() });
+			modeloTabla.addRow(
+					new Object[] { p.getNombre(), p.getDescripcion(), p.getPrecio(), p.getStock(), p.getProveedor() });
 		}
 	}
-	
-	
+
 }

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.0.3
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-11-2020 a las 21:01:56
+-- Tiempo de generación: 24-11-2020 a las 16:46:51
 -- Versión del servidor: 10.4.14-MariaDB
--- Versión de PHP: 7.4.10
+-- Versión de PHP: 7.2.34
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -123,6 +123,15 @@ CREATE TABLE `productos` (
   `ID_Producto` int(11) NOT NULL,
   `ID_Proveedor` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `productos`
+--
+
+INSERT INTO `productos` (`Nombre`, `Descripcion`, `Precio`, `Stock`, `ID_Producto`, `ID_Proveedor`) VALUES
+('mochila', 'pestoso', 10, 2, 1, 1),
+('Raton', 'Grande', 80, 2000, 4, 2),
+('Ratona', 'Grande', 2000, 80, 15, 2);
 
 -- --------------------------------------------------------
 
@@ -263,6 +272,7 @@ ALTER TABLE `personal`
 --
 ALTER TABLE `productos`
   ADD PRIMARY KEY (`ID_Producto`),
+  ADD UNIQUE KEY `Nombre` (`Nombre`),
   ADD KEY `fk_productos_proveedores` (`ID_Proveedor`);
 
 --
@@ -348,7 +358,7 @@ ALTER TABLE `personal`
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `ID_Producto` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID_Producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores`

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 29-10-2020 a las 19:42:38
+-- Tiempo de generación: 20-11-2020 a las 21:01:56
 -- Versión del servidor: 10.4.14-MariaDB
 -- Versión de PHP: 7.4.10
 
@@ -20,8 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `bbdd`
 --
-CREATE DATABASE IF NOT EXISTS `bbdd` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `bbdd`;
 
 -- --------------------------------------------------------
 
@@ -102,6 +100,15 @@ CREATE TABLE `personal` (
   `Email` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Volcado de datos para la tabla `personal`
+--
+
+INSERT INTO `personal` (`Nombre`, `DNI`, `ID_Personal`, `Direccion`, `Email`) VALUES
+('Rafael', '01111111Z', 1, 'Calle 1', 'rafa@gmail.com'),
+('Mario', '02222222A', 2, 'Calle 2', 'mario@gmail.com'),
+('Juanfer', '03333333X', 3, 'Calle 3', 'juanfer@gmail.com');
+
 -- --------------------------------------------------------
 
 --
@@ -138,10 +145,19 @@ CREATE TABLE `productos_ventas` (
 
 CREATE TABLE `proveedores` (
   `Nombre` varchar(100) NOT NULL,
+  `NIF` varchar(13) NOT NULL,
   `Direccion` varchar(200) NOT NULL,
   `Email` varchar(200) NOT NULL,
   `ID_Proveedor` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `proveedores`
+--
+
+INSERT INTO `proveedores` (`Nombre`, `NIF`, `Direccion`, `Email`, `ID_Proveedor`) VALUES
+('Paco', '1234567891235', 'Calle 1', 'paco@sanz.com', 1),
+('Agustin', '4321987654325', 'Calle 2', 'agustin@gmail.com', 2);
 
 -- --------------------------------------------------------
 
@@ -169,6 +185,17 @@ CREATE TABLE `telefonos` (
   `ID_Personal` int(11) DEFAULT NULL,
   `ID_Cliente` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `telefonos`
+--
+
+INSERT INTO `telefonos` (`ID_Telefono`, `Numero`, `ID_Proveedor`, `ID_Personal`, `ID_Cliente`) VALUES
+(33, 987987987, 1, NULL, NULL),
+(34, 999999999, 2, NULL, NULL),
+(35, 632654987, NULL, 1, NULL),
+(37, 653265152, NULL, 2, NULL),
+(38, 989855223, NULL, 3, NULL);
 
 -- --------------------------------------------------------
 
@@ -285,7 +312,7 @@ ALTER TABLE `ventas`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `ID_Cliente` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID_Cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `compras`
@@ -315,7 +342,7 @@ ALTER TABLE `ordenesfabrica`
 -- AUTO_INCREMENT de la tabla `personal`
 --
 ALTER TABLE `personal`
-  MODIFY `ID_Personal` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID_Personal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
@@ -327,7 +354,7 @@ ALTER TABLE `productos`
 -- AUTO_INCREMENT de la tabla `proveedores`
 --
 ALTER TABLE `proveedores`
-  MODIFY `ID_Proveedor` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID_Proveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores_productos`
@@ -339,7 +366,7 @@ ALTER TABLE `proveedores_productos`
 -- AUTO_INCREMENT de la tabla `telefonos`
 --
 ALTER TABLE `telefonos`
-  MODIFY `ID_Telefono` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID_Telefono` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT de la tabla `ventas`

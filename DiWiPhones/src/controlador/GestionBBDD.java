@@ -7,11 +7,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 import modelo.Cliente;
 import modelo.Personal;
+import modelo.Productos;
 import modelo.Proveedor;
 import modelo.Telefono;
 
@@ -23,8 +25,8 @@ public class GestionBBDD {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 			// guarda los regsitros de la tabla que vamos a consultar
-			ResultSet registro = consulta.executeQuery("select dni, nombre, direccion, email, numero "
-					+ "from clientes inner join telefonos on telefonos.id_cliente = clientes.id_cliente");
+			ResultSet registro = consulta.executeQuery("select distinct dni, nombre, direccion, email, numero "
+					+ "from clientes inner join telefonos on telefonos.id_cliente = clientes.id_cliente group by dni");
 
 			// si existe lo que estamos buscando
 			while (registro.next()) {
@@ -53,8 +55,8 @@ public class GestionBBDD {
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
-			ResultSet registro = consulta.executeQuery("select dni, nombre, direccion, email, numero "
-					+ "from personal inner join telefonos on " + "telefonos.id_personal = personal.id_personal");
+			ResultSet registro = consulta.executeQuery("select distinct dni, nombre, direccion, email, numero "
+					+ "from personal inner join telefonos on " + "telefonos.id_personal = personal.id_personal group by dni");
 			
 			while (registro.next()) {
 				Personal empleado = new Personal();
@@ -80,8 +82,8 @@ public class GestionBBDD {
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
-			ResultSet registro = consulta.executeQuery("select nombre, nif, direccion, email, numero "
-					+ "from proveedores inner join telefonos on " + "telefonos.id_proveedor = proveedores.id_proveedor");
+			ResultSet registro = consulta.executeQuery("select distinct nombre, nif, direccion, email, numero "
+					+ "from proveedores inner join telefonos on " + "telefonos.id_proveedor = proveedores.id_proveedor group by nif");
 			
 			while (registro.next()) {
 				Proveedor proveedor = new Proveedor();
@@ -129,6 +131,37 @@ public class GestionBBDD {
 					JOptionPane.WARNING_MESSAGE);
 		}
 		return telefonos;
+	}
+	public ArrayList<Productos> consultaProductos() {
+		ArrayList<Productos> productos = new ArrayList<Productos>();
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("select distinct productos.nombre, productos.descripcion, productos.precio,"
+					+ " productos.stock, proveedores.Nif  from productos inner join proveedores on productos.ID_Proveedor= proveedores.ID_Proveedor");
+
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				Productos producto = new Productos();
+				// guardamos los campos en el objeto modelo
+				producto.setNombre(registro.getString("Nombre"));
+				producto.setDescripcion(registro.getString("Descripcion"));
+				producto.setPrecio(registro.getInt("Precio"));
+				producto.setStock(registro.getInt("Stock"));
+				producto.setProveedor(registro.getString("NIF"));
+				// añadimos modelos al arrayList
+				productos.add(producto);
+
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			e.printStackTrace();
+		}
+		return productos;
 	}
 	
 	public void insertCliente(String nombre, String dni, String direccion, String email) {
@@ -183,6 +216,20 @@ public class GestionBBDD {
 		}
 	}
 	
+	public void insertProductos(Productos p) {
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+
+			Statement consulta = conexion.createStatement();
+			consulta.executeUpdate(
+					"insert into productos (nombre, descripcion, precio, stock, id_proveedor) "
+					+ "values ('"+p.getNombre()+"', '"+p.getDescripcion()+"', "+ p.getPrecio() +", "+p.getStock()
+					+", (Select id_proveedor from proveedores where NIF ='"+p.getProveedor()+"'))");
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 	public int obtenerIdGeneral(String tipo, String entidad, String documento, String numeroDoc) {
 		int id=0;
 		try {
@@ -481,5 +528,24 @@ public class GestionBBDD {
 			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
 		}
 	}
+	public DefaultComboBoxModel cargaProveedores() {
+		Connection conexion;
+		DefaultComboBoxModel listaModelo = new DefaultComboBoxModel();
+		listaModelo.addElement("Provedores");
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			ResultSet registro = consulta.executeQuery("Select NIF from proveedores");
+			while(registro.next()) {
+				listaModelo.addElement(registro.getString("NIF"));
+			}
+			conexion.close();
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
+		}
+		return listaModelo;
+	}
+	
 
 }

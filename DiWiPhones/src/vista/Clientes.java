@@ -116,7 +116,7 @@ public class Clientes extends JPanel {
 		});
 		btnEliminar.setBounds(429, 381, 89, 23);
 		add(btnEliminar);
-		btnRefresh.setIcon(new ImageIcon("C:\\Users\\juanfernando.diaz.JUANXXIII_23\\Documents\\GitHub\\SGE\\DiWiPhones\\img\\actualizado.png"));
+		btnRefresh.setIcon(new ImageIcon("img/actualizado.png"));
 		btnRefresh.setBounds(22, 11, 40, 35);
 		add(btnRefresh);
 
@@ -181,7 +181,7 @@ public class Clientes extends JPanel {
 		add(lblTel);
 		
 		JLabel lblLogo = new JLabel("");
-		lblLogo.setIcon(new ImageIcon("C:\\Users\\juanfernando.diaz.JUANXXIII_23\\Documents\\GitHub\\SGE\\DiWiPhones\\img\\diwi.png"));
+		lblLogo.setIcon(new ImageIcon("img/diwi.png"));
 		lblLogo.setBounds(494, 394, 199, 54);
 		add(lblLogo);
 

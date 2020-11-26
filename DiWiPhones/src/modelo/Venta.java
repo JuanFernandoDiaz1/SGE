@@ -8,7 +8,22 @@ public class Venta {
 	private String personal;
 	private String dniCliente;
 	private String dniPersonal;
+	private String producto;
+	private int unidades;
 	
+	
+	public String getProducto() {
+		return producto;
+	}
+	public void setProducto(String producto) {
+		this.producto = producto;
+	}
+	public int getUnidades() {
+		return unidades;
+	}
+	public void setUnidades(int unidades) {
+		this.unidades = unidades;
+	}
 	public String getFechaTotal() {
 		return fechaTotal;
 	}

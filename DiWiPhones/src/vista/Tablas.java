@@ -50,16 +50,6 @@ public class Tablas extends JPanel {
 		botonSalir.setBounds(321, 358, 89, 23);
 		add(botonSalir);
 		
-		JButton btnNewButton = new JButton("Volver");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-				
-			}
-		});
-		btnNewButton.setBounds(455, 82, 70, 23);
-		add(btnNewButton);
-		
 		JLabel labelDiwi = new JLabel("");
 		labelDiwi.setIcon(new ImageIcon("img\\diwi.png"));
 		labelDiwi.setBounds(0, 11, 188, 63);

@@ -50,7 +50,9 @@ public class ProductosVista extends JPanel {
 				} else if (productos.getPrecio() <= 0 || productos.getStock() <= 0) {
 					JOptionPane.showMessageDialog(null, "Los campos Precio y Stock no pueden ser 0 o negativos",
 							"Error", JOptionPane.WARNING_MESSAGE);
-				} else {
+				}else if (comboBox.getSelectedIndex() == 0) {
+					JOptionPane.showMessageDialog(null, "Selecciona un proveedor valido", "Error", JOptionPane.WARNING_MESSAGE);
+				}else {
 					gestor.comprobarProductos(productos);
 					cargarTabla();
 				}
@@ -184,15 +186,16 @@ public class ProductosVista extends JPanel {
 
 	public Productos recogerDatos() {
 		Productos productos = new Productos();
-		if (comboBox.getSelectedIndex() == 0) {
-			JOptionPane.showMessageDialog(null, "Selecciona una opcion");
-		} else {
-			productos.setProveedor((String) comboBox.getSelectedItem());
-		}
+		productos.setProveedor((String) comboBox.getSelectedItem());
 		productos.setNombre(txtNombre.getText());
 		productos.setDescripcion(txtDescripcion.getText());
-		productos.setPrecio(Integer.parseInt(txtPrecio.getText()));
-		productos.setStock(Integer.parseInt(txtStock.getText()));
+		try {
+			productos.setPrecio(Integer.parseInt(txtPrecio.getText()));
+			productos.setStock(Integer.parseInt(txtStock.getText()));
+		}catch(NumberFormatException a) {
+			JOptionPane.showMessageDialog(null, "Introduzca los campos correctamente");
+		}
+		
 		return productos;
 	}
 

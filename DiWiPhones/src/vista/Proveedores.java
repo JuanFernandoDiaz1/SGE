@@ -183,13 +183,7 @@ public class Proveedores extends JPanel {
 				txtNif.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 1).toString());
 				txtDireccion.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 2).toString());
 				txtEmail.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 3).toString());
-				txtTelefono.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 4).toString());
-			}else {
-				txtNombre.setText("");
-				txtDireccion.setText("");
-				txtEmail.setText("");
-				txtTelefono.setText("");
-				txtNif.setText("");
+				txtTelefono.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 4).toString());	
 			}
 		}
 	});

@@ -16,6 +16,7 @@ import modelo.Personal;
 import modelo.Productos;
 import modelo.Proveedor;
 import modelo.Telefono;
+import modelo.Venta;
 
 public class GestionBBDD {
 
@@ -162,6 +163,40 @@ public class GestionBBDD {
 			e.printStackTrace();
 		}
 		return productos;
+	}
+	
+	public ArrayList<Venta> consultaVenta() {
+		ArrayList<Venta> ventas = new ArrayList<Venta>();
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("select factura, fecha, clientes.nombre, clientes.dni,"
+					+ " personal.nombre, personal.dni from ventas inner join clientes on clientes.ID_Cliente = ventas.ID_Cliente"
+					+ " inner join personal on ventas.ID_Personal = personal.ID_Personal");
+
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				Venta venta = new Venta();
+				// guardamos los campos en el objeto modelo
+				venta.setFactura(registro.getInt("Factura"));
+				venta.setFechaTotal(registro.getString("Fecha"));
+				venta.setCliente(registro.getString("Clientes.Nombre"));
+				venta.setDniCliente(registro.getString("clientes.DNI"));
+				venta.setPersonal(registro.getString("personal.nombre"));
+				venta.setDniPersonal(registro.getString("personal.DNI"));
+				// añadimos modelos al arrayList
+				ventas.add(venta);
+
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			e.printStackTrace();
+		}
+		return ventas;
 	}
 	
 	public void insertCliente(String nombre, String dni, String direccion, String email) {

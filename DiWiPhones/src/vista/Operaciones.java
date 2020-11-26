@@ -33,7 +33,8 @@ public class Operaciones extends JPanel {
 				}else if(comboOperaciones.getSelectedIndex()==1){
 					//Compra
 				}else if(comboOperaciones.getSelectedIndex()==2){
-					//Venta
+					VentaVista ventas = new VentaVista();
+					nuevoPanel(ventas);
 				}else if(comboOperaciones.getSelectedIndex()==3) {
 					ProductosVista productos = new ProductosVista();
 					nuevoPanel(productos);

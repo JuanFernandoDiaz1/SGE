@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -29,10 +30,13 @@ import java.awt.event.ActionEvent;
 public class InsertarVentas extends JPanel {
 	private JTextField txtFactura;
 	private JTable tableProductos;
+	private JComboBox cmbEmpleados;
+	private JComboBox cmbClientes;
 	DefaultTableModel modeloTabla = new DefaultTableModel();
 	private JComboBox comboBox;
 	private JTextField txtUnidades;
 	ArrayList<Venta> ventas = new ArrayList<>();
+	private JCalendar calendario;
 
 	/**
 	 * Create the panel.
@@ -51,6 +55,8 @@ public class InsertarVentas extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				cargar();
 				cargarTabla();
+				
+				
 			}
 		});
 
@@ -95,19 +101,36 @@ public class InsertarVentas extends JPanel {
 		add(lblFactura);
 
 		JButton btnInsert = new JButton("Insertar");
+		btnInsert.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Venta v = new Venta();
+				v=pideDatosVenta();
+				if(v.getFactura()<=0) {
+					JOptionPane.showMessageDialog(null, "introduce una factura valida", "Error", JOptionPane.WARNING_MESSAGE);
+				}else if(cmbClientes.getSelectedIndex()==0||cmbEmpleados.getSelectedIndex()==0){
+					JOptionPane.showMessageDialog(null, "introduce una factura valida", "Error", JOptionPane.WARNING_MESSAGE);
+				}else if(ventas.size()<1){
+					JOptionPane.showMessageDialog(null, "Selecciona productos vendidos", "Error", JOptionPane.WARNING_MESSAGE);
+				}else {
+					insertVenta(v.getFactura(), v.getFechaTotal(), v.getDniCliente(), v.getDniPersonal());
+					insertProductosVentas();
+				}
+			}
+		});
 		btnInsert.setBounds(315, 394, 89, 23);
 		add(btnInsert);
 
-		JCalendar calendario = new JCalendar();
+		calendario = new JCalendar();
 		calendario.setBounds(90, 119, 230, 136);
+		//calendario.setMaxSelectableDate(2020);
 		add(calendario);
 
-		JComboBox cmbClientes = new JComboBox();
-		cmbClientes.setModel(new DefaultComboBoxModel(new String[] { "-Cliente-" }));
+		cmbClientes = new JComboBox();
+		cmbClientes.setModel(cargaClientes());
 		cmbClientes.setBounds(90, 325, 188, 22);
 		add(cmbClientes);
 
-		JComboBox cmbEmpleados = new JComboBox();
+		cmbEmpleados = new JComboBox();
 		cmbEmpleados.setModel(cargaPersonal());
 		cmbEmpleados.setBounds(90, 280, 188, 22);
 		add(cmbEmpleados);
@@ -124,18 +147,21 @@ public class InsertarVentas extends JPanel {
 
 	}
 
-	public void insertCliente(String nombre, String dni, String direccion, String email) {
+	public void insertVenta(int factura, String fecha, String dniC, String dniP) {
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 
 			Statement consulta = conexion.createStatement();
-			consulta.executeUpdate("insert into clientes (nombre, dni, direccion, email) values ('" + nombre + "', '"
-					+ dni + "', '" + direccion + "', '" + email + "')");
+			consulta.executeUpdate("insert into ventas (factura, fecha, id_cliente, id_personal) values (" + factura + ", '"
+					+ fecha + "',  (select id_cliente from clientes where dni='"+dniC + "'), (select id_personal from personal where dni='" + dniP + "'))");
 			conexion.close();
+			
 		} catch (SQLException e) {
-			System.out.println("Error en la BBDD");
+			e.printStackTrace();
 		}
 	}
+	
+	
 
 	public DefaultComboBoxModel cargaProductos() {
 		Connection conexion;
@@ -166,7 +192,27 @@ public class InsertarVentas extends JPanel {
 			Statement consulta = conexion.createStatement();
 			ResultSet registro = consulta.executeQuery("Select nombre, dni from personal");
 			while (registro.next()) {
-				listaModelo.addElement(registro.getString("nombre") + " | DNI:" + registro.getString("dni"));
+				listaModelo.addElement(registro.getString("dni"));
+			}
+			conexion.close();
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
+		}
+
+		return listaModelo;
+	}
+	
+	public DefaultComboBoxModel cargaClientes() {
+		Connection conexion;
+		DefaultComboBoxModel listaModelo = new DefaultComboBoxModel();
+		listaModelo.addElement("-Clientes-");
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			ResultSet registro = consulta.executeQuery("Select nombre, dni from clientes");
+			while (registro.next()) {
+				listaModelo.addElement(registro.getString("dni"));
 			}
 			conexion.close();
 
@@ -212,4 +258,39 @@ public class InsertarVentas extends JPanel {
 		}
 
 	}
+	
+	public Venta pideDatosVenta() {
+		Venta v = new Venta();
+		SimpleDateFormat dFormat = new SimpleDateFormat("yyyy/MM/dd");
+		v.setDniCliente(cmbClientes.getSelectedItem().toString());
+		v.setDniPersonal(cmbEmpleados.getSelectedItem().toString());
+		v.setFechaTotal(dFormat.format(calendario.getDate()));
+		
+		try {
+			v.setFactura(Integer.parseInt(txtFactura.getText()));
+		} catch (NumberFormatException e) {
+			v.setFactura(-1);
+		}
+		
+		return v;
+	}
+	
+	public void insertProductosVentas() {
+		for(int x=0; x<ventas.size();x++) {
+			try {
+				Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+
+				Statement consulta = conexion.createStatement();
+				consulta.executeUpdate("insert into productos_ventas (id_poducto, id_venta, unidades) values "
+						+ "((select id_producto from productos where nombre='"+ventas.get(x).getProducto()+"'), "
+								+ "(select id_ventas from ventas where factura="+txtFactura.getText()+"),"+ventas.get(x).getUnidades()+")");
+				conexion.close();
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
 }

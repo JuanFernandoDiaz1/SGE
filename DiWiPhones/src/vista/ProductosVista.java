@@ -67,8 +67,20 @@ public class ProductosVista extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Modificar el modelo?");
 				if (JOptionPane.OK_OPTION == valor) {
-					gestor.modificarProducto(recogerDatos(), tableProductos);
-					cargarTabla();
+					Productos productos = recogerDatos();
+					if (productos.getNombre().compareTo("") == 0 || productos.getDescripcion().compareTo("") == 0) {
+						JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error",
+								JOptionPane.WARNING_MESSAGE);
+					} else if (productos.getPrecio() <= 0 || productos.getStock() <= 0) {
+						JOptionPane.showMessageDialog(null, "Los campos Precio y Stock no pueden ser 0 o negativos",
+								"Error", JOptionPane.WARNING_MESSAGE);
+					}else if (comboBox.getSelectedIndex() == 0) {
+						JOptionPane.showMessageDialog(null, "Selecciona un proveedor valido", "Error", JOptionPane.WARNING_MESSAGE);
+					}else {
+						gestor.modificarProducto(recogerDatos(), tableProductos);
+						cargarTabla();
+					}
+					
 				}
 			}
 		});

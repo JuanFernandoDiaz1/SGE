@@ -117,7 +117,6 @@ public class InsertarVentas extends JPanel {
 					JOptionPane.showMessageDialog(null, "Selecciona productos vendidos", "Error", JOptionPane.WARNING_MESSAGE);
 				}else {
 					insertVenta(v.getFactura(), v.getFechaTotal(), v.getDniCliente(), v.getDniPersonal());
-					System.out.println(valid);
 					if(valid==true) {
 						insertProductosVentas();
 					}
@@ -162,7 +161,6 @@ public class InsertarVentas extends JPanel {
 			consulta.executeUpdate("insert into ventas (factura, fecha, id_cliente, id_personal) values (" + factura + ", '"
 					+ fecha + "',  (select id_cliente from clientes where dni='"+dniC + "'), (select id_personal from personal where dni='" + dniP + "'))");
 			valid=true;
-			System.out.println(valid);
 			conexion.close();
 		} catch (SQLIntegrityConstraintViolationException e) {
 			JOptionPane.showMessageDialog(null, "Factura ya registrada inserte otra", "Error", JOptionPane.WARNING_MESSAGE);

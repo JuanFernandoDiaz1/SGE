@@ -546,7 +546,7 @@ public class GestionBBDD {
 			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
 		}
 	}
-	//Juan
+	
 	public void borrarProveedor(JTable tabla) {
 		Connection conexion;
 		try {

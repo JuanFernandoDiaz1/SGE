@@ -2,6 +2,10 @@ package vista;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -22,7 +26,7 @@ import modelo.Productos;
 import modelo.Venta;
 
 public class VentaVista extends JPanel {
-	private JTable tableProductos;
+	private JTable tableVentas;
 	DefaultTableModel modeloTabla = new DefaultTableModel();
 	GestionBBDD gestor = new GestionBBDD();
 
@@ -68,8 +72,13 @@ public class VentaVista extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Eliminar el cliente?");
 				if (JOptionPane.OK_OPTION == valor) {
-					gestor.borrarProducto(tableProductos);
-					cargarTabla();
+					if(tableVentas.getSelectedRow()==-1) {
+						JOptionPane.showMessageDialog(null, "Selecciona una venta para eliminar", "Error", JOptionPane.WARNING_MESSAGE);
+					}else {
+						eliminarProdVentas();
+						eliminarVentas();
+						cargarTabla();
+					}
 				}
 			}
 		});
@@ -83,11 +92,11 @@ public class VentaVista extends JPanel {
 		scrollPane.setBounds(84, 41, 549, 311);
 		add(scrollPane);
 
-		tableProductos = new JTable();
-		scrollPane.setViewportView(tableProductos);
+		tableVentas = new JTable();
+		scrollPane.setViewportView(tableVentas);
 
 		modeloTabla.setColumnIdentifiers(new Object[] { "Factura", "Fecha", "Cliente", "DNI Cliente", "Personal", "DNI Personal"});
-		tableProductos.setModel(modeloTabla);
+		tableVentas.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 		cargarTabla();
 
@@ -119,6 +128,43 @@ public class VentaVista extends JPanel {
 		repaint();
 		revalidate();
 		
+	}
+	
+	public void eliminarVentas() {
+		Connection conexion;
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			int valor = consulta.executeUpdate("delete from ventas where factura ="
+					+ tableVentas.getValueAt(tableVentas.getSelectedRow(), 0).toString());
+			
+			if (valor == 1) {
+				JOptionPane.showMessageDialog(null, "Venta Eliminada correctamente");
+			} else {
+				JOptionPane.showMessageDialog(null, "No existe la venta", "Error", JOptionPane.WARNING_MESSAGE);
+			}
+
+			conexion.close();
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
+		}
+	}
+	
+	public void eliminarProdVentas() {
+		Connection conexion;
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			consulta.executeUpdate("delete from productos_ventas where id_venta = (select id_ventas from ventas where factura = "
+					+ tableVentas.getValueAt(tableVentas.getSelectedRow(), 0).toString()+")");
+			conexion.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
 

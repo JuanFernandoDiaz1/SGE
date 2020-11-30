@@ -262,7 +262,14 @@ public class InsertarVentas extends JPanel {
 			Venta e = new Venta();
 			e.setUnidades(unidades);
 			e.setProducto(comboBox.getSelectedItem().toString());
-			if(e.getProducto().compareTo("-Productos-")!=0) {
+			boolean validar=false;
+			for(int x = 0; x<ventas.size();x++) {
+				if(ventas.get(x).getProducto().compareTo(e.getProducto())==0) {
+					ventas.get(x).setUnidades(ventas.get(x).getUnidades()+e.getUnidades());
+					validar=true;
+				}
+			}
+			if(e.getProducto().compareTo("-Productos-")!=0&&validar==false) {
 				ventas.add(e);
 			}
 		}

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class InsertarVentas extends JPanel {
 	private JTextField txtUnidades;
 	ArrayList<Venta> ventas = new ArrayList<>();
 	private JCalendar calendario;
+	private boolean valid = false;
 
 	/**
 	 * Create the panel.
@@ -55,8 +57,6 @@ public class InsertarVentas extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				cargar();
 				cargarTabla();
-				
-				
 			}
 		});
 
@@ -68,8 +68,12 @@ public class InsertarVentas extends JPanel {
 		JButton btnEliminar = new JButton("Eliminar");
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ventas.remove(tableProductos.getSelectedRow());
-				cargarTabla();
+				if(tableProductos.getSelectedRow()==-1) {
+					JOptionPane.showMessageDialog(null, "Selecciona un producto para eliminar de la cesta", "Error", JOptionPane.WARNING_MESSAGE);
+				}else {
+					ventas.remove(tableProductos.getSelectedRow());
+					cargarTabla();
+				}
 			}
 		});
 		btnEliminar.setBounds(583, 358, 89, 23);
@@ -113,7 +117,10 @@ public class InsertarVentas extends JPanel {
 					JOptionPane.showMessageDialog(null, "Selecciona productos vendidos", "Error", JOptionPane.WARNING_MESSAGE);
 				}else {
 					insertVenta(v.getFactura(), v.getFechaTotal(), v.getDniCliente(), v.getDniPersonal());
-					insertProductosVentas();
+					System.out.println(valid);
+					if(valid==true) {
+						insertProductosVentas();
+					}
 				}
 			}
 		});
@@ -154,9 +161,12 @@ public class InsertarVentas extends JPanel {
 			Statement consulta = conexion.createStatement();
 			consulta.executeUpdate("insert into ventas (factura, fecha, id_cliente, id_personal) values (" + factura + ", '"
 					+ fecha + "',  (select id_cliente from clientes where dni='"+dniC + "'), (select id_personal from personal where dni='" + dniP + "'))");
+			valid=true;
+			System.out.println(valid);
 			conexion.close();
-			
-		} catch (SQLException e) {
+		} catch (SQLIntegrityConstraintViolationException e) {
+			JOptionPane.showMessageDialog(null, "Factura ya registrada inserte otra", "Error", JOptionPane.WARNING_MESSAGE);
+		} catch(SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -254,7 +264,9 @@ public class InsertarVentas extends JPanel {
 			Venta e = new Venta();
 			e.setUnidades(unidades);
 			e.setProducto(comboBox.getSelectedItem().toString());
-			ventas.add(e);
+			if(e.getProducto().compareTo("-Productos-")!=0) {
+				ventas.add(e);
+			}
 		}
 
 	}
@@ -281,7 +293,7 @@ public class InsertarVentas extends JPanel {
 				Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 
 				Statement consulta = conexion.createStatement();
-				consulta.executeUpdate("insert into productos_ventas (id_poducto, id_venta, unidades) values "
+				consulta.executeUpdate("insert into productos_ventas (id_producto, id_venta, unidades) values "
 						+ "((select id_producto from productos where nombre='"+ventas.get(x).getProducto()+"'), "
 								+ "(select id_ventas from ventas where factura="+txtFactura.getText()+"),"+ventas.get(x).getUnidades()+")");
 				conexion.close();

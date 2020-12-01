@@ -1,5 +1,7 @@
 package vista;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -9,10 +11,15 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
@@ -20,15 +27,8 @@ import com.toedter.calendar.JCalendar;
 
 import modelo.Venta;
 
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
-public class InsertarVentas extends JPanel {
+public class ModificarVentas extends JPanel{
+	private Venta venta = new Venta();
 	private JTable tableProductos;
 	private JComboBox cmbEmpleados;
 	private JComboBox cmbClientes;
@@ -38,14 +38,10 @@ public class InsertarVentas extends JPanel {
 	ArrayList<Venta> ventas = new ArrayList<>();
 	private JCalendar calendario;
 	private boolean valid = false;
-
-	/**
-	 * Create the panel.
-	 */
-	public InsertarVentas() {
+	public ModificarVentas(){
 		setLayout(null);
 		setBounds(0, 0, 723, 507);
-
+		
 		JButton btnCesta = new JButton("A\u00F1adir");
 		btnCesta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -94,7 +90,7 @@ public class InsertarVentas extends JPanel {
 		tableProductos.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 
-		JButton btnInsert = new JButton("Insertar");
+		JButton btnInsert = new JButton("Modificar");
 		btnInsert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Venta v = new Venta();
@@ -104,6 +100,8 @@ public class InsertarVentas extends JPanel {
 				}else if(ventas.size()<1){
 					JOptionPane.showMessageDialog(null, "Selecciona productos vendidos", "Error", JOptionPane.WARNING_MESSAGE);
 				}else {
+					eliminarProdVentas();
+					eliminarVentas();
 					insertVenta(v.getFechaTotal(), v.getDniCliente(), v.getDniPersonal());
 					if(valid==true) {
 						insertProductosVentas();
@@ -124,10 +122,12 @@ public class InsertarVentas extends JPanel {
 		cmbClientes.setBounds(90, 325, 188, 22);
 		add(cmbClientes);
 
+
 		cmbEmpleados = new JComboBox();
 		cmbEmpleados.setModel(cargaPersonal());
 		cmbEmpleados.setBounds(90, 220, 188, 22);
 		add(cmbEmpleados);
+		
 
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setIcon(new ImageIcon("img/diwi.png"));
@@ -138,6 +138,11 @@ public class InsertarVentas extends JPanel {
 		lblFondo.setIcon(new ImageIcon("img\\fondo.jpg"));
 		lblFondo.setBounds(0, 0, 723, 507);
 		add(lblFondo);
+		
+		JLabel lblFactura = new JLabel("");
+		lblFactura.setBounds(253, 11, 230, 25);
+		add(lblFactura);
+		lblFactura.setText("Factura nª: "+venta.getFactura());
 
 	}
 
@@ -190,6 +195,7 @@ public class InsertarVentas extends JPanel {
 			while (registro.next()) {
 				listaModelo.addElement(registro.getString("dni"));
 			}
+		
 			conexion.close();
 
 		} catch (SQLException e) {
@@ -314,5 +320,43 @@ public class InsertarVentas extends JPanel {
 		}
 		return id;
 	}
+
+	public Venta getVenta() {
+		return venta;
+	}
+
+	public void setVenta(Venta venta) {
+		this.venta = venta;
+	}
 	
+	public void eliminarVentas() {
+		Connection conexion;
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			int valor = consulta.executeUpdate("delete from venta where factura ="
+					+ venta.getFactura());
+		
+			conexion.close();
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
+		}
+	}
+	
+	public void eliminarProdVentas() {
+		Connection conexion;
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			consulta.executeUpdate("delete from productos_ventas where id_venta = "
+					+ venta.getFactura());
+			conexion.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

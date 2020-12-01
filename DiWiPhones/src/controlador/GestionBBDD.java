@@ -28,7 +28,7 @@ public class GestionBBDD {
 			Statement consulta = conexion.createStatement();
 			// guarda los regsitros de la tabla que vamos a consultar
 			ResultSet registro = consulta.executeQuery("select distinct dni, nombre, direccion, email, numero "
-					+ "from clientes inner join telefonos on telefonos.id_cliente = clientes.id_cliente group by dni");
+					+ "from clientes left join telefonos on telefonos.id_cliente = clientes.id_cliente group by dni");
 
 			// si existe lo que estamos buscando
 			while (registro.next()) {
@@ -58,7 +58,7 @@ public class GestionBBDD {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 			ResultSet registro = consulta.executeQuery("select distinct dni, nombre, direccion, email, numero "
-					+ "from personal inner join telefonos on " + "telefonos.id_personal = personal.id_personal group by dni");
+					+ "from personal left join telefonos on " + "telefonos.id_personal = personal.id_personal group by dni");
 			
 			while (registro.next()) {
 				Personal empleado = new Personal();
@@ -85,7 +85,7 @@ public class GestionBBDD {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 			ResultSet registro = consulta.executeQuery("select distinct nombre, nif, direccion, email, numero "
-					+ "from proveedores inner join telefonos on " + "telefonos.id_proveedor = proveedores.id_proveedor group by nif");
+					+ "from proveedores left join telefonos on " + "telefonos.id_proveedor = proveedores.id_proveedor group by nif");
 			
 			while (registro.next()) {
 				Proveedor proveedor = new Proveedor();
@@ -173,8 +173,8 @@ public class GestionBBDD {
 			Statement consulta = conexion.createStatement();
 			// guarda los regsitros de la tabla que vamos a consultar
 			ResultSet registro = consulta.executeQuery("select factura, fecha, clientes.nombre, clientes.dni,"
-					+ " personal.nombre, personal.dni from ventas inner join clientes on clientes.ID_Cliente = ventas.ID_Cliente"
-					+ " inner join personal on ventas.ID_Personal = personal.ID_Personal");
+					+ " personal.nombre, personal.dni from venta inner join clientes on clientes.ID_Cliente = venta.ID_Cliente"
+					+ " inner join personal on venta.ID_Personal = personal.ID_Personal");
 
 			// si existe lo que estamos buscando
 			while (registro.next()) {

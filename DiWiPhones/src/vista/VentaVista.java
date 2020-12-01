@@ -22,6 +22,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import controlador.GestionBBDD;
+import modelo.Fecha;
 import modelo.Productos;
 import modelo.Venta;
 
@@ -52,8 +53,14 @@ public class VentaVista extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Modificar el modelo?");
 				if (JOptionPane.OK_OPTION == valor) {
-					
-					cargarTabla();
+					if(tableVentas.getSelectedRow()==-1) {
+						JOptionPane.showMessageDialog(null, "Selecciona una venta para modificar", "Error", JOptionPane.WARNING_MESSAGE);
+					}else {
+						ModificarVentas mi = new ModificarVentas(); 
+						mi.setVenta(pideDatos());
+						nuevoPanel(mi);
+						cargarTabla();
+					}
 				}
 			}
 		});
@@ -136,7 +143,7 @@ public class VentaVista extends JPanel {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 
-			int valor = consulta.executeUpdate("delete from ventas where factura ="
+			int valor = consulta.executeUpdate("delete from venta where factura ="
 					+ tableVentas.getValueAt(tableVentas.getSelectedRow(), 0).toString());
 			
 			if (valor == 1) {
@@ -158,13 +165,23 @@ public class VentaVista extends JPanel {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 
-			consulta.executeUpdate("delete from productos_ventas where id_venta = (select id_ventas from ventas where factura = "
-					+ tableVentas.getValueAt(tableVentas.getSelectedRow(), 0).toString()+")");
+			consulta.executeUpdate("delete from productos_ventas where id_venta = "
+					+ tableVentas.getValueAt(tableVentas.getSelectedRow(), 0).toString());
 			conexion.close();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	public Venta pideDatos() {
+		Venta venta = new Venta();
+		venta.setFactura(Integer.parseInt(tableVentas.getValueAt(tableVentas.getSelectedRow(), 0).toString()));
+		venta.setFechaTotal(tableVentas.getValueAt(tableVentas.getSelectedRow(), 1).toString());
+		venta.setCliente(tableVentas.getValueAt(tableVentas.getSelectedRow(), 2).toString());
+		venta.setDniCliente(tableVentas.getValueAt(tableVentas.getSelectedRow(), 3).toString());
+		venta.setPersonal(tableVentas.getValueAt(tableVentas.getSelectedRow(), 4).toString());
+		venta.setDniPersonal(tableVentas.getValueAt(tableVentas.getSelectedRow(), 5).toString());
+		return venta;
 	}
 }
 

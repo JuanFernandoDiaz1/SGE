@@ -41,19 +41,16 @@ public class Clientes extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				GestionBBDD gestor = new GestionBBDD();
 				Cliente cli = new Cliente();
-				cli=pideDatosCliente();
+				cli = pideDatosCliente();
 				if (cli.getNombre().compareTo("") == 0 || cli.getDni().compareTo("") == 0
 						|| cli.getDireccion().compareTo("") == 0 || cli.getEmail().compareTo("") == 0) {
 					JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error",
 							JOptionPane.WARNING_MESSAGE);
-				} else if(cli.getDni().length()<8) {
-					JOptionPane.showMessageDialog(null,
-							"Introduce un DNI valido", "Error",
+				} else if (cli.getDni().length() < 8) {
+					JOptionPane.showMessageDialog(null, "Introduce un DNI valido", "Error",
 							JOptionPane.WARNING_MESSAGE);
-				} else if (cli.getTelefono() < 100000000
-						|| cli.getTelefono() > 999999999) { 
-					JOptionPane.showMessageDialog(null,
-							"Introduce un telefono valido", "Error",
+				} else if (cli.getTelefono() < 100000000 || cli.getTelefono() > 999999999) {
+					JOptionPane.showMessageDialog(null, "Introduce un telefono valido", "Error",
 							JOptionPane.WARNING_MESSAGE);
 				} else {
 
@@ -70,7 +67,7 @@ public class Clientes extends JPanel {
 		});
 		btnInsert.setBounds(199, 381, 89, 23);
 		add(btnInsert);
-		
+
 		JButton btnModificar = new JButton("Modificar");
 		btnModificar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -83,17 +80,17 @@ public class Clientes extends JPanel {
 		});
 		btnModificar.setBounds(315, 381, 89, 23);
 		add(btnModificar);
-		
+
 		JButton btnRefresh = new JButton("");
 		btnRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(tableClientes.getSelectedRow()!=-1) {
+				if (tableClientes.getSelectedRow() != -1) {
 					txtNombre.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 0).toString());
 					txtDni.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 1).toString());
 					txtDireccion.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 2).toString());
 					txtEmail.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 3).toString());
 					txtTelefono.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 4).toString());
-				}else {
+				} else {
 					txtNombre.setText("");
 					txtDni.setText("");
 					txtDireccion.setText("");
@@ -103,7 +100,7 @@ public class Clientes extends JPanel {
 				cargarTabla();
 			}
 		});
-		
+
 		JButton btnEliminar = new JButton("Eliminar");
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -146,8 +143,6 @@ public class Clientes extends JPanel {
 		txtNombre.setBounds(158, 286, 117, 20);
 		add(txtNombre);
 
-		
-		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(84, 41, 549, 210);
 		add(scrollPane);
@@ -159,7 +154,7 @@ public class Clientes extends JPanel {
 		tableClientes.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 		cargarTabla();
-		
+
 		JLabel lblNombre = new JLabel("Nombre: ");
 		lblNombre.setBounds(94, 288, 65, 17);
 		add(lblNombre);
@@ -179,7 +174,7 @@ public class Clientes extends JPanel {
 		JLabel lblTel = new JLabel("Telefono:");
 		lblTel.setBounds(474, 289, 55, 14);
 		add(lblTel);
-		
+
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setIcon(new ImageIcon("img/diwi.png"));
 		lblLogo.setBounds(494, 394, 199, 54);
@@ -189,38 +184,39 @@ public class Clientes extends JPanel {
 		lblFondo.setIcon(new ImageIcon("img\\fondo.jpg"));
 		lblFondo.setBounds(0, 0, 723, 507);
 		add(lblFondo);
-		
+
 		ListSelectionModel model = tableClientes.getSelectionModel();
 		model.addListSelectionListener(new ListSelectionListener() {
-		
-		@Override
-		public void valueChanged(ListSelectionEvent arg0) {
-			if(tableClientes.getSelectedRow()!=-1) {
-				txtNombre.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 0).toString());
-				txtDni.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 1).toString());
-				txtDireccion.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 2).toString());
-				txtEmail.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 3).toString());
-				txtTelefono.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 4).toString());
-			}else {
-				txtNombre.setText("");
-				txtDni.setText("");
-				txtDireccion.setText("");
-				txtEmail.setText("");
-				txtTelefono.setText("");
+
+			@Override
+			public void valueChanged(ListSelectionEvent arg0) {
+				if (tableClientes.getSelectedRow() != -1) {
+					txtNombre.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 0).toString());
+					txtDni.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 1).toString());
+					txtDireccion.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 2).toString());
+					txtEmail.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 3).toString());
+					txtTelefono.setText(tableClientes.getValueAt(tableClientes.getSelectedRow(), 4).toString());
+				} else {
+					txtNombre.setText("");
+					txtDni.setText("");
+					txtDireccion.setText("");
+					txtEmail.setText("");
+					txtTelefono.setText("");
+				}
 			}
-		}
-	});
-		
+		});
+
 	}
 
 	public void cargarTabla() {
 		GestionBBDD gestor = new GestionBBDD();
 		modeloTabla.setRowCount(0);
 		for (Cliente c : gestor.consulta()) {
-			modeloTabla.addRow(new Object[] { c.getNombre(), c.getDni(), c.getDireccion(), c.getEmail(), c.getTelefono() });
+			modeloTabla.addRow(
+					new Object[] { c.getNombre(), c.getDni(), c.getDireccion(), c.getEmail(), c.getTelefono() });
 		}
 	}
-	
+
 	public void reemplazar() {
 		txtNombre.setText("");
 		txtEmail.setText("");
@@ -228,42 +224,49 @@ public class Clientes extends JPanel {
 		txtDireccion.setText("");
 		txtDni.setText("");
 	}
-	
+
 	public void modificarCliente() {
 		Cliente cli = new Cliente();
-		cli=pideDatosCliente();
-		
+		cli = pideDatosCliente();
+
 		if (tableClientes.getSelectedRow() == -1) {//
 			JOptionPane.showMessageDialog(null, "Selecciona un cliente para modificar", "Error",
 					JOptionPane.WARNING_MESSAGE);
 		} else if (cli.getNombre().compareTo("") == 0 || cli.getDni().compareTo("") == 0
 				|| cli.getDireccion().compareTo("") == 0 || cli.getEmail().compareTo("") == 0) {
-			JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error",
-					JOptionPane.WARNING_MESSAGE);
-		} else if (cli.getTelefono() < 100000000
-				|| cli.getTelefono() > 999999999) { 
-			JOptionPane.showMessageDialog(null,
-					"Introduce un telefono valido", "Error",
-					JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error", JOptionPane.WARNING_MESSAGE);
+		} else if (cli.getTelefono() < 100000000 || cli.getTelefono() > 999999999) {
+			JOptionPane.showMessageDialog(null, "Introduce un telefono valido", "Error", JOptionPane.WARNING_MESSAGE);
 		} else {
 			GestionBBDD gest = new GestionBBDD();
-			gest.modificarTelefono(cli.getTelefono(), "cliente", "dni", "clientes", tableClientes);
-			gest.modificarCliente(cli, tableClientes);
-			cargarTabla();
-			reemplazar();
+			int id = gest.obtenerIdGeneral("cliente", "clientes", "dni", tableClientes.getValueAt(tableClientes.getSelectedRow(), 1).toString());
+			if (Integer.parseInt(tableClientes.getValueAt(tableClientes.getSelectedRow(), 4).toString())==0) {
+				gest.insertTel("cliente", cli.getTelefono(), id);
+				gest.modificarCliente(cli, tableClientes);
+				cargarTabla();
+				reemplazar();
+			} else {
+				gest.modificarTelefono(cli.getTelefono(), "cliente", "dni", "clientes", tableClientes);
+				gest.modificarCliente(cli, tableClientes);
+				cargarTabla();
+				reemplazar();
+			}
+
 		}
 	}
+
 	public void eliminarCliente() {
 		if (tableClientes.getSelectedRow() == -1) {//
 			JOptionPane.showMessageDialog(null, "Selecciona un cliente para eliminar", "Error",
 					JOptionPane.WARNING_MESSAGE);
-		}else {
+		} else {
 			GestionBBDD gest = new GestionBBDD();
 			gest.borrarTel("cliente", "dni", "clientes", tableClientes);
 			gest.borrarCliente(tableClientes);
 			cargarTabla();
 		}
 	}
+
 	public Cliente pideDatosCliente() {
 		Cliente cli = new Cliente();
 		cli.setNombre(txtNombre.getText());
@@ -277,6 +280,5 @@ public class Clientes extends JPanel {
 		}
 		return cli;
 	}
-	
 
 }

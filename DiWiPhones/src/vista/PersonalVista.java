@@ -236,10 +236,19 @@ public class PersonalVista extends JPanel {
 					JOptionPane.WARNING_MESSAGE);
 		} else {
 			GestionBBDD gest = new GestionBBDD();
-			gest.modificarTelefono(persona.getTelefono(), "personal", "dni", "personal", tablePersonal);
-			gest.modificarPersonal(persona, tablePersonal);
-			cargarTabla();
-			reemplazar();
+			int id=gest.obtenerIdGeneral("personal", "personal", "dni", tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 1).toString());
+			if(Integer.parseInt(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 4).toString())==0) {
+				gest.insertTel("personal", persona.getTelefono(), id);
+				gest.modificarPersonal(persona, tablePersonal);
+				cargarTabla();
+				reemplazar();
+			}else {
+				gest.modificarTelefono(persona.getTelefono(), "personal", "dni", "personal", tablePersonal);
+				gest.modificarPersonal(persona, tablePersonal);
+				cargarTabla();
+				reemplazar();
+			}
+			
 		}
 	}
 	public void eliminarPersonal() {

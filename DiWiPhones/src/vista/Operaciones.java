@@ -31,7 +31,8 @@ public class Operaciones extends JPanel {
 				if(comboOperaciones.getSelectedIndex()==0) {
 					JOptionPane.showMessageDialog(null, "Selecciona una tabla");
 				}else if(comboOperaciones.getSelectedIndex()==1){
-					//Compra
+					ComprasVista compra = new ComprasVista();
+					nuevoPanel(compra);
 				}else if(comboOperaciones.getSelectedIndex()==2){
 					VentaVista ventas = new VentaVista();
 					nuevoPanel(ventas);

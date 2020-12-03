@@ -262,6 +262,7 @@ public class Clientes extends JPanel {
 		} else {
 			GestionBBDD gest = new GestionBBDD();
 			gest.borrarTel("cliente", "dni", "clientes", tableClientes);
+			
 			gest.borrarCliente(tableClientes);
 			cargarTabla();
 		}

@@ -206,8 +206,8 @@ public class GestionBBDD {
 			Statement consulta = conexion.createStatement();
 			// guarda los regsitros de la tabla que vamos a consultar
 			ResultSet registro = consulta.executeQuery("select factura, fecha, proveedores.nombre, proveedores.nif,"
-					+ " personal.nombre, personal.dni from compras inner join proveedores on proveedores.ID_proveedor = compras.ID_proveedor"
-					+ " inner join personal on compras.ID_Personal = personal.ID_Personal");
+					+ " personal.nombre, personal.dni from compra inner join proveedores on proveedores.ID_proveedor = compra.ID_proveedor"
+					+ " inner join personal on compra.ID_Personal = personal.ID_Personal");
 
 			// si existe lo que estamos buscando
 			while (registro.next()) {
@@ -557,6 +557,7 @@ public class GestionBBDD {
 
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
+			e.printStackTrace();
 		}
 	}
 	public void borrarPersonal(JTable tabla) {
@@ -674,6 +675,7 @@ public class GestionBBDD {
 		}
 		
 	}
+	
 	
 
 }

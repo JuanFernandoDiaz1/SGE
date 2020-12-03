@@ -30,7 +30,6 @@ import modelo.Compras;
 
 
 public class InsertarCompras extends JPanel{
-	private JTextField txtFactura;
 	private JTable tableProductos;
 	private JComboBox cmbEmpleados;
 	private JComboBox cmbProveedor;
@@ -44,11 +43,6 @@ public class InsertarCompras extends JPanel{
 		
 	setLayout(null);
 	setBounds(0, 0, 723, 507);
-
-	txtFactura = new JTextField();
-	txtFactura.setColumns(10);
-	txtFactura.setBounds(90, 76, 86, 20);
-	add(txtFactura);
 
 	JButton btnCesta = new JButton("A\u00F1adir");
 	btnCesta.addActionListener(new ActionListener() {
@@ -98,23 +92,17 @@ public class InsertarCompras extends JPanel{
 	tableProductos.setModel(modeloTabla);
 	modeloTabla.setRowCount(0);
 
-	JLabel lblFactura = new JLabel("Factura: ");
-	lblFactura.setBounds(28, 79, 61, 14);
-	add(lblFactura);
-
 	JButton btnInsert = new JButton("Insertar");
 	btnInsert.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			Compras c = new Compras();
 			c=pideDatosCompra();
-			if(c.getFactura()<=0) {
-				JOptionPane.showMessageDialog(null, "introduce una factura valida", "Error", JOptionPane.WARNING_MESSAGE);
-			}else if(cmbProveedor.getSelectedIndex()==0||cmbEmpleados.getSelectedIndex()==0){
-				JOptionPane.showMessageDialog(null, "introduce una factura valida", "Error", JOptionPane.WARNING_MESSAGE);
+			if(cmbProveedor.getSelectedIndex()==0||cmbEmpleados.getSelectedIndex()==0){
+				JOptionPane.showMessageDialog(null, "Selecciona un proveedor valido", "Error", JOptionPane.WARNING_MESSAGE);
 			}else if(compras.size()<1){
 				JOptionPane.showMessageDialog(null, "Selecciona productos vendidos", "Error", JOptionPane.WARNING_MESSAGE);
 			}else {
-				insertCompra(c.getFactura(), c.getFechaTotal(), c.getDniProveedor(), c.getDniPersonal());
+				insertCompra(c.getFechaTotal(), c.getDniProveedor(), c.getDniPersonal());
 				if(valid==true) {
 					insertProductosCompras();
 				}
@@ -125,7 +113,7 @@ public class InsertarCompras extends JPanel{
 	add(btnInsert);
 
 	calendario = new JCalendar();
-	calendario.setBounds(90, 119, 230, 136);
+	calendario.setBounds(90, 44, 230, 136);
 	//calendario.setMaxSelectableDate(2020);
 	add(calendario);
 
@@ -136,7 +124,7 @@ public class InsertarCompras extends JPanel{
 
 	cmbEmpleados = new JComboBox();
 	cmbEmpleados.setModel(cargaPersonal());
-	cmbEmpleados.setBounds(90, 280, 188, 22);
+	cmbEmpleados.setBounds(90, 221, 188, 22);
 	add(cmbEmpleados);
 
 	JLabel lblLogo = new JLabel("");
@@ -151,17 +139,15 @@ public class InsertarCompras extends JPanel{
 
 }
 
-public void insertCompra(int factura, String fecha, String nif, String dniP) {
+public void insertCompra(String fecha, String nif, String dniP) {
 	try {
 		Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 
 		Statement consulta = conexion.createStatement();
-		consulta.executeUpdate("insert into compras (factura, fecha, id_proveedor, id_personal) values (" + factura + ", '"
-				+ fecha + "',  (select id_proveedor from proveedores where nif='"+nif + "'), (select id_personal from personal where dni='" + dniP + "'))");
+		consulta.executeUpdate("insert into compra (fecha, id_proveedor, id_personal) values ('"
+				+ fecha + "', (select id_proveedor from proveedores where nif='"+nif + "'), (select id_personal from personal where dni='" + dniP + "'))");
 		valid=true;
 		conexion.close();
-	} catch (SQLIntegrityConstraintViolationException e) {
-		JOptionPane.showMessageDialog(null, "Factura ya registrada inserte otra", "Error", JOptionPane.WARNING_MESSAGE);
 	} catch(SQLException e) {
 		e.printStackTrace();
 	}
@@ -276,15 +262,9 @@ public void cargar() {
 public Compras pideDatosCompra() {
 	Compras c = new Compras();
 	SimpleDateFormat dFormat = new SimpleDateFormat("yyyy/MM/dd");
-	c.setProveedor(cmbProveedor.getSelectedItem().toString());
+	c.setDniProveedor(cmbProveedor.getSelectedItem().toString());
 	c.setDniPersonal(cmbEmpleados.getSelectedItem().toString());
 	c.setFechaTotal(dFormat.format(calendario.getDate()));
-	
-	try {
-		c.setFactura(Integer.parseInt(txtFactura.getText()));
-	} catch (NumberFormatException e) {
-		c.setFactura(-1);
-	}
 	
 	return c;
 }
@@ -295,9 +275,9 @@ public void insertProductosCompras() {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 
 			Statement consulta = conexion.createStatement();
-			consulta.executeUpdate("insert into productos_compras (id_producto, id_compra, unidades) values "
+			consulta.executeUpdate("insert into productos_compra (id_producto, id_compra, unidades) values "
 					+ "((select id_producto from productos where nombre='"+compras.get(x).getProducto()+"'), "
-							+ "(select id_compras from compras where factura="+txtFactura.getText()+"),"+compras.get(x).getUnidades()+")");
+							+ recogerFactura()+","+compras.get(x).getUnidades()+")");
 			conexion.close();
 			
 		} catch (SQLException e) {
@@ -305,6 +285,30 @@ public void insertProductosCompras() {
 		}
 	}
 	
+}
+
+public int recogerFactura() {
+	int id=0;
+	try {
+		Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+		Statement consulta = conexion.createStatement();
+		// guarda los regsitros de la tabla que vamos a consultar
+		ResultSet registro = consulta
+				.executeQuery("select factura from compra order by id_personal desc limit 1");
+
+		// si existe lo que estamos buscando
+		if (registro.next()) {
+			id = registro.getInt("factura");
+		} else {
+			System.out.println("Error");
+		}
+
+		conexion.close();
+	} catch (SQLException e) {
+		JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+				JOptionPane.WARNING_MESSAGE);
+	}
+	return id;
 }
 
 }

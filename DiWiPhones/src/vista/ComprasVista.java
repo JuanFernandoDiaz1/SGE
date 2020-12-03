@@ -129,13 +129,8 @@ public class ComprasVista extends JPanel {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 
-			int valor = consulta.executeUpdate("delete from compras where factura ="
+			consulta.executeUpdate("delete from compra where factura ="
 					+ tableCompras.getValueAt(tableCompras.getSelectedRow(), 0).toString());			
-			if (valor == 1) {
-				JOptionPane.showMessageDialog(null, "Compra Eliminada correctamente");
-			} else {
-				JOptionPane.showMessageDialog(null, "No existe la compra", "Error", JOptionPane.WARNING_MESSAGE);
-			}
 
 			conexion.close();
 
@@ -150,8 +145,8 @@ public class ComprasVista extends JPanel {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 
-			consulta.executeUpdate("delete from productos_compras where id_compra = (select id_compras from compras where factura = "
-					+ tableCompras.getValueAt(tableCompras.getSelectedRow(), 0).toString()+")");
+			consulta.executeUpdate("delete from productos_compra where id_compra = "
+					+ tableCompras.getValueAt(tableCompras.getSelectedRow(), 0).toString());
 			conexion.close();
 
 		} catch (SQLException e) {

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.0.3
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-11-2020 a las 18:05:11
--- Versión del servidor: 10.4.11-MariaDB
--- Versión de PHP: 7.4.6
+-- Tiempo de generación: 03-12-2020 a las 18:57:58
+-- Versión del servidor: 10.4.14-MariaDB
+-- Versión de PHP: 7.2.34
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -41,7 +41,8 @@ CREATE TABLE `clientes` (
 
 INSERT INTO `clientes` (`ID_Cliente`, `DNI`, `Nombre`, `Direccion`, `Email`) VALUES
 (18, '01111111X', 'Jordan', 'Calle C1', 'jordan@gmail.com'),
-(19, '02222222X', 'Alberto', 'Calle C2', 'alberto@gmail.com');
+(19, '02222222X', 'Alberto', 'Calle C2', 'alberto@gmail.com'),
+(20, '09999999Z', 'Paco sanz', 'casa luismi', 'paco@sanz.com');
 
 -- --------------------------------------------------------
 
@@ -159,10 +160,7 @@ CREATE TABLE `productos_ventas` (
 --
 
 INSERT INTO `productos_ventas` (`ID`, `ID_Producto`, `ID_Venta`, `Unidades`) VALUES
-(1, 1, 11, 4),
-(2, 1, 10, 4),
-(3, 4, 10, 3),
-(4, 1, 21, 1);
+(9, 4, 9, 12);
 
 -- --------------------------------------------------------
 
@@ -224,34 +222,28 @@ INSERT INTO `telefonos` (`ID_Telefono`, `Numero`, `ID_Proveedor`, `ID_Personal`,
 (37, 653265152, NULL, 2, NULL),
 (38, 989855223, NULL, 3, NULL),
 (48, 611111111, NULL, NULL, 18),
-(49, 622222222, NULL, NULL, 19);
+(49, 622222222, NULL, NULL, 19),
+(50, 653653653, NULL, NULL, 20);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `ventas`
+-- Estructura de tabla para la tabla `venta`
 --
 
-CREATE TABLE `ventas` (
-  `ID_Ventas` int(11) NOT NULL,
-  `Fecha` date NOT NULL,
-  `Factura` int(11) NOT NULL,
-  `ID_Cliente` int(11) NOT NULL,
-  `ID_Personal` int(11) NOT NULL
+CREATE TABLE `venta` (
+  `factura` int(11) NOT NULL,
+  `fecha` date NOT NULL,
+  `Id_cliente` int(11) NOT NULL,
+  `Id_personal` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Volcado de datos para la tabla `ventas`
+-- Volcado de datos para la tabla `venta`
 --
 
-INSERT INTO `ventas` (`ID_Ventas`, `Fecha`, `Factura`, `ID_Cliente`, `ID_Personal`) VALUES
-(8, '2018-06-08', 1, 19, 1),
-(10, '2018-06-08', 2, 19, 1),
-(11, '2020-11-17', 6, 18, 1),
-(14, '2020-11-30', 3, 18, 1),
-(15, '2020-11-11', 5, 18, 1),
-(18, '2020-11-11', 8, 18, 1),
-(21, '2020-11-30', 9, 18, 1);
+INSERT INTO `venta` (`factura`, `fecha`, `Id_cliente`, `Id_personal`) VALUES
+(9, '2020-12-18', 20, 3);
 
 --
 -- Índices para tablas volcadas
@@ -313,8 +305,8 @@ ALTER TABLE `productos`
 --
 ALTER TABLE `productos_ventas`
   ADD PRIMARY KEY (`ID`),
-  ADD KEY `fk_ProductoVenta` (`ID_Producto`),
-  ADD KEY `fk_VentaProducto` (`ID_Venta`);
+  ADD KEY `producto_venta` (`ID_Producto`),
+  ADD KEY `ventaProducto` (`ID_Venta`);
 
 --
 -- Indices de la tabla `proveedores`
@@ -340,13 +332,12 @@ ALTER TABLE `telefonos`
   ADD KEY `fk_telefonos_personal` (`ID_Personal`);
 
 --
--- Indices de la tabla `ventas`
+-- Indices de la tabla `venta`
 --
-ALTER TABLE `ventas`
-  ADD PRIMARY KEY (`ID_Ventas`),
-  ADD UNIQUE KEY `Factura` (`Factura`),
-  ADD KEY `fk_ventas_clientes` (`ID_Cliente`),
-  ADD KEY `fk_ventas_personal` (`ID_Personal`);
+ALTER TABLE `venta`
+  ADD PRIMARY KEY (`factura`),
+  ADD KEY `ventas_cli` (`Id_cliente`),
+  ADD KEY `ventas_per` (`Id_personal`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -356,7 +347,7 @@ ALTER TABLE `ventas`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `ID_Cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `ID_Cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `compras`
@@ -386,7 +377,7 @@ ALTER TABLE `ordenesfabrica`
 -- AUTO_INCREMENT de la tabla `personal`
 --
 ALTER TABLE `personal`
-  MODIFY `ID_Personal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `ID_Personal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
@@ -398,13 +389,13 @@ ALTER TABLE `productos`
 -- AUTO_INCREMENT de la tabla `productos_ventas`
 --
 ALTER TABLE `productos_ventas`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores`
 --
 ALTER TABLE `proveedores`
-  MODIFY `ID_Proveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID_Proveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores_productos`
@@ -416,13 +407,13 @@ ALTER TABLE `proveedores_productos`
 -- AUTO_INCREMENT de la tabla `telefonos`
 --
 ALTER TABLE `telefonos`
-  MODIFY `ID_Telefono` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `ID_Telefono` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
--- AUTO_INCREMENT de la tabla `ventas`
+-- AUTO_INCREMENT de la tabla `venta`
 --
-ALTER TABLE `ventas`
-  MODIFY `ID_Ventas` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+ALTER TABLE `venta`
+  MODIFY `factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Restricciones para tablas volcadas
@@ -465,8 +456,8 @@ ALTER TABLE `productos`
 -- Filtros para la tabla `productos_ventas`
 --
 ALTER TABLE `productos_ventas`
-  ADD CONSTRAINT `fk_ProductoVenta` FOREIGN KEY (`ID_Producto`) REFERENCES `productos` (`ID_Producto`),
-  ADD CONSTRAINT `fk_VentaProducto` FOREIGN KEY (`ID_Venta`) REFERENCES `ventas` (`ID_Ventas`);
+  ADD CONSTRAINT `producto_venta` FOREIGN KEY (`ID_Producto`) REFERENCES `productos` (`ID_Producto`),
+  ADD CONSTRAINT `ventaProducto` FOREIGN KEY (`ID_Venta`) REFERENCES `venta` (`factura`);
 
 --
 -- Filtros para la tabla `proveedores_productos`
@@ -484,11 +475,11 @@ ALTER TABLE `telefonos`
   ADD CONSTRAINT `fk_telefonos_proveedores` FOREIGN KEY (`ID_Proveedor`) REFERENCES `proveedores` (`ID_Proveedor`);
 
 --
--- Filtros para la tabla `ventas`
+-- Filtros para la tabla `venta`
 --
-ALTER TABLE `ventas`
-  ADD CONSTRAINT `fk_ventas_clientes` FOREIGN KEY (`ID_Cliente`) REFERENCES `clientes` (`ID_Cliente`),
-  ADD CONSTRAINT `fk_ventas_personal` FOREIGN KEY (`ID_Personal`) REFERENCES `personal` (`ID_Personal`);
+ALTER TABLE `venta`
+  ADD CONSTRAINT `ventas_cli` FOREIGN KEY (`Id_cliente`) REFERENCES `clientes` (`ID_Cliente`),
+  ADD CONSTRAINT `ventas_per` FOREIGN KEY (`Id_personal`) REFERENCES `personal` (`ID_Personal`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

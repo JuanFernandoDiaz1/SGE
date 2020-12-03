@@ -28,6 +28,7 @@ public class Proveedores extends JPanel {
 	private JTextField txtDireccion;
 	private JTextField txtTelefono;
 	private JTextField txtNif;
+
 	/**
 	 * Create the panel.
 	 */
@@ -39,20 +40,19 @@ public class Proveedores extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				GestionBBDD gestor = new GestionBBDD();
 				Proveedor proveedor = new Proveedor();
-				proveedor=pideDatosProveedor();
-				if (proveedor.getNif().compareTo("")==0||proveedor.getNombre().compareTo("") == 0 || proveedor.getDireccion().compareTo("") == 0 || proveedor.getEmail().compareTo("") == 0) {
+				proveedor = pideDatosProveedor();
+				if (proveedor.getNif().compareTo("") == 0 || proveedor.getNombre().compareTo("") == 0
+						|| proveedor.getDireccion().compareTo("") == 0 || proveedor.getEmail().compareTo("") == 0) {
 					JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error",
 							JOptionPane.WARNING_MESSAGE);
-				
-				} else if (proveedor.getTelefono() < 100000000
-						|| proveedor.getTelefono() > 999999999) { 
-					JOptionPane.showMessageDialog(null,
-							"Introduce un telefono valido", "Error",
+
+				} else if (proveedor.getTelefono() < 100000000 || proveedor.getTelefono() > 999999999) {
+					JOptionPane.showMessageDialog(null, "Introduce un telefono valido", "Error",
 							JOptionPane.WARNING_MESSAGE);
 				} else {
 
 					int telefono = Integer.parseInt(txtTelefono.getText());
-					gestor.insertProveedor(txtNombre.getText(), txtNif.getText(),txtDireccion.getText(),
+					gestor.insertProveedor(txtNombre.getText(), txtNif.getText(), txtDireccion.getText(),
 							txtEmail.getText());
 					int id = gestor.obtenerIdProveedor();
 					gestor.insertTel("proveedor", telefono, id);
@@ -64,7 +64,7 @@ public class Proveedores extends JPanel {
 		});
 		btnInsert.setBounds(199, 381, 89, 23);
 		add(btnInsert);
-		
+
 		JButton btnModificar = new JButton("Modificar");
 		btnModificar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -77,7 +77,7 @@ public class Proveedores extends JPanel {
 		});
 		btnModificar.setBounds(315, 381, 89, 23);
 		add(btnModificar);
-		
+
 		JButton btnRefresh = new JButton("");
 		btnRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -85,8 +85,7 @@ public class Proveedores extends JPanel {
 				cargarTabla();
 			}
 		});
-		
-		
+
 		JButton btnEliminar = new JButton("Eliminar");
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -102,7 +101,7 @@ public class Proveedores extends JPanel {
 		btnRefresh.setIcon(new ImageIcon("img/actualizado.png"));
 		btnRefresh.setBounds(22, 11, 40, 35);
 		add(btnRefresh);
-		
+
 		txtNif = new JTextField();
 		txtNif.setColumns(10);
 		txtNif.setBounds(367, 286, 126, 20);
@@ -129,8 +128,6 @@ public class Proveedores extends JPanel {
 		txtNombre.setBounds(158, 286, 117, 20);
 		add(txtNombre);
 
-		
-		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(84, 41, 549, 210);
 		add(scrollPane);
@@ -138,11 +135,11 @@ public class Proveedores extends JPanel {
 		tableProveedor = new JTable();
 		scrollPane.setViewportView(tableProveedor);
 
-		modeloTabla.setColumnIdentifiers(new Object[] { "Nombre","NIF", "Direccion", "Email", "telefono" });
+		modeloTabla.setColumnIdentifiers(new Object[] { "Nombre", "NIF", "Direccion", "Email", "telefono" });
 		tableProveedor.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 		cargarTabla();
-		
+
 		JLabel lblNombre = new JLabel("Nombre: ");
 		lblNombre.setBounds(94, 288, 65, 17);
 		add(lblNombre);
@@ -158,11 +155,11 @@ public class Proveedores extends JPanel {
 		JLabel lblTel = new JLabel("Telefono: ");
 		lblTel.setBounds(506, 289, 55, 14);
 		add(lblTel);
-		
+
 		JLabel lblNif_1 = new JLabel("NIF:");
 		lblNif_1.setBounds(322, 289, 46, 14);
 		add(lblNif_1);
-		
+
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setIcon(new ImageIcon("img\\diwi.png"));
 		lblLogo.setBounds(494, 394, 199, 54);
@@ -172,32 +169,32 @@ public class Proveedores extends JPanel {
 		lblFondo.setIcon(new ImageIcon("img\\fondo.jpg"));
 		lblFondo.setBounds(0, 0, 723, 507);
 		add(lblFondo);
-		
+
 		ListSelectionModel model = tableProveedor.getSelectionModel();
 		model.addListSelectionListener(new ListSelectionListener() {
-		
-		@Override
-		public void valueChanged(ListSelectionEvent arg0) {
-			if(tableProveedor.getSelectedRow()!=-1) {
-				txtNombre.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 0).toString());
-				txtNif.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 1).toString());
-				txtDireccion.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 2).toString());
-				txtEmail.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 3).toString());
-				txtTelefono.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 4).toString());	
+
+			@Override
+			public void valueChanged(ListSelectionEvent arg0) {
+				if (tableProveedor.getSelectedRow() != -1) {
+					txtNombre.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 0).toString());
+					txtNif.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 1).toString());
+					txtDireccion.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 2).toString());
+					txtEmail.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 3).toString());
+					txtTelefono.setText(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 4).toString());
+				}
 			}
-		}
-	});
+		});
 	}
-	
 
 	public void cargarTabla() {
 		GestionBBDD gestor = new GestionBBDD();
 		modeloTabla.setRowCount(0);
 		for (Proveedor c : gestor.consultaProveedor()) {
-			modeloTabla.addRow(new Object[] { c.getNombre(),c.getNif(), c.getDireccion(), c.getEmail(), c.getTelefono() });
+			modeloTabla.addRow(
+					new Object[] { c.getNombre(), c.getNif(), c.getDireccion(), c.getEmail(), c.getTelefono() });
 		}
 	}
-	
+
 	public void reemplazar() {
 		txtNombre.setText("");
 		txtEmail.setText("");
@@ -205,42 +202,47 @@ public class Proveedores extends JPanel {
 		txtDireccion.setText("");
 		txtNif.setText("");
 	}
-	
+
 	public void modificarProveedor() {
 		Proveedor proveedor = new Proveedor();
-		proveedor=pideDatosProveedor();
-		
+		proveedor = pideDatosProveedor();
+
 		if (tableProveedor.getSelectedRow() == -1) {//
 			JOptionPane.showMessageDialog(null, "Selecciona un proveedor para modificar", "Error",
 					JOptionPane.WARNING_MESSAGE);
-		} else if (proveedor.getNif().compareTo("")==0||proveedor.getNombre().compareTo("") == 0|| proveedor.getDireccion().compareTo("") == 0 || 
-				proveedor.getEmail().compareTo("") == 0) {
-			JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error",
-					JOptionPane.WARNING_MESSAGE);
-		} else if (proveedor.getTelefono() < 100000000
-				|| proveedor.getTelefono() > 999999999) { 
-			JOptionPane.showMessageDialog(null,
-					"Introduce un telefono valido", "Error",
-					JOptionPane.WARNING_MESSAGE);
+		} else if (proveedor.getNif().compareTo("") == 0 || proveedor.getNombre().compareTo("") == 0
+				|| proveedor.getDireccion().compareTo("") == 0 || proveedor.getEmail().compareTo("") == 0) {
+			JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error", JOptionPane.WARNING_MESSAGE);
+		} else if (proveedor.getTelefono() < 100000000 || proveedor.getTelefono() > 999999999) {
+			JOptionPane.showMessageDialog(null, "Introduce un telefono valido", "Error", JOptionPane.WARNING_MESSAGE);
 		} else {
 			GestionBBDD gest = new GestionBBDD();
-			gest.modificarTelefono(proveedor.getTelefono(), "proveedor", "nif", "proveedores", tableProveedor);
-			gest.modificarProveedor(proveedor, tableProveedor);
-			cargarTabla();
-			reemplazar();
+			int id = gest.obtenerIdGeneral("proveedor", "proveedores", "nif", tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 1).toString());
+			if (Integer.parseInt(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 4).toString()) == 0) {
+				gest.insertTel("proveedor", proveedor.getTelefono(), id);
+				gest.modificarProveedor(proveedor, tableProveedor);
+			} else {
+				gest.modificarTelefono(proveedor.getTelefono(), "proveedor", "nif", "proveedores", tableProveedor);
+				gest.modificarProveedor(proveedor, tableProveedor);
+				cargarTabla();
+				reemplazar();
+			}
+
 		}
 	}
+
 	public void eliminarProveedor() {
 		if (tableProveedor.getSelectedRow() == -1) {//
 			JOptionPane.showMessageDialog(null, "Selecciona un proveedor para eliminar", "Error",
 					JOptionPane.WARNING_MESSAGE);
-		}else {
+		} else {
 			GestionBBDD gest = new GestionBBDD();
 			gest.borrarTel("proveedor", "nif", "proveedores", tableProveedor);
 			gest.borrarProveedor(tableProveedor);
 			cargarTabla();
 		}
 	}
+
 	public Proveedor pideDatosProveedor() {
 		Proveedor proveedor = new Proveedor();
 		proveedor.setNombre(txtNombre.getText());

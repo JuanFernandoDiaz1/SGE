@@ -9,40 +9,33 @@ import java.sql.Statement;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import controlador.GestionBBDD;
-import modelo.Fecha;
-import modelo.Productos;
+import modelo.Compras;
 import modelo.Venta;
 
-public class VentaVista extends JPanel {
-	private JTable tableVentas;
+public class ComprasVista extends JPanel {
+	private JTable tableCompras;
 	DefaultTableModel modeloTabla = new DefaultTableModel();
 	GestionBBDD gestor = new GestionBBDD();
-
 	/**
 	 * Create the panel.
 	 */
-	public VentaVista() {
+	public ComprasVista() {
 		setLayout(null);
 		setBounds(0, 0, 723, 507);
 
 		JButton btnInsert = new JButton("Insertar");
 		btnInsert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				InsertarVentas iv = new InsertarVentas();
-				nuevoPanel(iv);
+				InsertarCompras ic = new InsertarCompras();
+				nuevoPanel(ic);
 			}
 		});
 		btnInsert.setBounds(199, 381, 89, 23);
@@ -51,16 +44,9 @@ public class VentaVista extends JPanel {
 		JButton btnModificar = new JButton("Modificar");
 		btnModificar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Modificar el modelo?");
-				if (JOptionPane.OK_OPTION == valor) {
-					if(tableVentas.getSelectedRow()==-1) {
-						JOptionPane.showMessageDialog(null, "Selecciona una venta para modificar", "Error", JOptionPane.WARNING_MESSAGE);
-					}else {
-						ModificarVentas mi = new ModificarVentas(); 
-						mi.setVenta(pideDatos());
-						nuevoPanel(mi);
-						cargarTabla();
-					}
+				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Modificar la compra?");
+				if (JOptionPane.OK_OPTION == valor) {			
+					cargarTabla();
 				}
 			}
 		});
@@ -77,10 +63,10 @@ public class VentaVista extends JPanel {
 		JButton btnEliminar = new JButton("Eliminar");
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Eliminar el cliente?");
+				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Eliminar la compra?");
 				if (JOptionPane.OK_OPTION == valor) {
-					if(tableVentas.getSelectedRow()==-1) {
-						JOptionPane.showMessageDialog(null, "Selecciona una venta para eliminar", "Error", JOptionPane.WARNING_MESSAGE);
+					if(tableCompras.getSelectedRow()==-1) {
+						JOptionPane.showMessageDialog(null, "Selecciona una compra para eliminar", "Error", JOptionPane.WARNING_MESSAGE);
 					}else {
 						eliminarProdVentas();
 						eliminarVentas();
@@ -99,11 +85,11 @@ public class VentaVista extends JPanel {
 		scrollPane.setBounds(84, 41, 549, 311);
 		add(scrollPane);
 
-		tableVentas = new JTable();
-		scrollPane.setViewportView(tableVentas);
+		tableCompras = new JTable();
+		scrollPane.setViewportView(tableCompras);
 
-		modeloTabla.setColumnIdentifiers(new Object[] { "Factura", "Fecha", "Cliente", "DNI Cliente", "Personal", "DNI Personal"});
-		tableVentas.setModel(modeloTabla);
+		modeloTabla.setColumnIdentifiers(new Object[] { "Factura", "Fecha", "Proveedor", "NIF Proveedor", "Personal", "DNI Personal"});
+		tableCompras.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 		cargarTabla();
 
@@ -123,9 +109,9 @@ public class VentaVista extends JPanel {
 
 	public void cargarTabla() {
 		modeloTabla.setRowCount(0);
-		for (Venta v : gestor.consultaVenta()) {
+		for (Compras v : gestor.consultaCompras()) {
 			modeloTabla.addRow(
-					new Object[] { v.getFactura(), v.getFechaTotal(), v.getCliente(), v.getDniCliente(), v.getPersonal(), v.getDniPersonal() });
+					new Object[] { v.getFactura(), v.getFechaTotal(), v.getProveedor(), v.getDniProveedor(), v.getPersonal(), v.getDniPersonal() });
 		}
 	}
 	
@@ -143,13 +129,12 @@ public class VentaVista extends JPanel {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 
-			int valor = consulta.executeUpdate("delete from venta where factura ="
-					+ tableVentas.getValueAt(tableVentas.getSelectedRow(), 0).toString());
-			
+			int valor = consulta.executeUpdate("delete from compras where factura ="
+					+ tableCompras.getValueAt(tableCompras.getSelectedRow(), 0).toString());			
 			if (valor == 1) {
-				JOptionPane.showMessageDialog(null, "Venta Eliminada correctamente");
+				JOptionPane.showMessageDialog(null, "Compra Eliminada correctamente");
 			} else {
-				JOptionPane.showMessageDialog(null, "No existe la venta", "Error", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(null, "No existe la compra", "Error", JOptionPane.WARNING_MESSAGE);
 			}
 
 			conexion.close();
@@ -165,23 +150,14 @@ public class VentaVista extends JPanel {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 
-			consulta.executeUpdate("delete from productos_ventas where id_venta = "
-					+ tableVentas.getValueAt(tableVentas.getSelectedRow(), 0).toString());
+			consulta.executeUpdate("delete from productos_compras where id_compra = (select id_compras from compras where factura = "
+					+ tableCompras.getValueAt(tableCompras.getSelectedRow(), 0).toString()+")");
 			conexion.close();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	public Venta pideDatos() {
-		Venta venta = new Venta();
-		venta.setFactura(Integer.parseInt(tableVentas.getValueAt(tableVentas.getSelectedRow(), 0).toString()));
-		venta.setFechaTotal(tableVentas.getValueAt(tableVentas.getSelectedRow(), 1).toString());
-		venta.setCliente(tableVentas.getValueAt(tableVentas.getSelectedRow(), 2).toString());
-		venta.setDniCliente(tableVentas.getValueAt(tableVentas.getSelectedRow(), 3).toString());
-		venta.setPersonal(tableVentas.getValueAt(tableVentas.getSelectedRow(), 4).toString());
-		venta.setDniPersonal(tableVentas.getValueAt(tableVentas.getSelectedRow(), 5).toString());
-		return venta;
-	}
-}
+	
 
+}

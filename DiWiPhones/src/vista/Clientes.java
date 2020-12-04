@@ -14,6 +14,11 @@ import modelo.Cliente;
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -239,8 +244,9 @@ public class Clientes extends JPanel {
 			JOptionPane.showMessageDialog(null, "Introduce un telefono valido", "Error", JOptionPane.WARNING_MESSAGE);
 		} else {
 			GestionBBDD gest = new GestionBBDD();
-			int id = gest.obtenerIdGeneral("cliente", "clientes", "dni", tableClientes.getValueAt(tableClientes.getSelectedRow(), 1).toString());
-			if (Integer.parseInt(tableClientes.getValueAt(tableClientes.getSelectedRow(), 4).toString())==0) {
+			int id = gest.obtenerIdGeneral("cliente", "clientes", "dni",
+					tableClientes.getValueAt(tableClientes.getSelectedRow(), 1).toString());
+			if (Integer.parseInt(tableClientes.getValueAt(tableClientes.getSelectedRow(), 4).toString()) == 0) {
 				gest.insertTel("cliente", cli.getTelefono(), id);
 				gest.modificarCliente(cli, tableClientes);
 				cargarTabla();
@@ -251,7 +257,6 @@ public class Clientes extends JPanel {
 				cargarTabla();
 				reemplazar();
 			}
-
 		}
 	}
 
@@ -261,10 +266,17 @@ public class Clientes extends JPanel {
 					JOptionPane.WARNING_MESSAGE);
 		} else {
 			GestionBBDD gest = new GestionBBDD();
-			gest.borrarTel("cliente", "dni", "clientes", tableClientes);
+			int contador = gest.contarVentas("venta", "cliente", "clientes", "dni", tableClientes);
+			System.out.println(contador);
+			if(contador==0) {
+				gest.borrarTel("cliente", "dni", "clientes", tableClientes);
+				gest.borrarCliente(tableClientes);
+				cargarTabla();
+			}else {
+				JOptionPane.showMessageDialog(null, "El cliente tiene ventas no se puede eliminar", "Error",
+						JOptionPane.WARNING_MESSAGE);
+			}
 			
-			gest.borrarCliente(tableClientes);
-			cargarTabla();
 		}
 	}
 
@@ -281,5 +293,7 @@ public class Clientes extends JPanel {
 		}
 		return cli;
 	}
+
+
 
 }

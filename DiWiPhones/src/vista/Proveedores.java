@@ -217,7 +217,8 @@ public class Proveedores extends JPanel {
 			JOptionPane.showMessageDialog(null, "Introduce un telefono valido", "Error", JOptionPane.WARNING_MESSAGE);
 		} else {
 			GestionBBDD gest = new GestionBBDD();
-			int id = gest.obtenerIdGeneral("proveedor", "proveedores", "nif", tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 1).toString());
+			int id = gest.obtenerIdGeneral("proveedor", "proveedores", "nif",
+					tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 1).toString());
 			if (Integer.parseInt(tableProveedor.getValueAt(tableProveedor.getSelectedRow(), 4).toString()) == 0) {
 				gest.insertTel("proveedor", proveedor.getTelefono(), id);
 				gest.modificarProveedor(proveedor, tableProveedor);
@@ -237,9 +238,16 @@ public class Proveedores extends JPanel {
 					JOptionPane.WARNING_MESSAGE);
 		} else {
 			GestionBBDD gest = new GestionBBDD();
-			gest.borrarTel("proveedor", "nif", "proveedores", tableProveedor);
-			gest.borrarProveedor(tableProveedor);
-			cargarTabla();
+			int contador = gest.contarVentas("compra", "proveedor", "proveedores", "nif", tableProveedor);
+			System.out.println(contador+"------");
+			if (contador == 0) {
+				gest.borrarTel("proveedor", "nif", "proveedores", tableProveedor);
+				gest.borrarProveedor(tableProveedor);
+				cargarTabla();
+			} else {
+				JOptionPane.showMessageDialog(null, "El proveedor tiene ventas no se puede eliminar", "Error",
+						JOptionPane.WARNING_MESSAGE);
+			}
 		}
 	}
 

@@ -676,6 +676,31 @@ public class GestionBBDD {
 		
 	}
 	
+	public int contarVentas(String operacion, String tipo, String tabla, String documento, JTable tableClientes) {
+		int id=0;
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta
+					.executeQuery("select count(factura) from " +operacion +" where id_"+tipo+"=(select id_"+tipo +" from "+tabla+" where "+documento+"= '"+tableClientes.getValueAt(tableClientes.getSelectedRow(),1)+"')");
+
+			// si existe lo que estamos buscando
+			if (registro.next()) {
+				id = registro.getInt(1);
+			} else {
+				System.out.println("Error");
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		return id;
+
+	}
+	
 	
 
 }

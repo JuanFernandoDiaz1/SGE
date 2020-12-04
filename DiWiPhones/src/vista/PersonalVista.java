@@ -29,7 +29,7 @@ public class PersonalVista extends JPanel {
 	private JTextField txtEmail;
 	private JTextField txtDireccion;
 	private JTextField txtTelefono;
-	
+
 	/**
 	 * Create the panel.
 	 */
@@ -41,19 +41,16 @@ public class PersonalVista extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				GestionBBDD gestor = new GestionBBDD();
 				Personal persona = new Personal();
-				persona=pideDatosPersonal();
+				persona = pideDatosPersonal();
 				if (persona.getNombre().compareTo("") == 0 || persona.getDni().compareTo("") == 0
 						|| persona.getDireccion().compareTo("") == 0 || persona.getEmail().compareTo("") == 0) {
 					JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error",
 							JOptionPane.WARNING_MESSAGE);
-				} else if(persona.getDni().length()<8) {
-					JOptionPane.showMessageDialog(null,
-							"Introduce un DNI valido", "Error",
+				} else if (persona.getDni().length() < 8) {
+					JOptionPane.showMessageDialog(null, "Introduce un DNI valido", "Error",
 							JOptionPane.WARNING_MESSAGE);
-				} else if (persona.getTelefono() < 100000000
-						|| persona.getTelefono() > 999999999) { 
-					JOptionPane.showMessageDialog(null,
-							"Introduce un telefono valido", "Error",
+				} else if (persona.getTelefono() < 100000000 || persona.getTelefono() > 999999999) {
+					JOptionPane.showMessageDialog(null, "Introduce un telefono valido", "Error",
 							JOptionPane.WARNING_MESSAGE);
 				} else {
 
@@ -70,7 +67,7 @@ public class PersonalVista extends JPanel {
 		});
 		btnInsert.setBounds(199, 381, 89, 23);
 		add(btnInsert);
-		
+
 		JButton btnModificar = new JButton("Modificar");
 		btnModificar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -83,7 +80,7 @@ public class PersonalVista extends JPanel {
 		});
 		btnModificar.setBounds(315, 381, 89, 23);
 		add(btnModificar);
-		
+
 		JButton btnRefresh = new JButton("");
 		btnRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -91,8 +88,7 @@ public class PersonalVista extends JPanel {
 				cargarTabla();
 			}
 		});
-		
-		
+
 		JButton btnEliminar = new JButton("Eliminar");
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -135,8 +131,6 @@ public class PersonalVista extends JPanel {
 		txtNombre.setBounds(158, 286, 117, 20);
 		add(txtNombre);
 
-		
-		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(84, 41, 549, 210);
 		add(scrollPane);
@@ -148,7 +142,7 @@ public class PersonalVista extends JPanel {
 		tablePersonal.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 		cargarTabla();
-		
+
 		JLabel lblNombre = new JLabel("Nombre: ");
 		lblNombre.setBounds(94, 288, 65, 17);
 		add(lblNombre);
@@ -168,9 +162,9 @@ public class PersonalVista extends JPanel {
 		JLabel lblTel = new JLabel("Telefono: ");
 		lblTel.setBounds(474, 289, 55, 14);
 		add(lblTel);
-		
+
 		JLabel lblLogo = new JLabel("");
-		lblLogo.setIcon(new ImageIcon("img/diwi.png")); 
+		lblLogo.setIcon(new ImageIcon("img/diwi.png"));
 		lblLogo.setBounds(494, 394, 199, 54);
 		add(lblLogo);
 
@@ -178,38 +172,38 @@ public class PersonalVista extends JPanel {
 		lblFondo.setIcon(new ImageIcon("img\\fondo.jpg"));
 		lblFondo.setBounds(0, 0, 723, 507);
 		add(lblFondo);
-		
+
 		ListSelectionModel model = tablePersonal.getSelectionModel();
 		model.addListSelectionListener(new ListSelectionListener() {
-		
-		@Override
-		public void valueChanged(ListSelectionEvent arg0) {
-			if(tablePersonal.getSelectedRow()!=-1) {
-				txtNombre.setText(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 0).toString());
-				txtDni.setText(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 1).toString());
-				txtDireccion.setText(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 2).toString());
-				txtEmail.setText(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 3).toString());
-				txtTelefono.setText(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 4).toString());
-			}else {
-				txtNombre.setText("");
-				txtDni.setText("");
-				txtDireccion.setText("");
-				txtEmail.setText("");
-				txtTelefono.setText("");
+
+			@Override
+			public void valueChanged(ListSelectionEvent arg0) {
+				if (tablePersonal.getSelectedRow() != -1) {
+					txtNombre.setText(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 0).toString());
+					txtDni.setText(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 1).toString());
+					txtDireccion.setText(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 2).toString());
+					txtEmail.setText(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 3).toString());
+					txtTelefono.setText(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 4).toString());
+				} else {
+					txtNombre.setText("");
+					txtDni.setText("");
+					txtDireccion.setText("");
+					txtEmail.setText("");
+					txtTelefono.setText("");
+				}
 			}
-		}
-	});
+		});
 	}
-	
 
 	public void cargarTabla() {
 		GestionBBDD gestor = new GestionBBDD();
 		modeloTabla.setRowCount(0);
 		for (Personal c : gestor.consultaPersonal()) {
-			modeloTabla.addRow(new Object[] { c.getNombre(), c.getDni(), c.getDireccion(), c.getEmail(), c.getTelefono() });
+			modeloTabla.addRow(
+					new Object[] { c.getNombre(), c.getDni(), c.getDireccion(), c.getEmail(), c.getTelefono() });
 		}
 	}
-	
+
 	public void reemplazar() {
 		txtNombre.setText("");
 		txtEmail.setText("");
@@ -217,51 +211,60 @@ public class PersonalVista extends JPanel {
 		txtDireccion.setText("");
 		txtDni.setText("");
 	}
-	
+
 	public void modificarPersonal() {
 		Personal persona = new Personal();
-		persona=pideDatosPersonal();
-		
+		persona = pideDatosPersonal();
+
 		if (tablePersonal.getSelectedRow() == -1) {//
 			JOptionPane.showMessageDialog(null, "Selecciona un empleado para modificar", "Error",
 					JOptionPane.WARNING_MESSAGE);
 		} else if (persona.getNombre().compareTo("") == 0 || persona.getDni().compareTo("") == 0
 				|| persona.getDireccion().compareTo("") == 0 || persona.getEmail().compareTo("") == 0) {
-			JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error",
-					JOptionPane.WARNING_MESSAGE);
-		} else if (persona.getTelefono() < 100000000
-				|| persona.getTelefono() > 999999999) { 
-			JOptionPane.showMessageDialog(null,
-					"Introduce un telefono valido", "Error",
-					JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error", JOptionPane.WARNING_MESSAGE);
+		} else if (persona.getTelefono() < 100000000 || persona.getTelefono() > 999999999) {
+			JOptionPane.showMessageDialog(null, "Introduce un telefono valido", "Error", JOptionPane.WARNING_MESSAGE);
 		} else {
 			GestionBBDD gest = new GestionBBDD();
-			int id=gest.obtenerIdGeneral("personal", "personal", "dni", tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 1).toString());
-			if(Integer.parseInt(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 4).toString())==0) {
+			int id = gest.obtenerIdGeneral("personal", "personal", "dni",
+					tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 1).toString());
+			if (Integer.parseInt(tablePersonal.getValueAt(tablePersonal.getSelectedRow(), 4).toString()) == 0) {
 				gest.insertTel("personal", persona.getTelefono(), id);
 				gest.modificarPersonal(persona, tablePersonal);
 				cargarTabla();
 				reemplazar();
-			}else {
+			} else {
 				gest.modificarTelefono(persona.getTelefono(), "personal", "dni", "personal", tablePersonal);
 				gest.modificarPersonal(persona, tablePersonal);
 				cargarTabla();
 				reemplazar();
 			}
-			
+
 		}
 	}
+
 	public void eliminarPersonal() {
 		if (tablePersonal.getSelectedRow() == -1) {//
 			JOptionPane.showMessageDialog(null, "Selecciona un empleado para eliminar", "Error",
 					JOptionPane.WARNING_MESSAGE);
-		}else {
+		} else {
 			GestionBBDD gest = new GestionBBDD();
-			gest.borrarTel("personal", "dni", "personal", tablePersonal);
-			gest.borrarPersonal(tablePersonal);
-			cargarTabla();
+
+			int contadorV = gest.contarVentas("venta", "personal", "personal", "dni", tablePersonal);
+			int contadorC = gest.contarVentas("compra", "personal", "personal", "dni", tablePersonal);
+			if (contadorV == 0 && contadorC==0) {
+				gest.borrarTel("personal", "dni", "personal", tablePersonal);
+				gest.borrarPersonal(tablePersonal);
+				cargarTabla();
+			} else {
+
+				JOptionPane.showMessageDialog(null, "El empleado tiene ventas no se puede eliminar", "Error",
+						JOptionPane.WARNING_MESSAGE);
+			}
+
 		}
 	}
+
 	public Personal pideDatosPersonal() {
 		Personal persona = new Personal();
 		persona.setNombre(txtNombre.getText());

@@ -123,12 +123,12 @@ public class ProductosVista extends JPanel {
 
 		txtPrecio = new JTextField();
 		txtPrecio.setColumns(10);
-		txtPrecio.setBounds(338, 323, 126, 20);
+		txtPrecio.setBounds(141, 323, 117, 20);
 		add(txtPrecio);
 
 		txtStock = new JTextField();
 		txtStock.setColumns(10);
-		txtStock.setBounds(141, 323, 117, 20);
+		txtStock.setBounds(338, 323, 126, 20);
 		add(txtStock);
 
 		txtNombre = new JTextField();
@@ -188,8 +188,8 @@ public class ProductosVista extends JPanel {
 				if (tableProductos.getSelectedRow() != -1) {
 					txtNombre.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 0).toString());
 					txtDescripcion.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 1).toString());
-					txtStock.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 2).toString());
-					txtPrecio.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 3).toString());
+					txtPrecio.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 2).toString());
+					txtStock.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 3).toString());
 					comboBox.setSelectedItem(tableProductos.getValueAt(tableProductos.getSelectedRow(), 4).toString());
 				}
 			}

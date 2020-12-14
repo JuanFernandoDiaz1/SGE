@@ -39,8 +39,11 @@ public class InsertarCompras extends JPanel{
 	ArrayList<Compras> compras = new ArrayList<>();
 	private JCalendar calendario;
 	private boolean valid = false;
-	public InsertarCompras() {
-		
+	
+	/**
+	 * Create the panel.
+	 */
+	public InsertarCompras() {		
 	setLayout(null);
 	setBounds(0, 0, 723, 507);
 
@@ -102,7 +105,7 @@ public class InsertarCompras extends JPanel{
 			}else if(compras.size()<1){
 				JOptionPane.showMessageDialog(null, "Selecciona productos vendidos", "Error", JOptionPane.WARNING_MESSAGE);
 			}else {
-				insertCompra(c.getFechaTotal(), c.getDniProveedor(), c.getDniPersonal());
+				insertCompra(c.getFechaTotal(), c.getNifProveedor(), c.getDniPersonal());
 				if(valid==true) {
 					insertProductosCompras();
 				}
@@ -262,7 +265,7 @@ public void cargar() {
 public Compras pideDatosCompra() {
 	Compras c = new Compras();
 	SimpleDateFormat dFormat = new SimpleDateFormat("yyyy/MM/dd");
-	c.setDniProveedor(cmbProveedor.getSelectedItem().toString());
+	c.setNifProveedor(cmbProveedor.getSelectedItem().toString());
 	c.setDniPersonal(cmbEmpleados.getSelectedItem().toString());
 	c.setFechaTotal(dFormat.format(calendario.getDate()));
 	

@@ -216,7 +216,7 @@ public class GestionBBDD {
 				compra.setFactura(registro.getInt("Factura"));
 				compra.setFechaTotal(registro.getString("Fecha"));
 				compra.setProveedor(registro.getString("proveedores.Nombre"));
-				compra.setDniProveedor(registro.getString("proveedores.NIF"));
+				compra.setNifProveedor(registro.getString("proveedores.NIF"));
 				compra.setPersonal(registro.getString("personal.nombre"));
 				compra.setDniPersonal(registro.getString("personal.DNI"));
 				// añadimos modelos al arrayList
@@ -699,6 +699,62 @@ public class GestionBBDD {
 		}
 		return id;
 
+	}
+	public ArrayList<Venta> listaCompra(int factura){
+		ArrayList<Venta> productos = new ArrayList<>();	
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta
+					.executeQuery("SELECT Nombre, Unidades FROM productos_ventas inner join productos on productos_ventas.ID_Producto = productos.ID_Producto WHERE ID_Venta="+factura);
+
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				Venta producto = new Venta();
+				
+				producto.setProducto(registro.getString("Nombre"));
+				producto.setUnidades(registro.getInt("Unidades"));
+				// añadimos modelos al arrayList
+				productos.add(producto);
+
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		
+		return productos;
+		
+	}
+	public ArrayList<Compras> listaCompra2(int factura){
+		ArrayList<Compras> productos = new ArrayList<>();	
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta
+					.executeQuery("SELECT Nombre, Unidades FROM productos_compra inner join productos on productos_compra.ID_Producto = productos.ID_Producto WHERE ID_compra="+factura);
+
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				Compras compra = new Compras();
+				
+				compra.setProducto(registro.getString("Nombre"));
+				compra.setUnidades(registro.getInt("Unidades"));
+				// añadimos modelos al arrayList
+				productos.add(compra);
+
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		
+		return productos;
+		
 	}
 	
 	

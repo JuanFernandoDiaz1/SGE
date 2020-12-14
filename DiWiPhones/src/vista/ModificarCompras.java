@@ -26,21 +26,24 @@ import javax.swing.table.DefaultTableModel;
 import com.toedter.calendar.JCalendar;
 
 import controlador.GestionBBDD;
-import modelo.Productos;
+import modelo.Compras;
 import modelo.Venta;
 
-public class ModificarVentas extends JPanel{
-	private Venta venta = new Venta();
+public class ModificarCompras extends JPanel {
+	private Compras compra = new Compras();
 	private JTable tableProductos;
-	private JComboBox cmbEmpleados;
+	private JComboBox cmbProveedores;
 	private JComboBox cmbClientes;
 	DefaultTableModel modeloTabla = new DefaultTableModel();
 	private JComboBox comboBox;
 	private JTextField txtUnidades;
-	ArrayList<Venta> ventas = new ArrayList<>();
+	ArrayList<Compras> compras = new ArrayList<>();
 	private JCalendar calendario;
 	private boolean valid = false;
-	public ModificarVentas(){
+	/**
+	 * Create the panel.
+	 */
+	public ModificarCompras() {
 		setLayout(null);
 		setBounds(0, 0, 723, 507);
 		
@@ -65,7 +68,7 @@ public class ModificarVentas extends JPanel{
 				if(tableProductos.getSelectedRow()==-1) {
 					JOptionPane.showMessageDialog(null, "Selecciona un producto para eliminar de la cesta", "Error", JOptionPane.WARNING_MESSAGE);
 				}else {
-					ventas.remove(tableProductos.getSelectedRow());
+					compras.remove(tableProductos.getSelectedRow());
 					cargarTabla();
 				}
 			}
@@ -97,20 +100,20 @@ public class ModificarVentas extends JPanel{
 		JButton btnInsert = new JButton("Modificar");
 		btnInsert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Venta v = new Venta();
-				v=pideDatosVenta();
-				if(cmbClientes.getSelectedIndex()==0||cmbEmpleados.getSelectedIndex()==0){
+				Compras v = new Compras();
+				v=pideDatosCompra();
+				if(cmbClientes.getSelectedIndex()==0||cmbProveedores.getSelectedIndex()==0){
 					JOptionPane.showMessageDialog(null, "introduce una cliente valido", "Error", JOptionPane.WARNING_MESSAGE);
-				}else if(ventas.size()<1){
+				}else if(compras.size()<1){
 					JOptionPane.showMessageDialog(null, "Selecciona productos vendidos", "Error", JOptionPane.WARNING_MESSAGE);
 				}else {
-					eliminarProdVentas();
-					eliminarVentas();
-					insertVenta(v.getFechaTotal(), v.getDniCliente(), v.getDniPersonal());
+					eliminarProdCompras();
+					eliminarCompras();
+					insertCompra(v.getFechaTotal(), v.getNifProveedor(), v.getDniPersonal());
 					if(valid==true) {
-						insertProductosVentas();
+						insertProductosCompras();
 					}
-					JOptionPane.showMessageDialog(null, "Venta Modificada");
+					JOptionPane.showMessageDialog(null, "Compra Modificada");
 				}
 			}
 		});
@@ -123,15 +126,15 @@ public class ModificarVentas extends JPanel{
 		add(calendario);
 
 		cmbClientes = new JComboBox();
-		cmbClientes.setModel(cargaClientes());
+		cmbClientes.setModel(cargaProveedores());
 		cmbClientes.setBounds(90, 325, 188, 22);
 		add(cmbClientes);
 
 
-		cmbEmpleados = new JComboBox();
-		cmbEmpleados.setModel(cargaPersonal());
-		cmbEmpleados.setBounds(90, 220, 188, 22);
-		add(cmbEmpleados);
+		cmbProveedores = new JComboBox();
+		cmbProveedores.setModel(cargaPersonal());
+		cmbProveedores.setBounds(90, 220, 188, 22);
+		add(cmbProveedores);
 		
 
 		JLabel lblLogo = new JLabel("");
@@ -144,16 +147,14 @@ public class ModificarVentas extends JPanel{
 		lblFondo.setBounds(0, 0, 723, 507);
 		add(lblFondo);
 		
-
 	}
-
-	public void insertVenta(String fecha, String dniC, String dniP) {
+	public void insertCompra(String fecha, String nif, String dniP) {
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 
 			Statement consulta = conexion.createStatement();
-			consulta.executeUpdate("insert into venta (fecha, id_cliente, id_personal) values ('"
-					+ fecha + "',  (select id_cliente from clientes where dni='"+dniC + "'), (select id_personal from personal where dni='" + dniP + "'))");
+			consulta.executeUpdate("insert into compra (fecha, id_proveedor, id_personal) values ('"
+					+ fecha + "',  (select id_proveedor from proveedores where nif='"+nif+ "'), (select id_personal from personal where dni='" + dniP + "'))");
 			valid=true;
 			conexion.close();
 		} catch (SQLIntegrityConstraintViolationException e) {
@@ -206,16 +207,16 @@ public class ModificarVentas extends JPanel{
 		return listaModelo;
 	}
 	
-	public DefaultComboBoxModel cargaClientes() {
+	public DefaultComboBoxModel cargaProveedores() {
 		Connection conexion;
 		DefaultComboBoxModel listaModelo = new DefaultComboBoxModel();
-		listaModelo.addElement("-Clientes-");
+		listaModelo.addElement("-Proveedores-");
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
-			ResultSet registro = consulta.executeQuery("Select nombre, dni from clientes");
+			ResultSet registro = consulta.executeQuery("Select nombre, nif from proveedores");
 			while (registro.next()) {
-				listaModelo.addElement(registro.getString("dni"));
+				listaModelo.addElement(registro.getString("nif"));
 			}
 			conexion.close();
 
@@ -239,8 +240,8 @@ public class ModificarVentas extends JPanel{
 			JOptionPane.showMessageDialog(null, "Selecciona un producto", "Error", JOptionPane.WARNING_MESSAGE);
 		} else {
 			modeloTabla.setRowCount(0);
-			for (Venta v : ventas) {
-				modeloTabla.addRow(new Object[] { v.getProducto(), v.getUnidades() });
+			for (Compras c : compras) {
+				modeloTabla.addRow(new Object[] { c.getProducto(), c.getUnidades() });
 			}
 
 		}
@@ -254,42 +255,42 @@ public class ModificarVentas extends JPanel{
 			unidades = -1;
 		}
 		if (unidades != -1 || unidades>0) {
-			Venta e = new Venta();
+			Compras e = new Compras();
 			e.setUnidades(unidades);
 			e.setProducto(comboBox.getSelectedItem().toString());
 			boolean validar=false;
-			for(int x = 0; x<ventas.size();x++) {
-				if(ventas.get(x).getProducto().compareTo(e.getProducto())==0) {
-					ventas.get(x).setUnidades(ventas.get(x).getUnidades()+e.getUnidades());
+			for(int x = 0; x<compras.size();x++) {
+				if(compras.get(x).getProducto().compareTo(e.getProducto())==0) {
+					compras.get(x).setUnidades(compras.get(x).getUnidades()+e.getUnidades());
 					validar=true;
 				}
 			}
 			if(e.getProducto().compareTo("-Productos-")!=0&&validar==false) {
-				ventas.add(e);
+				compras.add(e);
 			}
 		}
 
 	}
 	
-	public Venta pideDatosVenta() {
-		Venta v = new Venta();
+	public Compras pideDatosCompra() {
+		Compras c = new Compras();
 		SimpleDateFormat dFormat = new SimpleDateFormat("yyyy/MM/dd");
-		v.setDniCliente(cmbClientes.getSelectedItem().toString());
-		v.setDniPersonal(cmbEmpleados.getSelectedItem().toString());
-		v.setFechaTotal(dFormat.format(calendario.getDate()));
+		c.setNifProveedor(cmbClientes.getSelectedItem().toString());
+		c.setDniPersonal(cmbProveedores.getSelectedItem().toString());
+		c.setFechaTotal(dFormat.format(calendario.getDate()));
 		
-		return v;
+		return c;
 	}
 	
-	public void insertProductosVentas() {
-		for(int x=0; x<ventas.size();x++) {
+	public void insertProductosCompras() {
+		for(int x=0; x<compras.size();x++) {
 			try {
 				Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 
 				Statement consulta = conexion.createStatement();
-				consulta.executeUpdate("insert into productos_ventas (id_producto, id_venta, unidades) values "
-						+ "((select id_producto from productos where nombre='"+ventas.get(x).getProducto()+"'), "
-								+recogerFactura()+","+ventas.get(x).getUnidades()+")");
+				consulta.executeUpdate("insert into productos_compra (id_producto, id_compra, unidades) values "
+						+ "((select id_producto from productos where nombre='"+compras.get(x).getProducto()+"'), "
+								+recogerFactura()+","+compras.get(x).getUnidades()+")");
 				conexion.close();
 				
 			} catch (SQLException e) {
@@ -305,7 +306,7 @@ public class ModificarVentas extends JPanel{
 			Statement consulta = conexion.createStatement();
 			// guarda los regsitros de la tabla que vamos a consultar
 			ResultSet registro = consulta
-					.executeQuery("select factura from venta order by id_cliente desc limit 1");
+					.executeQuery("select factura from compra order by id_proveedor desc limit 1");
 
 			// si existe lo que estamos buscando
 			if (registro.next()) {
@@ -322,23 +323,23 @@ public class ModificarVentas extends JPanel{
 		return id;
 	}
 
-	public Venta getVenta() {
-		return venta;
+	public Compras getCompras() {
+		return compra;
 	}
 
-	public void setVenta(Venta venta) {
-		this.venta = venta;
+	public void setCompras(Compras compra) {
+		this.compra = compra;
 		cargarFactura();
 	}
 	
-	public void eliminarVentas() {
+	public void eliminarCompras() {
 		Connection conexion;
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 
-			int valor = consulta.executeUpdate("delete from venta where factura ="
-					+ venta.getFactura());
+			int valor = consulta.executeUpdate("delete from compra where factura ="
+					+ compra.getFactura());
 		
 			conexion.close();
 
@@ -347,14 +348,14 @@ public class ModificarVentas extends JPanel{
 		}
 	}
 	
-	public void eliminarProdVentas() {
+	public void eliminarProdCompras() {
 		Connection conexion;
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 
-			consulta.executeUpdate("delete from productos_ventas where id_venta = "
-					+ venta.getFactura());
+			consulta.executeUpdate("delete from productos_compra where id_compra = "
+					+ compra.getFactura());
 			conexion.close();
 
 		} catch (SQLException e) {
@@ -363,17 +364,18 @@ public class ModificarVentas extends JPanel{
 	}
 	public void cargarFactura() {
 
-		cmbClientes.setSelectedItem(venta.getDniCliente());
-		cmbEmpleados.setSelectedItem(venta.getDniPersonal());
+		cmbClientes.setSelectedItem(compra.getNifProveedor());
+		cmbProveedores.setSelectedItem(compra.getDniPersonal());
 		GestionBBDD gestion = new GestionBBDD();
 		modeloTabla.setRowCount(0);
-		for (Venta p : gestion.listaCompra(venta.getFactura())) {
-			ventas.add(p);
+		for (Compras c : gestion.listaCompra2(compra.getFactura())) {
+			compras.add(c);
 		}
 		modeloTabla.setRowCount(0);
-		for (Venta v : ventas) {
-			modeloTabla.addRow(new Object[] { v.getProducto(), v.getUnidades() });
+		for (Compras c : compras) {
+			modeloTabla.addRow(new Object[] { c.getProducto(), c.getUnidades() });
 		} 
 		
 	}
+
 }

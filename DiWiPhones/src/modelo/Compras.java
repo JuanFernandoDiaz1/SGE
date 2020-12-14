@@ -6,7 +6,7 @@ public class Compras {
 	private String fechaTotal;
 	private String proveedor;
 	private String personal;
-	private String dniProveedor;
+	private String nifProveedor;
 	private String dniPersonal;
 	private String producto;
 	private int unidades;
@@ -41,11 +41,11 @@ public class Compras {
 	public void setPersonal(String personal) {
 		this.personal = personal;
 	}
-	public String getDniProveedor() {
-		return dniProveedor;
+	public String getNifProveedor() {
+		return nifProveedor;
 	}
-	public void setDniProveedor(String dniProveedor) {
-		this.dniProveedor = dniProveedor;
+	public void setNifProveedor(String dniProveedor) {
+		this.nifProveedor = dniProveedor;
 	}
 	public String getDniPersonal() {
 		return dniPersonal;

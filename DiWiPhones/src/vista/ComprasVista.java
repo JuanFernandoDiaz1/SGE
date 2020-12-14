@@ -44,9 +44,16 @@ public class ComprasVista extends JPanel {
 		JButton btnModificar = new JButton("Modificar");
 		btnModificar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Modificar la compra?");
-				if (JOptionPane.OK_OPTION == valor) {			
-					cargarTabla();
+				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Modificar el modelo?");
+				if (JOptionPane.OK_OPTION == valor) {
+					if(tableCompras.getSelectedRow()==-1) {
+						JOptionPane.showMessageDialog(null, "Selecciona una venta para modificar", "Error", JOptionPane.WARNING_MESSAGE);
+					}else {
+						ModificarCompras mv = new ModificarCompras(); 
+						mv.setCompras(pideDatos());
+						nuevoPanel(mv);
+						cargarTabla();
+					}
 				}
 			}
 		});
@@ -111,7 +118,7 @@ public class ComprasVista extends JPanel {
 		modeloTabla.setRowCount(0);
 		for (Compras v : gestor.consultaCompras()) {
 			modeloTabla.addRow(
-					new Object[] { v.getFactura(), v.getFechaTotal(), v.getProveedor(), v.getDniProveedor(), v.getPersonal(), v.getDniPersonal() });
+					new Object[] { v.getFactura(), v.getFechaTotal(), v.getProveedor(), v.getNifProveedor(), v.getPersonal(), v.getDniPersonal() });
 		}
 	}
 	
@@ -154,5 +161,14 @@ public class ComprasVista extends JPanel {
 		}
 	}
 	
-
+	public Compras pideDatos() {
+		Compras compra = new Compras();
+		compra.setFactura(Integer.parseInt(tableCompras.getValueAt(tableCompras.getSelectedRow(), 0).toString()));
+		compra.setFechaTotal(tableCompras.getValueAt(tableCompras.getSelectedRow(), 1).toString());
+		compra.setProveedor(tableCompras.getValueAt(tableCompras.getSelectedRow(), 2).toString());
+		compra.setNifProveedor(tableCompras.getValueAt(tableCompras.getSelectedRow(), 3).toString());
+		compra.setPersonal(tableCompras.getValueAt(tableCompras.getSelectedRow(), 4).toString());
+		compra.setDniPersonal(tableCompras.getValueAt(tableCompras.getSelectedRow(), 5).toString());
+		return compra;
+	}
 }

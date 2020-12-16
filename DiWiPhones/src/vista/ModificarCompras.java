@@ -38,21 +38,46 @@ public class ModificarCompras extends JPanel {
 	private JComboBox comboBox;
 	private JTextField txtUnidades;
 	ArrayList<Compras> compras = new ArrayList<>();
+	ArrayList<Compras> comprasAux = new ArrayList<>();
 	private JCalendar calendario;
 	private boolean valid = false;
+	private int cont = 0;
+
 	/**
 	 * Create the panel.
 	 */
 	public ModificarCompras() {
 		setLayout(null);
 		setBounds(0, 0, 723, 507);
-		
-		
+
 		JButton btnCesta = new JButton("A\u00F1adir");
 		btnCesta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				cargar();
-				cargarTabla();
+				if (cont == 0) {
+					for (int x = 0; x < tableProductos.getRowCount(); x++) {
+						Compras c1 = new Compras();
+						c1.setProducto(tableProductos.getValueAt(x, 0).toString());
+						c1.setUnidades(Integer.parseInt(tableProductos.getValueAt(x, 1).toString()));
+						comprasAux.add(c1);
+						cont++;
+					}
+				}
+
+				int unidades = 0;
+				try {
+					unidades = Integer.parseInt(txtUnidades.getText().toString());
+				} catch (NumberFormatException z) {
+					unidades = -1;
+				}
+				if (unidades == -1 || unidades <= 0) {
+					JOptionPane.showMessageDialog(null, "Introduce unidades validas", "Error",
+							JOptionPane.WARNING_MESSAGE);
+				} else if (comboBox.getSelectedIndex() == 0) {
+					JOptionPane.showMessageDialog(null, "Selecciona un producto", "Error", JOptionPane.WARNING_MESSAGE);
+				} else {
+					cargar();
+					cargarTabla();
+				}
 			}
 		});
 
@@ -64,10 +89,11 @@ public class ModificarCompras extends JPanel {
 		JButton btnEliminar = new JButton("Eliminar");
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				if(tableProductos.getSelectedRow()==-1) {
-					JOptionPane.showMessageDialog(null, "Selecciona un producto para eliminar de la cesta", "Error", JOptionPane.WARNING_MESSAGE);
-				}else {
+
+				if (tableProductos.getSelectedRow() == -1) {
+					JOptionPane.showMessageDialog(null, "Selecciona un producto para eliminar de la cesta", "Error",
+							JOptionPane.WARNING_MESSAGE);
+				} else {
 					compras.remove(tableProductos.getSelectedRow());
 					cargarTabla();
 				}
@@ -101,17 +127,25 @@ public class ModificarCompras extends JPanel {
 		btnInsert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Compras v = new Compras();
-				v=pideDatosCompra();
-				if(cmbClientes.getSelectedIndex()==0||cmbProveedores.getSelectedIndex()==0){
-					JOptionPane.showMessageDialog(null, "introduce una cliente valido", "Error", JOptionPane.WARNING_MESSAGE);
-				}else if(compras.size()<1){
-					JOptionPane.showMessageDialog(null, "Selecciona productos vendidos", "Error", JOptionPane.WARNING_MESSAGE);
-				}else {
+				v = pideDatosCompra();
+				if (cmbClientes.getSelectedIndex() == 0 || cmbProveedores.getSelectedIndex() == 0) {
+					JOptionPane.showMessageDialog(null, "introduce una cliente valido", "Error",
+							JOptionPane.WARNING_MESSAGE);
+				} else if (compras.size() < 1) {
+					JOptionPane.showMessageDialog(null, "Selecciona productos vendidos", "Error",
+							JOptionPane.WARNING_MESSAGE);
+				} else {
 					eliminarProdCompras();
 					eliminarCompras();
 					insertCompra(v.getFechaTotal(), v.getNifProveedor(), v.getDniPersonal());
-					if(valid==true) {
+					if (valid == true) {
 						insertProductosCompras();
+					}
+					for (int x = 0; x < comprasAux.size(); x++) {
+						restarStock(x);
+					}
+					for (int x = 0; x < compras.size(); x++) {
+						sumarStock(x);
 					}
 					JOptionPane.showMessageDialog(null, "Compra Modificada");
 				}
@@ -122,7 +156,7 @@ public class ModificarCompras extends JPanel {
 
 		calendario = new JCalendar();
 		calendario.setBounds(90, 44, 230, 136);
-		//calendario.setMaxSelectableDate(2020);
+		// calendario.setMaxSelectableDate(2020);
 		add(calendario);
 
 		cmbClientes = new JComboBox();
@@ -130,12 +164,10 @@ public class ModificarCompras extends JPanel {
 		cmbClientes.setBounds(90, 325, 188, 22);
 		add(cmbClientes);
 
-
 		cmbProveedores = new JComboBox();
 		cmbProveedores.setModel(cargaPersonal());
 		cmbProveedores.setBounds(90, 220, 188, 22);
 		add(cmbProveedores);
-		
 
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setIcon(new ImageIcon("img/diwi.png"));
@@ -146,25 +178,26 @@ public class ModificarCompras extends JPanel {
 		lblFondo.setIcon(new ImageIcon("img\\fondo.jpg"));
 		lblFondo.setBounds(0, 0, 723, 507);
 		add(lblFondo);
-		
+
 	}
+
 	public void insertCompra(String fecha, String nif, String dniP) {
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 
 			Statement consulta = conexion.createStatement();
-			consulta.executeUpdate("insert into compra (fecha, id_proveedor, id_personal) values ('"
-					+ fecha + "',  (select id_proveedor from proveedores where nif='"+nif+ "'), (select id_personal from personal where dni='" + dniP + "'))");
-			valid=true;
+			consulta.executeUpdate("insert into compra (fecha, id_proveedor, id_personal) values ('" + fecha
+					+ "',  (select id_proveedor from proveedores where nif='" + nif
+					+ "'), (select id_personal from personal where dni='" + dniP + "'))");
+			valid = true;
 			conexion.close();
 		} catch (SQLIntegrityConstraintViolationException e) {
-			JOptionPane.showMessageDialog(null, "Factura ya registrada inserte otra", "Error", JOptionPane.WARNING_MESSAGE);
-		} catch(SQLException e) {
+			JOptionPane.showMessageDialog(null, "Factura ya registrada inserte otra", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
 
 	public DefaultComboBoxModel cargaProductos() {
 		Connection conexion;
@@ -197,7 +230,7 @@ public class ModificarCompras extends JPanel {
 			while (registro.next()) {
 				listaModelo.addElement(registro.getString("dni"));
 			}
-		
+
 			conexion.close();
 
 		} catch (SQLException e) {
@@ -206,7 +239,7 @@ public class ModificarCompras extends JPanel {
 
 		return listaModelo;
 	}
-	
+
 	public DefaultComboBoxModel cargaProveedores() {
 		Connection conexion;
 		DefaultComboBoxModel listaModelo = new DefaultComboBoxModel();
@@ -228,23 +261,12 @@ public class ModificarCompras extends JPanel {
 	}
 
 	public void cargarTabla() {
-		int unidades = 0;
-		try {
-			unidades = Integer.parseInt(txtUnidades.getText().toString());
-		} catch (NumberFormatException e) {
-			unidades = -1;
-		}
-		if (unidades == -1 || unidades <= 0) {
-			JOptionPane.showMessageDialog(null, "Introduce unidades validas", "Error", JOptionPane.WARNING_MESSAGE);
-		} else if (comboBox.getSelectedIndex() == 0) {
-			JOptionPane.showMessageDialog(null, "Selecciona un producto", "Error", JOptionPane.WARNING_MESSAGE);
-		} else {
-			modeloTabla.setRowCount(0);
-			for (Compras c : compras) {
-				modeloTabla.addRow(new Object[] { c.getProducto(), c.getUnidades() });
-			}
 
+		modeloTabla.setRowCount(0);
+		for (Compras c : compras) {
+			modeloTabla.addRow(new Object[] { c.getProducto(), c.getUnidades() });
 		}
+
 	}
 
 	public void cargar() {
@@ -254,59 +276,58 @@ public class ModificarCompras extends JPanel {
 		} catch (NumberFormatException e) {
 			unidades = -1;
 		}
-		if (unidades != -1 || unidades>0) {
+		if (unidades != -1 || unidades > 0) {
 			Compras e = new Compras();
 			e.setUnidades(unidades);
 			e.setProducto(comboBox.getSelectedItem().toString());
-			boolean validar=false;
-			for(int x = 0; x<compras.size();x++) {
-				if(compras.get(x).getProducto().compareTo(e.getProducto())==0) {
-					compras.get(x).setUnidades(compras.get(x).getUnidades()+e.getUnidades());
-					validar=true;
+			boolean validar = false;
+			for (int x = 0; x < compras.size(); x++) {
+				if (compras.get(x).getProducto().compareTo(e.getProducto()) == 0) {
+					compras.get(x).setUnidades(compras.get(x).getUnidades() + e.getUnidades());
+					validar = true;
 				}
 			}
-			if(e.getProducto().compareTo("-Productos-")!=0&&validar==false) {
+			if (e.getProducto().compareTo("-Productos-") != 0 && validar == false) {
 				compras.add(e);
 			}
 		}
 
 	}
-	
+
 	public Compras pideDatosCompra() {
 		Compras c = new Compras();
 		SimpleDateFormat dFormat = new SimpleDateFormat("yyyy/MM/dd");
 		c.setNifProveedor(cmbClientes.getSelectedItem().toString());
 		c.setDniPersonal(cmbProveedores.getSelectedItem().toString());
 		c.setFechaTotal(dFormat.format(calendario.getDate()));
-		
+
 		return c;
 	}
-	
+
 	public void insertProductosCompras() {
-		for(int x=0; x<compras.size();x++) {
+		for (int x = 0; x < compras.size(); x++) {
 			try {
 				Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 
 				Statement consulta = conexion.createStatement();
 				consulta.executeUpdate("insert into productos_compra (id_producto, id_compra, unidades) values "
-						+ "((select id_producto from productos where nombre='"+compras.get(x).getProducto()+"'), "
-								+recogerFactura()+","+compras.get(x).getUnidades()+")");
+						+ "((select id_producto from productos where nombre='" + compras.get(x).getProducto() + "'), "
+						+ recogerFactura() + "," + compras.get(x).getUnidades() + ")");
 				conexion.close();
-				
+
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	public int recogerFactura() {
-		int id=0;
+		int id = 0;
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 			// guarda los regsitros de la tabla que vamos a consultar
-			ResultSet registro = consulta
-					.executeQuery("select factura from compra order by id_proveedor desc limit 1");
+			ResultSet registro = consulta.executeQuery("select factura from compra order by id_proveedor desc limit 1");
 
 			// si existe lo que estamos buscando
 			if (registro.next()) {
@@ -331,37 +352,36 @@ public class ModificarCompras extends JPanel {
 		this.compra = compra;
 		cargarFactura();
 	}
-	
+
 	public void eliminarCompras() {
 		Connection conexion;
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 
-			int valor = consulta.executeUpdate("delete from compra where factura ="
-					+ compra.getFactura());
-		
+			int valor = consulta.executeUpdate("delete from compra where factura =" + compra.getFactura());
+
 			conexion.close();
 
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
 		}
 	}
-	
+
 	public void eliminarProdCompras() {
 		Connection conexion;
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 
-			consulta.executeUpdate("delete from productos_compra where id_compra = "
-					+ compra.getFactura());
+			consulta.executeUpdate("delete from productos_compra where id_compra = " + compra.getFactura());
 			conexion.close();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
+
 	public void cargarFactura() {
 
 		cmbClientes.setSelectedItem(compra.getNifProveedor());
@@ -374,8 +394,63 @@ public class ModificarCompras extends JPanel {
 		modeloTabla.setRowCount(0);
 		for (Compras c : compras) {
 			modeloTabla.addRow(new Object[] { c.getProducto(), c.getUnidades() });
-		} 
-		
+		}
+
+	}
+
+	public void sumarStock(int x) {
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			int calculo = recogerStock(x) + compras.get(x).getUnidades();
+			int valor = consulta.executeUpdate("update productos set stock = " + calculo + " where nombre = '"
+					+ compras.get(x).getProducto() + "'");
+
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void restarStock(int x) {
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			System.out.println(recogerStock(x));
+			int calculo = recogerStock(x) - comprasAux.get(x).getUnidades();
+			int valor = consulta.executeUpdate("update productos set stock = " + calculo + " where nombre = '"
+					+ comprasAux.get(x).getProducto() + "'");
+
+			System.out.println(calculo);
+			System.out.println(comprasAux.get(x).getUnidades());
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public int recogerStock(int x) {
+		int stock = 0;
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta
+					.executeQuery("select stock from productos where nombre='" + compras.get(x).getProducto() + "'");
+
+			// si existe lo que estamos buscando
+			if (registro.next()) {
+
+				stock = registro.getInt("stock");
+
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		return stock;
 	}
 
 }

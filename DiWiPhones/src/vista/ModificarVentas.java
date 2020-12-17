@@ -26,6 +26,7 @@ import javax.swing.table.DefaultTableModel;
 import com.toedter.calendar.JCalendar;
 
 import controlador.GestionBBDD;
+import modelo.Compras;
 import modelo.Productos;
 import modelo.Venta;
 
@@ -38,6 +39,9 @@ public class ModificarVentas extends JPanel{
 	private JComboBox comboBox;
 	private JTextField txtUnidades;
 	ArrayList<Venta> ventas = new ArrayList<>();
+	ArrayList<Venta> ventasAux = new ArrayList<>();
+	private int cont = 0;
+	private int cont2 = 0;
 	private JCalendar calendario;
 	private boolean valid = false;
 	public ModificarVentas(){
@@ -105,11 +109,22 @@ public class ModificarVentas extends JPanel{
 					JOptionPane.showMessageDialog(null, "Selecciona productos vendidos", "Error", JOptionPane.WARNING_MESSAGE);
 				}else {
 					eliminarProdVentas();
-					eliminarVentas();
+					
 					insertVenta(v.getFechaTotal(), v.getDniCliente(), v.getDniPersonal());
 					if(valid==true) {
 						insertProductosVentas();
 					}
+					
+					for (int i = 0; i < ventasAux.size(); i++) {
+						sumarStock(i);
+					}
+					
+					for (int i = 0; i<ventas.size();i++) {
+						restarStock(i);
+					}
+					
+					VentaVista vv = new VentaVista();
+					nuevoPanel(vv);
 					JOptionPane.showMessageDialog(null, "Venta Modificada");
 				}
 			}
@@ -152,8 +167,8 @@ public class ModificarVentas extends JPanel{
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 
 			Statement consulta = conexion.createStatement();
-			consulta.executeUpdate("insert into venta (fecha, id_cliente, id_personal) values ('"
-					+ fecha + "',  (select id_cliente from clientes where dni='"+dniC + "'), (select id_personal from personal where dni='" + dniP + "'))");
+			consulta.executeUpdate("update venta set fecha= '"+fecha+"', id_cliente="
+					 + " (select id_cliente from clientes where dni='"+dniC + "'), id_personal=(select id_personal from personal where dni='" + dniP + "') where factura="+venta.getFactura());
 			valid=true;
 			conexion.close();
 		} catch (SQLIntegrityConstraintViolationException e) {
@@ -374,6 +389,76 @@ public class ModificarVentas extends JPanel{
 		for (Venta v : ventas) {
 			modeloTabla.addRow(new Object[] { v.getProducto(), v.getUnidades() });
 		} 
+		
+		if (cont2 == 0) {
+			ventasAux = gestion.listaCompra(venta.getFactura());
+			System.out.println("Unidades aux " + ventasAux.get(0).getUnidades());
+			cont2++;
+		}
+		
+	}
+	
+	public void restarStock(int x) {
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			consulta.executeUpdate("update productos set stock = " + recogerStock(x)+"-"+ventas.get(x).getUnidades()
+					+ " where nombre = '" + ventas.get(x).getProducto() + "'");
+
+
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void sumarStock(int x) {
+		try {
+			
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			System.out.println("stock " + recogerStock(x));
+			int calculo = recogerStock(x) + ventasAux.get(x).getUnidades();
+			consulta.executeUpdate("update productos set stock = " + calculo + " where nombre = '"
+					+ ventasAux.get(x).getProducto() + "'");
+
+			System.out.println("calculo " + calculo);
+			System.out.println("Unidades " + ventasAux.get(x).getUnidades());
+			System.out.println("Unidades aux " + ventasAux.get(x).getUnidades());
+			System.out.println("Producto " + ventasAux.get(x).getProducto());
+
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public int recogerStock(int x) {
+		int stock=0;
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			ResultSet registro = consulta.executeQuery("select stock from productos where nombre='" + ventas.get(x).getProducto()+"'");
+
+
+			if (registro.next()) {
+				stock = registro.getInt("stock");
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		return stock;
+	}
+	
+	public void nuevoPanel(JPanel panelActual) {
+		removeAll();
+		add(panelActual);
+		repaint();
+		revalidate();
 		
 	}
 }

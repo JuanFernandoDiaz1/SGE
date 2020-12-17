@@ -107,7 +107,13 @@ public class InsertarVentas extends JPanel {
 					insertVenta(v.getFechaTotal(), v.getDniCliente(), v.getDniPersonal());
 					if(valid==true) {
 						insertProductosVentas();
+						for(int x=0;x<ventas.size();x++) {
+							restarStock(x);
+						}
 					}
+					JOptionPane.showMessageDialog(null, "Venta Realizada");
+					VentaVista vv = new VentaVista();
+					nuevoPanel(vv);
 				}
 			}
 		});
@@ -315,4 +321,46 @@ public class InsertarVentas extends JPanel {
 		return id;
 	}
 	
+	public void restarStock(int x) {
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			int valor = consulta.executeUpdate("update productos set stock = " + recogerStock(x)+"-"+ventas.get(x).getUnidades()
+					+ " where nombre = '" + ventas.get(x).getProducto() + "'");
+
+
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public int recogerStock(int x) {
+		int stock=0;
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			ResultSet registro = consulta.executeQuery("select stock from productos where nombre='" + ventas.get(x).getProducto()+"'");
+
+
+			if (registro.next()) {
+				stock = registro.getInt("stock");
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		return stock;
+	}
+	
+	public void nuevoPanel(JPanel panelActual) {
+		removeAll();
+		add(panelActual);
+		repaint();
+		revalidate();
+		
+	}
 }

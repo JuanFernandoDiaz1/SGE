@@ -116,6 +116,8 @@ public class InsertarCompras extends JPanel {
 						}
 					}
 					JOptionPane.showMessageDialog(null, "Compra Añadida");
+					ComprasVista cv = new ComprasVista();
+					nuevoPanel(cv);
 				}
 			}
 		});
@@ -353,5 +355,13 @@ public class InsertarCompras extends JPanel {
 					JOptionPane.WARNING_MESSAGE);
 		}
 		return stock;
+	}
+	
+	public void nuevoPanel(JPanel panelActual) {
+		removeAll();
+		add(panelActual);
+		repaint();
+		revalidate();
+		
 	}
 }

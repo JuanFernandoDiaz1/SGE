@@ -157,7 +157,8 @@ public class ModificarCompras extends JPanel {
 					JOptionPane.showMessageDialog(null, "Compra Modificada");
 					modeloTabla.setRowCount(0);
 
-					//cargarFactura();
+					ComprasVista cv = new ComprasVista();
+					nuevoPanel(cv);
 				}
 			}
 		});
@@ -178,15 +179,6 @@ public class ModificarCompras extends JPanel {
 		cmbProveedores.setModel(cargaPersonal());
 		cmbProveedores.setBounds(90, 220, 188, 22);
 		add(cmbProveedores);
-		
-		JButton btnNewButton = new JButton("New button");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				cargarFactura();
-			}
-		});
-		btnNewButton.setBounds(425, 11, 89, 23);
-		add(btnNewButton);
 
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setIcon(new ImageIcon("img/diwi.png"));
@@ -371,6 +363,7 @@ public class ModificarCompras extends JPanel {
 
 	public void setCompras(Compras compra) {
 		this.compra = compra;
+		cargarFactura();
 	}
 
 	public void eliminarCompras() {
@@ -418,15 +411,16 @@ public class ModificarCompras extends JPanel {
 		System.out.println(cont2);
 
 		if (cont2 == 0) {
-			comprasAux = compras;
+			comprasAux = gestion.listaCompra2(compra.getFactura());
 			System.out.println("Unidades aux " + comprasAux.get(0).getUnidades());
+			
 			cont2++;
 		}
 
 	}
 
 	public void sumarStock(int x) {
-		/*try {
+		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 			System.out.println(compras.get(x).getUnidades());
@@ -440,7 +434,7 @@ public class ModificarCompras extends JPanel {
 			conexion.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}*/
+		}
 	}
 
 	public void restarStock(int x) {
@@ -484,5 +478,13 @@ public class ModificarCompras extends JPanel {
 					JOptionPane.WARNING_MESSAGE);
 		}
 		return stock;
+	}
+	
+	public void nuevoPanel(JPanel panelActual) {
+		removeAll();
+		add(panelActual);
+		repaint();
+		revalidate();
+		
 	}
 }

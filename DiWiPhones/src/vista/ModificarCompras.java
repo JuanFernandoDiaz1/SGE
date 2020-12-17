@@ -58,7 +58,6 @@ public class ModificarCompras extends JPanel {
 						Compras c1 = new Compras();
 						c1.setProducto(tableProductos.getValueAt(x, 0).toString());
 						c1.setUnidades(Integer.parseInt(tableProductos.getValueAt(x, 1).toString()));
-						comprasAux.add(c1);
 						cont++;
 					}
 				}
@@ -310,38 +309,18 @@ public class ModificarCompras extends JPanel {
 				Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 
 				Statement consulta = conexion.createStatement();
+				System.out.println("factura "+compra.getFactura());
+				System.out.println("oriducto "+ compras.get(x).getProducto());
+				System.out.println("unidades "+ compras.get(x).getUnidades());
 				consulta.executeUpdate("insert into productos_compra (id_producto, id_compra, unidades) values "
 						+ "((select id_producto from productos where nombre='" + compras.get(x).getProducto() + "'), "
-						+ recogerFactura() + "," + compras.get(x).getUnidades() + ")");
+						+ compra.getFactura() + "," + compras.get(x).getUnidades() + ")");
 				conexion.close();
 
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	public int recogerFactura() {
-		int id = 0;
-		try {
-			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
-			Statement consulta = conexion.createStatement();
-			// guarda los regsitros de la tabla que vamos a consultar
-			ResultSet registro = consulta.executeQuery("select factura from compra order by id_proveedor desc limit 1");
-
-			// si existe lo que estamos buscando
-			if (registro.next()) {
-				id = registro.getInt("factura");
-			} else {
-				System.out.println("Error");
-			}
-
-			conexion.close();
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
-					JOptionPane.WARNING_MESSAGE);
-		}
-		return id;
 	}
 
 	public Compras getCompras() {
@@ -395,6 +374,8 @@ public class ModificarCompras extends JPanel {
 		for (Compras c : compras) {
 			modeloTabla.addRow(new Object[] { c.getProducto(), c.getUnidades() });
 		}
+		comprasAux = gestion.listaCompra2(compra.getFactura());
+		System.out.println("compras "+compra.getFactura());
 
 	}
 
@@ -402,10 +383,11 @@ public class ModificarCompras extends JPanel {
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
-			int calculo = recogerStock(x) + compras.get(x).getUnidades();
-			int valor = consulta.executeUpdate("update productos set stock = " + calculo + " where nombre = '"
+			
+				int calculo = recogerStock(x) + compras.get(x).getUnidades();
+				int valor = consulta.executeUpdate("update productos set stock = " + calculo + " where nombre = '"
 					+ compras.get(x).getProducto() + "'");
-
+			
 			conexion.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -416,13 +398,16 @@ public class ModificarCompras extends JPanel {
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
-			System.out.println(recogerStock(x));
-			int calculo = recogerStock(x) - comprasAux.get(x).getUnidades();
-			int valor = consulta.executeUpdate("update productos set stock = " + calculo + " where nombre = '"
+				System.out.println("vuelta "+x);
+				System.out.println("stock "+recogerStock(x));
+				int calculo = recogerStock(x) - comprasAux.get(x).getUnidades();
+				int valor = consulta.executeUpdate("update productos set stock = " + calculo + " where nombre = '"
 					+ comprasAux.get(x).getProducto() + "'");
 
-			System.out.println(calculo);
-			System.out.println(comprasAux.get(x).getUnidades());
+				System.out.println("calculo "+calculo);
+				System.out.println("Unidades "+comprasAux.get(x).getUnidades());
+			
+			
 			conexion.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -434,15 +419,13 @@ public class ModificarCompras extends JPanel {
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
-			// guarda los regsitros de la tabla que vamos a consultar
+
 			ResultSet registro = consulta
 					.executeQuery("select stock from productos where nombre='" + compras.get(x).getProducto() + "'");
 
-			// si existe lo que estamos buscando
 			if (registro.next()) {
 
 				stock = registro.getInt("stock");
-
 			}
 
 			conexion.close();

@@ -340,16 +340,11 @@ public class InsertarCompras extends JPanel {
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
-			// guarda los regsitros de la tabla que vamos a consultar
 			ResultSet registro = consulta.executeQuery("select stock from productos where nombre='" + compras.get(x).getProducto()+"'");
 
-			// si existe lo que estamos buscando
-			if (registro.next()) {
-			
-				stock = registro.getInt("stock");
-				
-				
 
+			if (registro.next()) {
+				stock = registro.getInt("stock");
 			}
 
 			conexion.close();

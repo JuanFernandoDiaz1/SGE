@@ -4,9 +4,16 @@ public class Productos {
 	private String nombre;
 	private String descripcion;
 	private int precio;
+	private int precioVenta;
 	private int Stock;
 	private String Proveedor;
 	
+	public int getPrecioVenta() {
+		return precioVenta;
+	}
+	public void setPrecioVenta(int precioVenta) {
+		this.precioVenta = precioVenta;
+	}
 	public String getProveedor() {
 		return Proveedor;
 	}

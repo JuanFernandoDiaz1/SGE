@@ -32,8 +32,8 @@ import modelo.Venta;
 public class ModificarCompras extends JPanel {
 	private Compras compra = new Compras();
 	private JTable tableProductos;
+	private JComboBox cmbPersonal;
 	private JComboBox cmbProveedores;
-	private JComboBox cmbClientes;
 	DefaultTableModel modeloTabla = new DefaultTableModel();
 	private JComboBox comboBox;
 	private JTextField txtUnidades;
@@ -130,7 +130,7 @@ public class ModificarCompras extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				Compras v = new Compras();
 				v = pideDatosCompra();
-				if (cmbClientes.getSelectedIndex() == 0 || cmbProveedores.getSelectedIndex() == 0) {
+				if (cmbProveedores.getSelectedIndex() == 0 || cmbPersonal.getSelectedIndex() == 0) {
 					JOptionPane.showMessageDialog(null, "introduce una cliente valido", "Error",
 							JOptionPane.WARNING_MESSAGE);
 				} else if (compras.size() < 1) {
@@ -170,15 +170,15 @@ public class ModificarCompras extends JPanel {
 		// calendario.setMaxSelectableDate(2020);
 		add(calendario);
 
-		cmbClientes = new JComboBox();
-		cmbClientes.setModel(cargaProveedores());
-		cmbClientes.setBounds(90, 325, 188, 22);
-		add(cmbClientes);
-
 		cmbProveedores = new JComboBox();
-		cmbProveedores.setModel(cargaPersonal());
-		cmbProveedores.setBounds(90, 220, 188, 22);
+		cmbProveedores.setModel(cargaProveedores());
+		cmbProveedores.setBounds(90, 325, 188, 22);
 		add(cmbProveedores);
+
+		cmbPersonal = new JComboBox();
+		cmbPersonal.setModel(cargaPersonal());
+		cmbPersonal.setBounds(90, 220, 188, 22);
+		add(cmbPersonal);
 
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setIcon(new ImageIcon("img/diwi.png"));
@@ -309,8 +309,8 @@ public class ModificarCompras extends JPanel {
 	public Compras pideDatosCompra() {
 		Compras c = new Compras();
 		SimpleDateFormat dFormat = new SimpleDateFormat("yyyy/MM/dd");
-		c.setNifProveedor(cmbClientes.getSelectedItem().toString());
-		c.setDniPersonal(cmbProveedores.getSelectedItem().toString());
+		c.setNifProveedor(cmbProveedores.getSelectedItem().toString());
+		c.setDniPersonal(cmbPersonal.getSelectedItem().toString());
 		c.setFechaTotal(dFormat.format(calendario.getDate()));
 
 		return c;
@@ -397,8 +397,8 @@ public class ModificarCompras extends JPanel {
 
 	public void cargarFactura() {
 		compras.clear();
-		cmbClientes.setSelectedItem(compra.getNifProveedor());
-		cmbProveedores.setSelectedItem(compra.getDniPersonal());
+		cmbProveedores.setSelectedItem(compra.getNifProveedor());
+		cmbPersonal.setSelectedItem(compra.getDniPersonal());
 		GestionBBDD gestion = new GestionBBDD();
 		modeloTabla.setRowCount(0);
 		for (Compras c : gestion.listaCompra2(compra.getFactura())) {

@@ -26,6 +26,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.toedter.calendar.JCalendar;
 
+import controlador.GestionBBDD;
 import modelo.Cliente;
 import modelo.Compras;
 
@@ -113,7 +114,9 @@ public class InsertarCompras extends JPanel {
 						insertProductosCompras();
 						for(int x=0;x<compras.size();x++) {
 							sumarStock(x);
+							int precioTotal=compras.get(x).getUnidades()*
 						}
+						
 					}
 					JOptionPane.showMessageDialog(null, "Compra Añadida");
 					ComprasVista cv = new ComprasVista();
@@ -362,6 +365,30 @@ public class InsertarCompras extends JPanel {
 		add(panelActual);
 		repaint();
 		revalidate();
-		
+	}
+	
+	
+	public void cargarFactura() {
+		compras.clear();
+		cmbProveedor.setSelectedItem(compra.getNifProveedor());
+		cmbProveedores.setSelectedItem(compra.getDniPersonal());
+		GestionBBDD gestion = new GestionBBDD();
+		modeloTabla.setRowCount(0);
+		for (Compras c : gestion.listaCompra2(compra.getFactura())) {
+			compras.add(c);
+		}
+		modeloTabla.setRowCount(0);
+		for (Compras c : compras) {
+			modeloTabla.addRow(new Object[] { c.getProducto(), c.getUnidades() });
+		}
+		System.out.println(cont2);
+
+		if (cont2 == 0) {
+			comprasAux = gestion.listaCompra2(compra.getFactura());
+			System.out.println("Unidades aux " + comprasAux.get(0).getUnidades());
+			
+			cont2++;
+		}
+
 	}
 }

@@ -140,7 +140,7 @@ public class GestionBBDD {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 			// guarda los regsitros de la tabla que vamos a consultar
-			ResultSet registro = consulta.executeQuery("select distinct productos.nombre, productos.descripcion, productos.precio,"
+			ResultSet registro = consulta.executeQuery("select distinct productos.nombre, productos.descripcion, productos.precio, productos.precioVenta,"
 					+ " productos.stock, proveedores.Nif  from productos inner join proveedores on productos.ID_Proveedor= proveedores.ID_Proveedor");
 
 			// si existe lo que estamos buscando
@@ -150,6 +150,7 @@ public class GestionBBDD {
 				producto.setNombre(registro.getString("Nombre"));
 				producto.setDescripcion(registro.getString("Descripcion"));
 				producto.setPrecio(registro.getInt("Precio"));
+				producto.setPrecioVenta(registro.getInt("PrecioVenta"));
 				producto.setStock(registro.getInt("Stock"));
 				producto.setProveedor(registro.getString("NIF"));
 				// añadimos modelos al arrayList
@@ -291,8 +292,8 @@ public class GestionBBDD {
 
 			Statement consulta = conexion.createStatement();
 			consulta.executeUpdate(
-					"insert into productos (nombre, descripcion, precio, stock, id_proveedor) "
-					+ "values ('"+p.getNombre()+"', '"+p.getDescripcion()+"', "+ p.getPrecio() +", "+p.getStock()
+					"insert into productos (nombre, descripcion, precio,precioVenta, stock, id_proveedor) "
+					+ "values ('"+p.getNombre()+"', '"+p.getDescripcion()+"', "+ p.getPrecio()+", "+p.getPrecioVenta() +", "+p.getStock()
 					+", (Select id_proveedor from proveedores where NIF ='"+p.getProveedor()+"'))");
 			conexion.close();
 		} catch (SQLException e) {
@@ -522,7 +523,7 @@ public class GestionBBDD {
 			Statement consulta = conexion.createStatement();
 
 			int valor = consulta.executeUpdate("update productos set nombre = '" + p.getNombre() + "', descripcion = '"+p.getDescripcion()+
-					"' , precio = " +p.getPrecio()+", Stock = "+p.getStock()+", id_proveedor =  (Select id_proveedor from proveedores "
+					"' , precio = " +p.getPrecio()+" , precioVenta = " +p.getPrecioVenta()+", Stock = "+p.getStock()+", id_proveedor =  (Select id_proveedor from proveedores "
 					+ "where NIF ='"+p.getProveedor()+"') where nombre='"+tabla.getValueAt(tabla.getSelectedRow(), 0)+"' and descripcion='"+ tabla.getValueAt(tabla.getSelectedRow(), 1)+"'");
 
 			if (valor == 1) {
@@ -735,7 +736,7 @@ public class GestionBBDD {
 			Statement consulta = conexion.createStatement();
 			// guarda los regsitros de la tabla que vamos a consultar
 			ResultSet registro = consulta
-					.executeQuery("SELECT Nombre, Unidades FROM productos_compra inner join productos on productos_compra.ID_Producto = productos.ID_Producto WHERE ID_compra="+factura);
+					.executeQuery("SELECT Nombre, Unidades,Precio FROM productos_compra inner join productos on productos_compra.ID_Producto = productos.ID_Producto WHERE ID_compra="+factura);
 
 			// si existe lo que estamos buscando
 			while (registro.next()) {

@@ -32,6 +32,7 @@ public class ProductosVista extends JPanel {
 	private JTextField txtStock;
 	private JComboBox comboBox;
 	GestionBBDD gestor = new GestionBBDD();
+	private JTextField txtPrecioVenta;
 
 	/**
 	 * Create the panel.
@@ -71,7 +72,7 @@ public class ProductosVista extends JPanel {
 					if (productos.getNombre().compareTo("") == 0 || productos.getDescripcion().compareTo("") == 0) {
 						JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error",
 								JOptionPane.WARNING_MESSAGE);
-					} else if (productos.getPrecio() <= 0 || productos.getStock() <= 0) {
+					} else if (productos.getPrecio() <= 0 || productos.getStock() <= 0|| productos.getPrecioVenta() <= 0) {
 						JOptionPane.showMessageDialog(null, "Los campos Precio y Stock no pueden ser 0 o negativos",
 								"Error", JOptionPane.WARNING_MESSAGE);
 					}else if (comboBox.getSelectedIndex() == 0) {
@@ -95,6 +96,7 @@ public class ProductosVista extends JPanel {
 				txtDescripcion.setText("");
 				txtStock.setText("");
 				txtPrecio.setText("");
+				txtPrecioVenta.setText("");
 				comboBox.setSelectedIndex(0);
 				cargarTabla();
 			}
@@ -144,13 +146,13 @@ public class ProductosVista extends JPanel {
 		tableProductos = new JTable();
 		scrollPane.setViewportView(tableProductos);
 
-		modeloTabla.setColumnIdentifiers(new Object[] { "Nombre", "Descripcion", "Precio", "Stock", "Proveedor" });
+		modeloTabla.setColumnIdentifiers(new Object[] { "Nombre", "Descripcion", "Precio Compra","Precio Venta", "Stock", "Proveedor" });
 		tableProductos.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 		cargarTabla();
 
 		JLabel lblNombre = new JLabel("Nombre: ");
-		lblNombre.setBounds(84, 288, 65, 17);
+		lblNombre.setBounds(68, 288, 65, 17);
 		add(lblNombre);
 
 		JLabel lblDescripcion = new JLabel("Descripcion:");
@@ -161,12 +163,21 @@ public class ProductosVista extends JPanel {
 		lblStock.setBounds(268, 323, 40, 20);
 		add(lblStock);
 
-		JLabel lblPrecio = new JLabel("Precio:");
-		lblPrecio.setBounds(84, 326, 63, 14);
+		JLabel lblPrecio = new JLabel("Precio Compra:");
+		lblPrecio.setBounds(68, 326, 73, 14);
 		add(lblPrecio);
+		
+		txtPrecioVenta = new JTextField();
+		txtPrecioVenta.setColumns(10);
+		txtPrecioVenta.setBounds(560, 323, 117, 20);
+		add(txtPrecioVenta);
+		
+		JLabel lblPrecioVenta = new JLabel("Precio Venta:");
+		lblPrecioVenta.setBounds(474, 326, 76, 14);
+		add(lblPrecioVenta);
 
 		comboBox = new JComboBox();
-		comboBox.setBounds(507, 286, 126, 21);
+		comboBox.setBounds(516, 286, 126, 21);
 		add(comboBox);
 		comboBox.setModel(gestor.cargaProveedores());
 
@@ -189,8 +200,9 @@ public class ProductosVista extends JPanel {
 					txtNombre.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 0).toString());
 					txtDescripcion.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 1).toString());
 					txtPrecio.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 2).toString());
-					txtStock.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 3).toString());
-					comboBox.setSelectedItem(tableProductos.getValueAt(tableProductos.getSelectedRow(), 4).toString());
+					txtPrecioVenta.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 3).toString());
+					txtStock.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 4).toString());
+					comboBox.setSelectedItem(tableProductos.getValueAt(tableProductos.getSelectedRow(), 5).toString());
 				}
 			}
 		});
@@ -204,6 +216,7 @@ public class ProductosVista extends JPanel {
 		try {
 			productos.setPrecio(Integer.parseInt(txtPrecio.getText()));
 			productos.setStock(Integer.parseInt(txtStock.getText()));
+			productos.setPrecioVenta(Integer.parseInt(txtPrecioVenta.getText()));
 		}catch(NumberFormatException a) {
 			JOptionPane.showMessageDialog(null, "Introduzca los campos correctamente");
 		}
@@ -215,8 +228,7 @@ public class ProductosVista extends JPanel {
 		modeloTabla.setRowCount(0);
 		for (Productos p : gestor.consultaProductos()) {
 			modeloTabla.addRow(
-					new Object[] { p.getNombre(), p.getDescripcion(), p.getPrecio(), p.getStock(), p.getProveedor() });
+					new Object[] { p.getNombre(), p.getDescripcion(), p.getPrecio(),p.getPrecioVenta(), p.getStock(), p.getProveedor() });
 		}
 	}
-
 }

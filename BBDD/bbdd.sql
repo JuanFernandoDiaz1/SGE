@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.0.3
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 03-12-2020 a las 20:10:21
--- Versión del servidor: 10.4.11-MariaDB
--- Versión de PHP: 7.4.6
+-- Tiempo de generación: 17-12-2020 a las 21:00:22
+-- Versión del servidor: 10.4.14-MariaDB
+-- Versión de PHP: 7.2.34
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -41,7 +41,8 @@ CREATE TABLE `clientes` (
 
 INSERT INTO `clientes` (`ID_Cliente`, `DNI`, `Nombre`, `Direccion`, `Email`) VALUES
 (18, '01111111X', 'Jordan', 'Calle C1', 'jordan@gmail.com'),
-(19, '02222222X', 'Alberto', 'Calle C2', 'alberto@gmail.com');
+(19, '02222222X', 'Alberto', 'Calle C2', 'alberto@gmail.com'),
+(22, '01111111X', 'Jordan', 'Calle C1', 'jordan@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -53,8 +54,19 @@ CREATE TABLE `compra` (
   `Factura` int(11) NOT NULL,
   `fecha` date NOT NULL,
   `id_personal` int(11) NOT NULL,
-  `id_proveedor` int(11) NOT NULL
+  `id_proveedor` int(11) NOT NULL,
+  `PrecioCompra` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `compra`
+--
+
+INSERT INTO `compra` (`Factura`, `fecha`, `id_personal`, `id_proveedor`, `PrecioCompra`) VALUES
+(8, '2020-12-17', 2, 2, 0),
+(9, '2020-12-17', 2, 2, 0),
+(11, '2020-12-17', 2, 2, 0),
+(12, '2020-12-17', 2, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -112,9 +124,7 @@ CREATE TABLE `personal` (
 --
 
 INSERT INTO `personal` (`Nombre`, `DNI`, `ID_Personal`, `Direccion`, `Email`) VALUES
-('Rafael', '01111111Z', 1, 'Calle 1', 'rafa@gmail.com'),
-('Mario', '02222222A', 2, 'Calle 2', 'mario@gmail.com'),
-('Juanfer', '03333333X', 3, 'Calle 3', 'juanfer@gmail.com');
+('Mario', '02222222A', 2, 'Calle 2', 'mario@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -126,6 +136,7 @@ CREATE TABLE `productos` (
   `Nombre` varchar(100) NOT NULL,
   `Descripcion` varchar(500) NOT NULL,
   `Precio` int(11) NOT NULL,
+  `PrecioVenta` int(11) NOT NULL,
   `Stock` int(11) NOT NULL,
   `ID_Producto` int(11) NOT NULL,
   `ID_Proveedor` int(11) NOT NULL
@@ -135,11 +146,12 @@ CREATE TABLE `productos` (
 -- Volcado de datos para la tabla `productos`
 --
 
-INSERT INTO `productos` (`Nombre`, `Descripcion`, `Precio`, `Stock`, `ID_Producto`, `ID_Proveedor`) VALUES
-('mochila', 'pestoso', 10, 2, 1, 1),
-('Raton', 'Grande', 80, 2000, 4, 2),
-('Ratona', 'Grande', 2000, 80, 15, 2),
-('<3', '<3<3<3<3<3<3<3<3', 1000, 822, 16, 1);
+INSERT INTO `productos` (`Nombre`, `Descripcion`, `Precio`, `PrecioVenta`, `Stock`, `ID_Producto`, `ID_Proveedor`) VALUES
+('mochila', 'pestoso', 10, 0, 900, 1, 1),
+('Raton', 'Grande', 80, 0, 2000, 4, 2),
+('Ratona', 'Grande', 2000, 0, 81, 15, 2),
+('<3', '<3<3<3<3<3<3<3<3', 1000, 60, 1942, 16, 1),
+('hola', '<3<----', 100030, 600, 1942, 17, 1);
 
 -- --------------------------------------------------------
 
@@ -153,6 +165,16 @@ CREATE TABLE `productos_compra` (
   `Id_compra` int(11) NOT NULL,
   `Unidades` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `productos_compra`
+--
+
+INSERT INTO `productos_compra` (`ID`, `id_producto`, `Id_compra`, `Unidades`) VALUES
+(10, 1, 8, 36),
+(28, 16, 9, 12),
+(29, 1, 9, 8),
+(32, 4, 12, 1);
 
 -- --------------------------------------------------------
 
@@ -172,7 +194,8 @@ CREATE TABLE `productos_ventas` (
 --
 
 INSERT INTO `productos_ventas` (`ID`, `ID_Producto`, `ID_Venta`, `Unidades`) VALUES
-(13, 16, 11, 200);
+(13, 16, 11, 200),
+(14, 1, 12, 90);
 
 -- --------------------------------------------------------
 
@@ -228,13 +251,10 @@ CREATE TABLE `telefonos` (
 --
 
 INSERT INTO `telefonos` (`ID_Telefono`, `Numero`, `ID_Proveedor`, `ID_Personal`, `ID_Cliente`) VALUES
-(33, 987987987, 1, NULL, NULL),
 (34, 999999999, 2, NULL, NULL),
-(35, 632654987, NULL, 1, NULL),
 (37, 653265152, NULL, 2, NULL),
-(38, 989855223, NULL, 3, NULL),
-(48, 611111111, NULL, NULL, 18),
-(49, 622222222, NULL, NULL, 19);
+(49, 622222222, NULL, NULL, 19),
+(57, 611111111, NULL, NULL, 22);
 
 -- --------------------------------------------------------
 
@@ -246,15 +266,17 @@ CREATE TABLE `venta` (
   `factura` int(11) NOT NULL,
   `fecha` date NOT NULL,
   `Id_cliente` int(11) NOT NULL,
-  `Id_personal` int(11) NOT NULL
+  `Id_personal` int(11) NOT NULL,
+  `PrecioVenta` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `venta`
 --
 
-INSERT INTO `venta` (`factura`, `fecha`, `Id_cliente`, `Id_personal`) VALUES
-(11, '2019-08-13', 18, 2);
+INSERT INTO `venta` (`factura`, `fecha`, `Id_cliente`, `Id_personal`, `PrecioVenta`) VALUES
+(11, '2019-08-13', 18, 2, 0),
+(12, '2020-12-22', 19, 2, 0);
 
 --
 -- Índices para tablas volcadas
@@ -366,13 +388,13 @@ ALTER TABLE `venta`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `ID_Cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `ID_Cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT de la tabla `compra`
 --
 ALTER TABLE `compra`
-  MODIFY `Factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `Factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `escandallo`
@@ -402,19 +424,19 @@ ALTER TABLE `personal`
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `ID_Producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `ID_Producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `productos_compra`
 --
 ALTER TABLE `productos_compra`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT de la tabla `productos_ventas`
 --
 ALTER TABLE `productos_ventas`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores`
@@ -432,13 +454,13 @@ ALTER TABLE `proveedores_productos`
 -- AUTO_INCREMENT de la tabla `telefonos`
 --
 ALTER TABLE `telefonos`
-  MODIFY `ID_Telefono` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `ID_Telefono` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT de la tabla `venta`
 --
 ALTER TABLE `venta`
-  MODIFY `factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Restricciones para tablas volcadas

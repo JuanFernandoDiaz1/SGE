@@ -242,7 +242,7 @@ public class GestionBBDD {
 					+ dni + "', '" + direccion + "', '" + email + "')");
 			conexion.close();
 		} catch (SQLException e) {
-			System.out.println("Error en la BBDD");
+			e.printStackTrace();
 		}
 	}
 	

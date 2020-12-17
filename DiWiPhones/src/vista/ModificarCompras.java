@@ -39,9 +39,11 @@ public class ModificarCompras extends JPanel {
 	private JTextField txtUnidades;
 	ArrayList<Compras> compras = new ArrayList<>();
 	ArrayList<Compras> comprasAux = new ArrayList<>();
+
 	private JCalendar calendario;
 	private boolean valid = false;
 	private int cont = 0;
+	private int cont2 = 0;
 
 	/**
 	 * Create the panel.
@@ -49,7 +51,7 @@ public class ModificarCompras extends JPanel {
 	public ModificarCompras() {
 		setLayout(null);
 		setBounds(0, 0, 723, 507);
-
+		
 		JButton btnCesta = new JButton("A\u00F1adir");
 		btnCesta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -74,6 +76,7 @@ public class ModificarCompras extends JPanel {
 				} else if (comboBox.getSelectedIndex() == 0) {
 					JOptionPane.showMessageDialog(null, "Selecciona un producto", "Error", JOptionPane.WARNING_MESSAGE);
 				} else {
+
 					cargar();
 					cargarTabla();
 				}
@@ -135,18 +138,26 @@ public class ModificarCompras extends JPanel {
 							JOptionPane.WARNING_MESSAGE);
 				} else {
 					eliminarProdCompras();
-					
+
 					insertCompra(v.getFechaTotal(), v.getNifProveedor(), v.getDniPersonal());
 					if (valid == true) {
 						insertProductosCompras();
 					}
+
 					for (int x = 0; x < comprasAux.size(); x++) {
+
 						restarStock(x);
+
 					}
+
 					for (int x = 0; x < compras.size(); x++) {
 						sumarStock(x);
 					}
+
 					JOptionPane.showMessageDialog(null, "Compra Modificada");
+					modeloTabla.setRowCount(0);
+
+					//cargarFactura();
 				}
 			}
 		});
@@ -167,6 +178,15 @@ public class ModificarCompras extends JPanel {
 		cmbProveedores.setModel(cargaPersonal());
 		cmbProveedores.setBounds(90, 220, 188, 22);
 		add(cmbProveedores);
+		
+		JButton btnNewButton = new JButton("New button");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				cargarFactura();
+			}
+		});
+		btnNewButton.setBounds(425, 11, 89, 23);
+		add(btnNewButton);
 
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setIcon(new ImageIcon("img/diwi.png"));
@@ -187,7 +207,8 @@ public class ModificarCompras extends JPanel {
 			Statement consulta = conexion.createStatement();
 			consulta.executeUpdate("update compra set fecha= '" + fecha
 					+ "', id_proveedor = (select id_proveedor from proveedores where nif='" + nif
-					+ "'), id_personal = (select id_personal from personal where dni='" + dniP + "') where factura="+compra.getFactura());
+					+ "'), id_personal = (select id_personal from personal where dni='" + dniP + "') where factura="
+					+ compra.getFactura());
 			valid = true;
 			conexion.close();
 		} catch (SQLIntegrityConstraintViolationException e) {
@@ -309,9 +330,6 @@ public class ModificarCompras extends JPanel {
 				Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 
 				Statement consulta = conexion.createStatement();
-				System.out.println("factura "+compra.getFactura());
-				System.out.println("oriducto "+ compras.get(x).getProducto());
-				System.out.println("unidades "+ compras.get(x).getUnidades());
 				consulta.executeUpdate("insert into productos_compra (id_producto, id_compra, unidades) values "
 						+ "((select id_producto from productos where nombre='" + compras.get(x).getProducto() + "'), "
 						+ compra.getFactura() + "," + compras.get(x).getUnidades() + ")");
@@ -322,14 +340,15 @@ public class ModificarCompras extends JPanel {
 			}
 		}
 	}
+
 	public int recogerFactura() {
-		int id=0;
+		int id = 0;
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 			// guarda los regsitros de la tabla que vamos a consultar
-			ResultSet registro = consulta
-					.executeQuery("select factura from compra where factura="+tableProductos.getValueAt(tableProductos.getSelectedRow(), 0).toString());
+			ResultSet registro = consulta.executeQuery("select factura from compra where factura="
+					+ tableProductos.getValueAt(tableProductos.getSelectedRow(), 0).toString());
 
 			// si existe lo que estamos buscando
 			if (registro.next()) {
@@ -352,7 +371,6 @@ public class ModificarCompras extends JPanel {
 
 	public void setCompras(Compras compra) {
 		this.compra = compra;
-		cargarFactura();
 	}
 
 	public void eliminarCompras() {
@@ -385,7 +403,7 @@ public class ModificarCompras extends JPanel {
 	}
 
 	public void cargarFactura() {
-
+		compras.clear();
 		cmbClientes.setSelectedItem(compra.getNifProveedor());
 		cmbProveedores.setSelectedItem(compra.getDniPersonal());
 		GestionBBDD gestion = new GestionBBDD();
@@ -397,40 +415,49 @@ public class ModificarCompras extends JPanel {
 		for (Compras c : compras) {
 			modeloTabla.addRow(new Object[] { c.getProducto(), c.getUnidades() });
 		}
-		comprasAux = gestion.listaCompra2(compra.getFactura());
-		System.out.println("compras "+compra.getFactura());
+		System.out.println(cont2);
+
+		if (cont2 == 0) {
+			comprasAux = compras;
+			System.out.println("Unidades aux " + comprasAux.get(0).getUnidades());
+			cont2++;
+		}
 
 	}
 
 	public void sumarStock(int x) {
-		try {
+		/*try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
-			
-				int calculo = recogerStock(x) + compras.get(x).getUnidades();
-				int valor = consulta.executeUpdate("update productos set stock = " + calculo + " where nombre = '"
+			System.out.println(compras.get(x).getUnidades());
+
+			int calculo = recogerStock(x) + compras.get(x).getUnidades();
+			consulta.executeUpdate("update productos set stock = " + calculo + " where nombre = '"
 					+ compras.get(x).getProducto() + "'");
-			
+			System.out.println(compras.get(x).getProducto());
+			System.out.println(calculo);
+
 			conexion.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 	public void restarStock(int x) {
 		try {
+			
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
-				System.out.println("vuelta "+x);
-				System.out.println("stock "+recogerStock(x));
-				int calculo = recogerStock(x) - comprasAux.get(x).getUnidades();
-				int valor = consulta.executeUpdate("update productos set stock = " + calculo + " where nombre = '"
+			System.out.println("stock " + recogerStock(x));
+			int calculo = recogerStock(x) - comprasAux.get(x).getUnidades();
+			consulta.executeUpdate("update productos set stock = " + calculo + " where nombre = '"
 					+ comprasAux.get(x).getProducto() + "'");
 
-				System.out.println("calculo "+calculo);
-				System.out.println("Unidades "+comprasAux.get(x).getUnidades());
-			
-			
+			System.out.println("calculo " + calculo);
+			System.out.println("Unidades " + compras.get(x).getUnidades());
+			System.out.println("Unidades aux " + comprasAux.get(x).getUnidades());
+			System.out.println("Producto " + comprasAux.get(x).getProducto());
+
 			conexion.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -458,5 +485,4 @@ public class ModificarCompras extends JPanel {
 		}
 		return stock;
 	}
-
 }

@@ -135,7 +135,7 @@ public class ModificarCompras extends JPanel {
 							JOptionPane.WARNING_MESSAGE);
 				} else {
 					eliminarProdCompras();
-					eliminarCompras();
+					
 					insertCompra(v.getFechaTotal(), v.getNifProveedor(), v.getDniPersonal());
 					if (valid == true) {
 						insertProductosCompras();
@@ -185,9 +185,9 @@ public class ModificarCompras extends JPanel {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 
 			Statement consulta = conexion.createStatement();
-			consulta.executeUpdate("insert into compra (fecha, id_proveedor, id_personal) values ('" + fecha
-					+ "',  (select id_proveedor from proveedores where nif='" + nif
-					+ "'), (select id_personal from personal where dni='" + dniP + "'))");
+			consulta.executeUpdate("update compra set fecha= '" + fecha
+					+ "', id_proveedor = (select id_proveedor from proveedores where nif='" + nif
+					+ "'), id_personal = (select id_personal from personal where dni='" + dniP + "') where factura="+compra.getFactura());
 			valid = true;
 			conexion.close();
 		} catch (SQLIntegrityConstraintViolationException e) {
@@ -321,6 +321,29 @@ public class ModificarCompras extends JPanel {
 				e.printStackTrace();
 			}
 		}
+	}
+	public int recogerFactura() {
+		int id=0;
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta
+					.executeQuery("select factura from compra where factura="+tableProductos.getValueAt(tableProductos.getSelectedRow(), 0).toString());
+
+			// si existe lo que estamos buscando
+			if (registro.next()) {
+				id = registro.getInt("factura");
+			} else {
+				System.out.println("Error");
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		return id;
 	}
 
 	public Compras getCompras() {

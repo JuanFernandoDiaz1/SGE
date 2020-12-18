@@ -4,8 +4,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -75,6 +77,7 @@ public class ComprasVista extends JPanel {
 					if(tableCompras.getSelectedRow()==-1) {
 						JOptionPane.showMessageDialog(null, "Selecciona una compra para eliminar", "Error", JOptionPane.WARNING_MESSAGE);
 					}else {
+						restarStock(eliminarCompra());
 						eliminarProdVentas();
 						eliminarVentas();
 						cargarTabla();
@@ -95,7 +98,7 @@ public class ComprasVista extends JPanel {
 		tableCompras = new JTable();
 		scrollPane.setViewportView(tableCompras);
 
-		modeloTabla.setColumnIdentifiers(new Object[] { "Factura", "Fecha", "Proveedor", "NIF Proveedor", "Personal", "DNI Personal"});
+		modeloTabla.setColumnIdentifiers(new Object[] { "Factura", "Fecha", "Proveedor", "NIF Proveedor", "Personal", "DNI Personal","Precio Compra"});
 		tableCompras.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 		cargarTabla();
@@ -118,7 +121,7 @@ public class ComprasVista extends JPanel {
 		modeloTabla.setRowCount(0);
 		for (Compras v : gestor.consultaCompras()) {
 			modeloTabla.addRow(
-					new Object[] { v.getFactura(), v.getFechaTotal(), v.getProveedor(), v.getNifProveedor(), v.getPersonal(), v.getDniPersonal() });
+					new Object[] { v.getFactura(), v.getFechaTotal(), v.getProveedor(), v.getNifProveedor(), v.getPersonal(), v.getDniPersonal(),v.getPrecioTotal() });
 		}
 	}
 	
@@ -159,6 +162,71 @@ public class ComprasVista extends JPanel {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	public ArrayList<Compras> eliminarCompra() {
+		ArrayList<Compras> productos = new ArrayList<>();
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery(
+					"SELECT Nombre, Unidades FROM productos_compra inner join productos on productos_compra.ID_Producto = productos.ID_Producto WHERE ID_compra="
+							+ tableCompras.getValueAt(tableCompras.getSelectedRow(), 0).toString());
+
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				Compras compra = new Compras();
+
+				compra.setProducto(registro.getString("Nombre"));
+				compra.setUnidades(registro.getInt("Unidades"));
+				// añadimos modelos al arrayList
+				productos.add(compra);
+
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+
+		return productos;
+	}
+	public void restarStock(ArrayList<Compras> compra) {
+			try {
+			
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			for (int i = 0; i < compra.size(); i++) {
+					
+				int calculo = recogerStock(i,compra) - compra.get(i).getUnidades();
+				consulta.executeUpdate("update productos set stock = " + calculo + " where nombre = '"
+					+ compra.get(i).getProducto() + "'");
+
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	public int recogerStock(int x, ArrayList<Compras> compra) {
+		int stock = 0;
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			ResultSet registro = consulta
+					.executeQuery("select stock from productos where nombre='" + compra.get(x).getProducto() + "'");
+
+			if (registro.next()) {
+				stock = registro.getInt("stock");
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		return stock;
 	}
 	
 	public Compras pideDatos() {

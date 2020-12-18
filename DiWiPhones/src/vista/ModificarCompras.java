@@ -55,15 +55,6 @@ public class ModificarCompras extends JPanel {
 		JButton btnCesta = new JButton("A\u00F1adir");
 		btnCesta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (cont == 0) {
-					for (int x = 0; x < tableProductos.getRowCount(); x++) {
-						Compras c1 = new Compras();
-						c1.setProducto(tableProductos.getValueAt(x, 0).toString());
-						c1.setUnidades(Integer.parseInt(tableProductos.getValueAt(x, 1).toString()));
-						cont++;
-					}
-				}
-
 				int unidades = 0;
 				try {
 					unidades = Integer.parseInt(txtUnidades.getText().toString());
@@ -76,7 +67,6 @@ public class ModificarCompras extends JPanel {
 				} else if (comboBox.getSelectedIndex() == 0) {
 					JOptionPane.showMessageDialog(null, "Selecciona un producto", "Error", JOptionPane.WARNING_MESSAGE);
 				} else {
-
 					cargar();
 					cargarTabla();
 				}
@@ -138,8 +128,11 @@ public class ModificarCompras extends JPanel {
 							JOptionPane.WARNING_MESSAGE);
 				} else {
 					eliminarProdCompras();
-
-					insertCompra(v.getFechaTotal(), v.getNifProveedor(), v.getDniPersonal());
+					for(int x=0;x<compras.size();x++) {
+						v.setPrecioTotal(v.getPrecioTotal()+(compras.get(x).getUnidades()*compras.get(x).getPrecio()));
+						
+					}
+					insertCompra(v.getFechaTotal(), v.getNifProveedor(), v.getDniPersonal(),v.getPrecioTotal());
 					if (valid == true) {
 						insertProductosCompras();
 					}
@@ -192,14 +185,14 @@ public class ModificarCompras extends JPanel {
 
 	}
 
-	public void insertCompra(String fecha, String nif, String dniP) {
+	public void insertCompra(String fecha, String nif, String dniP, int precioTotal) {
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 
 			Statement consulta = conexion.createStatement();
 			consulta.executeUpdate("update compra set fecha= '" + fecha
 					+ "', id_proveedor = (select id_proveedor from proveedores where nif='" + nif
-					+ "'), id_personal = (select id_personal from personal where dni='" + dniP + "') where factura="
+					+ "'), id_personal = (select id_personal from personal where dni='" + dniP + "'),precioCompra = "+precioTotal+" where factura="
 					+ compra.getFactura());
 			valid = true;
 			conexion.close();
@@ -282,6 +275,7 @@ public class ModificarCompras extends JPanel {
 	}
 
 	public void cargar() {
+		GestionBBDD gestor = new GestionBBDD();
 		int unidades = 0;
 		try {
 			unidades = Integer.parseInt(txtUnidades.getText().toString());
@@ -292,6 +286,7 @@ public class ModificarCompras extends JPanel {
 			Compras e = new Compras();
 			e.setUnidades(unidades);
 			e.setProducto(comboBox.getSelectedItem().toString());
+			e.setPrecio(gestor.consultaPrecioCompra(e.getProducto()));
 			boolean validar = false;
 			for (int x = 0; x < compras.size(); x++) {
 				if (compras.get(x).getProducto().compareTo(e.getProducto()) == 0) {

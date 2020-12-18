@@ -10,8 +10,22 @@ public class Venta {
 	private String dniPersonal;
 	private String producto;
 	private int unidades;
+	private int precio;
+	private int precioTotal;
 	
 	
+	public int getPrecio() {
+		return precio;
+	}
+	public void setPrecio(int precio) {
+		this.precio = precio;
+	}
+	public int getPrecioTotal() {
+		return precioTotal;
+	}
+	public void setPrecioTotal(int precioTotal) {
+		this.precioTotal = precioTotal;
+	}
 	public String getProducto() {
 		return producto;
 	}

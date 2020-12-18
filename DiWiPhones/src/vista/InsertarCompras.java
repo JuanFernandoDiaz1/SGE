@@ -109,13 +109,16 @@ public class InsertarCompras extends JPanel {
 					JOptionPane.showMessageDialog(null, "Selecciona productos vendidos", "Error",
 							JOptionPane.WARNING_MESSAGE);
 				} else {
-					insertCompra(c.getFechaTotal(), c.getNifProveedor(), c.getDniPersonal());
+					for(int x=0;x<compras.size();x++) {
+						sumarStock(x);
+						c.setPrecioTotal(c.getPrecioTotal()+(compras.get(x).getUnidades()*compras.get(x).getPrecio()));
+						
+					}
+					insertCompra(c.getFechaTotal(), c.getNifProveedor(), c.getDniPersonal(), c.getPrecioTotal());
 					if (valid == true) {
 						insertProductosCompras();
-						for(int x=0;x<compras.size();x++) {
-							sumarStock(x);
-							int precioTotal=compras.get(x).getUnidades()*
-						}
+						
+						
 						
 					}
 					JOptionPane.showMessageDialog(null, "Compra Añadida");
@@ -154,14 +157,14 @@ public class InsertarCompras extends JPanel {
 
 	}
 
-	public void insertCompra(String fecha, String nif, String dniP) {
+	public void insertCompra(String fecha, String nif, String dniP, int precioTotal) {
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 
 			Statement consulta = conexion.createStatement();
-			consulta.executeUpdate("insert into compra (fecha, id_proveedor, id_personal) values ('" + fecha
+			consulta.executeUpdate("insert into compra (fecha, id_proveedor, id_personal, precioCompra) values ('" + fecha
 					+ "', (select id_proveedor from proveedores where nif='" + nif
-					+ "'), (select id_personal from personal where dni='" + dniP + "'))");
+					+ "'), (select id_personal from personal where dni='" + dniP + "'), "+precioTotal+")");
 			valid = true;
 			conexion.close();
 		} catch (SQLException e) {
@@ -250,6 +253,7 @@ public class InsertarCompras extends JPanel {
 	}
 
 	public void cargar() {
+		GestionBBDD gestor = new GestionBBDD();
 		int unidades = 0;
 		try {
 			unidades = Integer.parseInt(txtUnidades.getText().toString());
@@ -260,6 +264,7 @@ public class InsertarCompras extends JPanel {
 			Compras c = new Compras();
 			c.setUnidades(unidades);
 			c.setProducto(comboBox.getSelectedItem().toString());
+			c.setPrecio(gestor.consultaPrecioCompra(c.getProducto()));
 			boolean validar = false;
 			for (int x = 0; x < compras.size(); x++) {
 				if (compras.get(x).getProducto().compareTo(c.getProducto()) == 0) {
@@ -368,27 +373,5 @@ public class InsertarCompras extends JPanel {
 	}
 	
 	
-	public void cargarFactura() {
-		compras.clear();
-		cmbProveedor.setSelectedItem(compra.getNifProveedor());
-		cmbProveedores.setSelectedItem(compra.getDniPersonal());
-		GestionBBDD gestion = new GestionBBDD();
-		modeloTabla.setRowCount(0);
-		for (Compras c : gestion.listaCompra2(compra.getFactura())) {
-			compras.add(c);
-		}
-		modeloTabla.setRowCount(0);
-		for (Compras c : compras) {
-			modeloTabla.addRow(new Object[] { c.getProducto(), c.getUnidades() });
-		}
-		System.out.println(cont2);
 
-		if (cont2 == 0) {
-			comprasAux = gestion.listaCompra2(compra.getFactura());
-			System.out.println("Unidades aux " + comprasAux.get(0).getUnidades());
-			
-			cont2++;
-		}
-
-	}
 }

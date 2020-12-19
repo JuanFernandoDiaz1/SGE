@@ -18,6 +18,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.toedter.calendar.JCalendar;
 
+import controlador.GestionBBDD;
 import modelo.Venta;
 
 import javax.swing.JComboBox;
@@ -104,7 +105,12 @@ public class InsertarVentas extends JPanel {
 				}else if(ventas.size()<1){
 					JOptionPane.showMessageDialog(null, "Selecciona productos vendidos", "Error", JOptionPane.WARNING_MESSAGE);
 				}else {
-					insertVenta(v.getFechaTotal(), v.getDniCliente(), v.getDniPersonal());
+					for(int x=0;x<ventas.size();x++) {
+						restarStock(x);
+						v.setPrecioTotal(v.getPrecioTotal()+(ventas.get(x).getUnidades()*ventas.get(x).getPrecio()));
+						
+					}
+					insertVenta(v.getFechaTotal(), v.getDniCliente(), v.getDniPersonal(),v.getPrecioTotal());
 					if(valid==true) {
 						insertProductosVentas();
 						for(int x=0;x<ventas.size();x++) {
@@ -147,13 +153,13 @@ public class InsertarVentas extends JPanel {
 
 	}
 
-	public void insertVenta(String fecha, String dniC, String dniP) {
+	public void insertVenta(String fecha, String dniC, String dniP, int precioTotal) {
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 
 			Statement consulta = conexion.createStatement();
-			consulta.executeUpdate("insert into venta (fecha, id_cliente, id_personal) values ('"
-					+ fecha + "',  (select id_cliente from clientes where dni='"+dniC + "'), (select id_personal from personal where dni='" + dniP + "'))");
+			consulta.executeUpdate("insert into venta (fecha, id_cliente, id_personal, precioVenta) values ('"
+					+ fecha + "',  (select id_cliente from clientes where dni='"+dniC + "'), (select id_personal from personal where dni='" + dniP + "'),"+precioTotal+")");
 			valid=true;
 			conexion.close();
 		} catch (SQLIntegrityConstraintViolationException e) {
@@ -246,6 +252,7 @@ public class InsertarVentas extends JPanel {
 	}
 
 	public void cargar() {
+		GestionBBDD gestor = new GestionBBDD();
 		int unidades = 0;
 		try {
 			unidades = Integer.parseInt(txtUnidades.getText().toString());
@@ -256,6 +263,7 @@ public class InsertarVentas extends JPanel {
 			Venta e = new Venta();
 			e.setUnidades(unidades);
 			e.setProducto(comboBox.getSelectedItem().toString());
+			e.setPrecio(gestor.consultaPrecioCompra(e.getProducto()));
 			boolean validar=false;
 			for(int x = 0; x<ventas.size();x++) {
 				if(ventas.get(x).getProducto().compareTo(e.getProducto())==0) {

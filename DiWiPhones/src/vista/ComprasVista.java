@@ -78,8 +78,8 @@ public class ComprasVista extends JPanel {
 						JOptionPane.showMessageDialog(null, "Selecciona una compra para eliminar", "Error", JOptionPane.WARNING_MESSAGE);
 					}else {
 						restarStock(eliminarCompra());
-						eliminarProdVentas();
-						eliminarVentas();
+						eliminarProdCompras();
+						eliminarCompras();
 						cargarTabla();
 					}
 				}
@@ -133,7 +133,7 @@ public class ComprasVista extends JPanel {
 		
 	}
 	
-	public void eliminarVentas() {
+	public void eliminarCompras() {
 		Connection conexion;
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
@@ -149,7 +149,7 @@ public class ComprasVista extends JPanel {
 		}
 	}
 	
-	public void eliminarProdVentas() {
+	public void eliminarProdCompras() {
 		Connection conexion;
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");

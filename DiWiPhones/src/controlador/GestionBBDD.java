@@ -179,7 +179,7 @@ public class GestionBBDD {
 			Statement consulta = conexion.createStatement();
 			// guarda los regsitros de la tabla que vamos a consultar
 			ResultSet registro = consulta.executeQuery("select factura, fecha, clientes.nombre, clientes.dni,"
-					+ " personal.nombre, personal.dni from venta inner join clientes on clientes.ID_Cliente = venta.ID_Cliente"
+					+ " personal.nombre, personal.dni, precioVenta from venta inner join clientes on clientes.ID_Cliente = venta.ID_Cliente"
 					+ " inner join personal on venta.ID_Personal = personal.ID_Personal");
 
 			// si existe lo que estamos buscando
@@ -192,6 +192,7 @@ public class GestionBBDD {
 				venta.setDniCliente(registro.getString("clientes.DNI"));
 				venta.setPersonal(registro.getString("personal.nombre"));
 				venta.setDniPersonal(registro.getString("personal.DNI"));
+				venta.setPrecioTotal(registro.getInt("precioVenta"));
 				// añadimos modelos al arrayList
 				ventas.add(venta);
 

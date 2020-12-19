@@ -4,8 +4,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -22,6 +24,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import controlador.GestionBBDD;
+import modelo.Compras;
 import modelo.Fecha;
 import modelo.Productos;
 import modelo.Venta;
@@ -82,6 +85,7 @@ public class VentaVista extends JPanel {
 					if(tableVentas.getSelectedRow()==-1) {
 						JOptionPane.showMessageDialog(null, "Selecciona una venta para eliminar", "Error", JOptionPane.WARNING_MESSAGE);
 					}else {
+						sumarStock(eliminarVenta());
 						eliminarProdVentas();
 						eliminarVentas();
 						cargarTabla();
@@ -102,7 +106,7 @@ public class VentaVista extends JPanel {
 		tableVentas = new JTable();
 		scrollPane.setViewportView(tableVentas);
 
-		modeloTabla.setColumnIdentifiers(new Object[] { "Factura", "Fecha", "Cliente", "DNI Cliente", "Personal", "DNI Personal"});
+		modeloTabla.setColumnIdentifiers(new Object[] { "Factura", "Fecha", "Cliente", "DNI Cliente", "Personal", "DNI Personal","Precio Venta"});
 		tableVentas.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 		cargarTabla();
@@ -125,7 +129,7 @@ public class VentaVista extends JPanel {
 		modeloTabla.setRowCount(0);
 		for (Venta v : gestor.consultaVenta()) {
 			modeloTabla.addRow(
-					new Object[] { v.getFactura(), v.getFechaTotal(), v.getCliente(), v.getDniCliente(), v.getPersonal(), v.getDniPersonal() });
+					new Object[] { v.getFactura(), v.getFechaTotal(), v.getCliente(), v.getDniCliente(), v.getPersonal(), v.getDniPersonal(),v.getPrecioTotal() });
 		}
 	}
 	
@@ -172,6 +176,71 @@ public class VentaVista extends JPanel {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	public ArrayList<Venta> eliminarVenta() {
+		ArrayList<Venta> productos = new ArrayList<>();
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery(
+					"SELECT Nombre, Unidades FROM productos_ventas inner join productos on productos_ventas.ID_Producto = productos.ID_Producto WHERE ID_venta="
+							+ tableVentas.getValueAt(tableVentas.getSelectedRow(), 0).toString());
+
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				Venta venta = new Venta();
+
+				venta.setProducto(registro.getString("Nombre"));
+				venta.setUnidades(registro.getInt("Unidades"));
+				// añadimos modelos al arrayList
+				productos.add(venta);
+
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+
+		return productos;
+	}
+	public void sumarStock(ArrayList<Venta> venta) {
+			try {
+			
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			for (int i = 0; i < venta.size(); i++) {
+					
+				int calculo = recogerStock(i,venta) + venta.get(i).getUnidades();
+				consulta.executeUpdate("update productos set stock = " + calculo + " where nombre = '"
+					+ venta.get(i).getProducto() + "'");
+
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	public int recogerStock(int x, ArrayList<Venta> venta) {
+		int stock = 0;
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			ResultSet registro = consulta
+					.executeQuery("select stock from productos where nombre='" + venta.get(x).getProducto() + "'");
+
+			if (registro.next()) {
+				stock = registro.getInt("stock");
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		return stock;
 	}
 	public Venta pideDatos() {
 		Venta venta = new Venta();

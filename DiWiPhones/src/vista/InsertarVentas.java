@@ -113,9 +113,7 @@ public class InsertarVentas extends JPanel {
 					insertVenta(v.getFechaTotal(), v.getDniCliente(), v.getDniPersonal(),v.getPrecioTotal());
 					if(valid==true) {
 						insertProductosVentas();
-						for(int x=0;x<ventas.size();x++) {
-							restarStock(x);
-						}
+						
 					}
 					JOptionPane.showMessageDialog(null, "Venta Realizada");
 					VentaVista vv = new VentaVista();
@@ -263,7 +261,7 @@ public class InsertarVentas extends JPanel {
 			Venta e = new Venta();
 			e.setUnidades(unidades);
 			e.setProducto(comboBox.getSelectedItem().toString());
-			e.setPrecio(gestor.consultaPrecioCompra(e.getProducto()));
+			e.setPrecio(gestor.consultaPrecioVenta(e.getProducto()));
 			boolean validar=false;
 			for(int x = 0; x<ventas.size();x++) {
 				if(ventas.get(x).getProducto().compareTo(e.getProducto())==0) {
@@ -312,7 +310,7 @@ public class InsertarVentas extends JPanel {
 			Statement consulta = conexion.createStatement();
 			// guarda los regsitros de la tabla que vamos a consultar
 			ResultSet registro = consulta
-					.executeQuery("select factura from venta order by id_cliente desc limit 1");
+					.executeQuery("select factura from venta order by factura desc limit 1");
 
 			// si existe lo que estamos buscando
 			if (registro.next()) {
@@ -333,11 +331,13 @@ public class InsertarVentas extends JPanel {
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
-
+			System.out.println("+++"+recogerStock(x)+"+++++");
+			
 			int valor = consulta.executeUpdate("update productos set stock = " + recogerStock(x)+"-"+ventas.get(x).getUnidades()
 					+ " where nombre = '" + ventas.get(x).getProducto() + "'");
 
-
+			System.out.println("+++"+recogerStock(x)+"+++++");
+			System.out.println("---"+ventas.get(x).getUnidades()+"----");
 			conexion.close();
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -800,7 +800,25 @@ public class GestionBBDD {
 			}
 			conexion.close();
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la precio", "Error",
+			JOptionPane.showMessageDialog(null, "Error en la BBDD precio", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		return precio;
+	}
+	
+	public int consultaPrecioVenta(String nombre) {
+		int precio = 0;
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			ResultSet registro = consulta.executeQuery("select precioVenta from productos where nombre='" + nombre + "'");
+
+			if(registro.next()) {
+				precio = registro.getInt("precioVenta");
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD precio", "Error",
 					JOptionPane.WARNING_MESSAGE);
 		}
 		return precio;

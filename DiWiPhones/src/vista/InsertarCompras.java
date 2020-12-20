@@ -313,7 +313,7 @@ public class InsertarCompras extends JPanel {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 			// guarda los regsitros de la tabla que vamos a consultar
-			ResultSet registro = consulta.executeQuery("select factura from compra order by id_personal desc limit 1");
+			ResultSet registro = consulta.executeQuery("select factura from compra order by factura desc limit 1");
 
 			// si existe lo que estamos buscando
 			if (registro.next()) {

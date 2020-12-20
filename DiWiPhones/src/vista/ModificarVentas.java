@@ -278,7 +278,7 @@ public class ModificarVentas extends JPanel {
 			Venta e = new Venta();
 			e.setUnidades(unidades);
 			e.setProducto(comboBox.getSelectedItem().toString());
-			e.setPrecio(gestor.consultaPrecioCompra(e.getProducto()));
+			e.setPrecio(gestor.consultaPrecioVenta(e.getProducto()));
 			boolean validar = false;
 			for (int x = 0; x < ventas.size(); x++) {
 				if (ventas.get(x).getProducto().compareTo(e.getProducto()) == 0) {

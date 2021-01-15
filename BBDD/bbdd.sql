@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.3
+-- version 5.0.2
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 17-12-2020 a las 21:00:22
--- Versión del servidor: 10.4.14-MariaDB
--- Versión de PHP: 7.2.34
+-- Tiempo de generación: 15-01-2021 a las 19:43:25
+-- Versión del servidor: 10.4.11-MariaDB
+-- Versión de PHP: 7.4.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -40,9 +40,7 @@ CREATE TABLE `clientes` (
 --
 
 INSERT INTO `clientes` (`ID_Cliente`, `DNI`, `Nombre`, `Direccion`, `Email`) VALUES
-(18, '01111111X', 'Jordan', 'Calle C1', 'jordan@gmail.com'),
-(19, '02222222X', 'Alberto', 'Calle C2', 'alberto@gmail.com'),
-(22, '01111111X', 'Jordan', 'Calle C1', 'jordan@gmail.com');
+(27, '09130325Z', 'Mario', 'Calle 1', 'juan@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -63,10 +61,8 @@ CREATE TABLE `compra` (
 --
 
 INSERT INTO `compra` (`Factura`, `fecha`, `id_personal`, `id_proveedor`, `PrecioCompra`) VALUES
-(8, '2020-12-17', 2, 2, 0),
-(9, '2020-12-17', 2, 2, 0),
-(11, '2020-12-17', 2, 2, 0),
-(12, '2020-12-17', 2, 1, 0);
+(13, '2020-12-11', 6, 4, 150),
+(14, '2020-12-21', 6, 4, 15);
 
 -- --------------------------------------------------------
 
@@ -76,21 +72,32 @@ INSERT INTO `compra` (`Factura`, `fecha`, `id_personal`, `id_proveedor`, `Precio
 
 CREATE TABLE `escandallo` (
   `ID_Escandallo` int(11) NOT NULL,
-  `ID_Personal` int(11) NOT NULL,
   `ID_Producto` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `ordenes-productos`
+-- Estructura de tabla para la tabla `escandallos_materiales`
 --
 
-CREATE TABLE `ordenes-productos` (
-  `ID` int(11) NOT NULL,
-  `ID_Poducto` int(11) NOT NULL,
-  `ID_Ordenes` int(11) NOT NULL,
-  `Unidades` int(11) NOT NULL
+CREATE TABLE `escandallos_materiales` (
+  `ID_Escandallo` int(11) NOT NULL,
+  `ID_Material` int(11) NOT NULL,
+  `UnidadesMaterial` int(11) NOT NULL,
+  `ID_Escandallo_materiales` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `materiales`
+--
+
+CREATE TABLE `materiales` (
+  `ID_Material` int(11) NOT NULL,
+  `Nombre` int(11) NOT NULL,
+  `Stock` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -102,7 +109,11 @@ CREATE TABLE `ordenes-productos` (
 CREATE TABLE `ordenesfabrica` (
   `Unidades` int(11) NOT NULL,
   `ID_Escandallo` int(11) NOT NULL,
-  `ID_orden` int(11) NOT NULL
+  `ID_orden` int(11) NOT NULL,
+  `ID_Personal` int(11) NOT NULL,
+  `FechaInicio` date NOT NULL,
+  `FechaFin` date NOT NULL,
+  `Estado` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -124,7 +135,7 @@ CREATE TABLE `personal` (
 --
 
 INSERT INTO `personal` (`Nombre`, `DNI`, `ID_Personal`, `Direccion`, `Email`) VALUES
-('Mario', '02222222A', 2, 'Calle 2', 'mario@gmail.com');
+('Rafael', '08888888X', 6, 'calle', 'rafa@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -147,11 +158,7 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`Nombre`, `Descripcion`, `Precio`, `PrecioVenta`, `Stock`, `ID_Producto`, `ID_Proveedor`) VALUES
-('mochila', 'pestoso', 10, 0, 900, 1, 1),
-('Raton', 'Grande', 80, 0, 2000, 4, 2),
-('Ratona', 'Grande', 2000, 0, 81, 15, 2),
-('<3', '<3<3<3<3<3<3<3<3', 1000, 60, 1942, 16, 1),
-('hola', '<3<----', 100030, 600, 1942, 17, 1);
+('Raton', 'raton gaming', 15, 20, -5, 18, 4);
 
 -- --------------------------------------------------------
 
@@ -171,10 +178,8 @@ CREATE TABLE `productos_compra` (
 --
 
 INSERT INTO `productos_compra` (`ID`, `id_producto`, `Id_compra`, `Unidades`) VALUES
-(10, 1, 8, 36),
-(28, 16, 9, 12),
-(29, 1, 9, 8),
-(32, 4, 12, 1);
+(33, 18, 13, 10),
+(35, 18, 14, 1);
 
 -- --------------------------------------------------------
 
@@ -194,8 +199,9 @@ CREATE TABLE `productos_ventas` (
 --
 
 INSERT INTO `productos_ventas` (`ID`, `ID_Producto`, `ID_Venta`, `Unidades`) VALUES
-(13, 16, 11, 200),
-(14, 1, 12, 90);
+(24, 18, 22, 30),
+(25, 18, 23, 31),
+(26, 18, 24, 5);
 
 -- --------------------------------------------------------
 
@@ -216,8 +222,7 @@ CREATE TABLE `proveedores` (
 --
 
 INSERT INTO `proveedores` (`Nombre`, `NIF`, `Direccion`, `Email`, `ID_Proveedor`) VALUES
-('Paco', '1234567891235', 'Calle 1', 'paco@sanz.com', 1),
-('Agustin', '4321987654325', 'Calle 2', 'agustin@gmail.com', 2);
+('Agustin', '012012012X', 'Calle 1', 'jordan@gmail.com', 4);
 
 -- --------------------------------------------------------
 
@@ -251,10 +256,10 @@ CREATE TABLE `telefonos` (
 --
 
 INSERT INTO `telefonos` (`ID_Telefono`, `Numero`, `ID_Proveedor`, `ID_Personal`, `ID_Cliente`) VALUES
-(34, 999999999, 2, NULL, NULL),
-(37, 653265152, NULL, 2, NULL),
-(49, 622222222, NULL, NULL, 19),
-(57, 611111111, NULL, NULL, 22);
+(65, 653653653, NULL, NULL, 27),
+(67, 653653652, 4, NULL, NULL),
+(68, 654621687, NULL, 6, NULL),
+(69, 655555555, NULL, NULL, 27);
 
 -- --------------------------------------------------------
 
@@ -275,8 +280,9 @@ CREATE TABLE `venta` (
 --
 
 INSERT INTO `venta` (`factura`, `fecha`, `Id_cliente`, `Id_personal`, `PrecioVenta`) VALUES
-(11, '2019-08-13', 18, 2, 0),
-(12, '2020-12-22', 19, 2, 0);
+(22, '2020-12-20', 27, 6, 600),
+(23, '2020-12-21', 27, 6, 620),
+(24, '2020-12-21', 27, 6, 100);
 
 --
 -- Índices para tablas volcadas
@@ -301,23 +307,29 @@ ALTER TABLE `compra`
 --
 ALTER TABLE `escandallo`
   ADD PRIMARY KEY (`ID_Escandallo`),
-  ADD KEY `fk_escandallo_personal` (`ID_Personal`),
   ADD KEY `fk_escandallo_producto` (`ID_Producto`);
 
 --
--- Indices de la tabla `ordenes-productos`
+-- Indices de la tabla `escandallos_materiales`
 --
-ALTER TABLE `ordenes-productos`
-  ADD PRIMARY KEY (`ID`),
-  ADD KEY `fk_orden_producto` (`ID_Ordenes`),
-  ADD KEY `fk_producto_orden` (`ID_Poducto`);
+ALTER TABLE `escandallos_materiales`
+  ADD PRIMARY KEY (`ID_Escandallo_materiales`),
+  ADD KEY `fk_escandallo_materiales` (`ID_Escandallo`),
+  ADD KEY `fk_materiales_escandallo` (`ID_Material`);
+
+--
+-- Indices de la tabla `materiales`
+--
+ALTER TABLE `materiales`
+  ADD PRIMARY KEY (`ID_Material`);
 
 --
 -- Indices de la tabla `ordenesfabrica`
 --
 ALTER TABLE `ordenesfabrica`
   ADD PRIMARY KEY (`ID_orden`),
-  ADD KEY `fk_orden_escandallo` (`ID_Escandallo`);
+  ADD KEY `fk_orden_escandallo` (`ID_Escandallo`),
+  ADD KEY `fk_orden_personal` (`ID_Personal`);
 
 --
 -- Indices de la tabla `personal`
@@ -388,13 +400,13 @@ ALTER TABLE `venta`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `ID_Cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `ID_Cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT de la tabla `compra`
 --
 ALTER TABLE `compra`
-  MODIFY `Factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `Factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `escandallo`
@@ -403,10 +415,16 @@ ALTER TABLE `escandallo`
   MODIFY `ID_Escandallo` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `ordenes-productos`
+-- AUTO_INCREMENT de la tabla `escandallos_materiales`
 --
-ALTER TABLE `ordenes-productos`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `escandallos_materiales`
+  MODIFY `ID_Escandallo_materiales` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `materiales`
+--
+ALTER TABLE `materiales`
+  MODIFY `ID_Material` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `ordenesfabrica`
@@ -418,31 +436,31 @@ ALTER TABLE `ordenesfabrica`
 -- AUTO_INCREMENT de la tabla `personal`
 --
 ALTER TABLE `personal`
-  MODIFY `ID_Personal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ID_Personal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `ID_Producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `ID_Producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `productos_compra`
 --
 ALTER TABLE `productos_compra`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT de la tabla `productos_ventas`
 --
 ALTER TABLE `productos_ventas`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores`
 --
 ALTER TABLE `proveedores`
-  MODIFY `ID_Proveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `ID_Proveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores_productos`
@@ -454,13 +472,13 @@ ALTER TABLE `proveedores_productos`
 -- AUTO_INCREMENT de la tabla `telefonos`
 --
 ALTER TABLE `telefonos`
-  MODIFY `ID_Telefono` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `ID_Telefono` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT de la tabla `venta`
 --
 ALTER TABLE `venta`
-  MODIFY `factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- Restricciones para tablas volcadas
@@ -477,21 +495,21 @@ ALTER TABLE `compra`
 -- Filtros para la tabla `escandallo`
 --
 ALTER TABLE `escandallo`
-  ADD CONSTRAINT `fk_escandallo_personal` FOREIGN KEY (`ID_Personal`) REFERENCES `personal` (`ID_Personal`),
   ADD CONSTRAINT `fk_escandallo_producto` FOREIGN KEY (`ID_Producto`) REFERENCES `productos` (`ID_Producto`);
 
 --
--- Filtros para la tabla `ordenes-productos`
+-- Filtros para la tabla `escandallos_materiales`
 --
-ALTER TABLE `ordenes-productos`
-  ADD CONSTRAINT `fk_orden_producto` FOREIGN KEY (`ID_Ordenes`) REFERENCES `ordenesfabrica` (`ID_orden`),
-  ADD CONSTRAINT `fk_producto_orden` FOREIGN KEY (`ID_Poducto`) REFERENCES `productos` (`ID_Producto`);
+ALTER TABLE `escandallos_materiales`
+  ADD CONSTRAINT `fk_escandallo_materiales` FOREIGN KEY (`ID_Escandallo`) REFERENCES `escandallo` (`ID_Escandallo`),
+  ADD CONSTRAINT `fk_materiales_escandallo` FOREIGN KEY (`ID_Material`) REFERENCES `materiales` (`ID_Material`);
 
 --
 -- Filtros para la tabla `ordenesfabrica`
 --
 ALTER TABLE `ordenesfabrica`
-  ADD CONSTRAINT `fk_orden_escandallo` FOREIGN KEY (`ID_Escandallo`) REFERENCES `escandallo` (`ID_Escandallo`);
+  ADD CONSTRAINT `fk_orden_escandallo` FOREIGN KEY (`ID_Escandallo`) REFERENCES `escandallo` (`ID_Escandallo`),
+  ADD CONSTRAINT `fk_orden_personal` FOREIGN KEY (`ID_Personal`) REFERENCES `personal` (`ID_Personal`);
 
 --
 -- Filtros para la tabla `productos`

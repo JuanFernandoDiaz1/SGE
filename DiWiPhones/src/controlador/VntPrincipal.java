@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import vista.Fabrica;
 import vista.Operaciones;
 import vista.Tablas;
 
@@ -82,6 +83,16 @@ public class VntPrincipal extends JFrame {
 			}
 		});
 		menu.add(menuOperaciones);
+		
+		JMenuItem menuFabrica = new JMenuItem("Menu Fabrica");
+		menuFabrica.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Fabrica fabrica = new Fabrica();
+				nuevoPanel(fabrica);
+			}
+		});
+		menu.add(menuFabrica);
 		
 		JLabel labelDiwi = new JLabel("");
 		labelDiwi.setIcon(new ImageIcon("img\\diwi.png"));

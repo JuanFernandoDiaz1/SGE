@@ -13,6 +13,7 @@ import javax.swing.JTable;
 
 import modelo.Cliente;
 import modelo.Compras;
+import modelo.Escandallo;
 import modelo.Personal;
 import modelo.Productos;
 import modelo.Proveedor;
@@ -822,6 +823,32 @@ public class GestionBBDD {
 					JOptionPane.WARNING_MESSAGE);
 		}
 		return precio;
+	}
+	public ArrayList<Escandallo> consultaEscandallo() {
+		ArrayList<Escandallo> escandallos = new ArrayList<>();
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("SELECT id_escandallo, nombre FROM escandallo inner join productos on productos.ID_Producto = escandallo.ID_Producto");
+
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				Escandallo escandallo = new Escandallo();
+
+				escandallo.setIdEscandallo(registro.getInt("id_escandallo"));
+				escandallo.setProducto(registro.getString("nombre"));
+				// añadimos modelos al arrayList
+				escandallos.add(escandallo);
+
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+
+		return escandallos;
 	}
 
 

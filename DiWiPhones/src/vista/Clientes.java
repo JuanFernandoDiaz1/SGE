@@ -24,6 +24,8 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 
 public class Clientes extends JPanel {
 	private JTable tableClientes;
@@ -38,7 +40,6 @@ public class Clientes extends JPanel {
 	 * Create the panel.
 	 */
 	public Clientes() {
-		setLayout(null);
 		setBounds(0, 0, 723, 507);
 
 		JButton btnInsert = new JButton("Insertar");
@@ -70,8 +71,6 @@ public class Clientes extends JPanel {
 
 			}
 		});
-		btnInsert.setBounds(199, 381, 89, 23);
-		add(btnInsert);
 
 		JButton btnModificar = new JButton("Modificar");
 		btnModificar.addActionListener(new ActionListener() {
@@ -83,8 +82,6 @@ public class Clientes extends JPanel {
 				}
 			}
 		});
-		btnModificar.setBounds(315, 381, 89, 23);
-		add(btnModificar);
 
 		JButton btnRefresh = new JButton("");
 		btnRefresh.addActionListener(new ActionListener() {
@@ -116,41 +113,25 @@ public class Clientes extends JPanel {
 				}
 			}
 		});
-		btnEliminar.setBounds(429, 381, 89, 23);
-		add(btnEliminar);
 		btnRefresh.setIcon(new ImageIcon("img/actualizado.png"));
-		btnRefresh.setBounds(22, 11, 40, 35);
-		add(btnRefresh);
 
 		txtTelefono = new JTextField();
 		txtTelefono.setColumns(10);
-		txtTelefono.setBounds(539, 286, 86, 20);
-		add(txtTelefono);
 
 		txtDni = new JTextField();
 		txtDni.setColumns(10);
-		txtDni.setBounds(367, 286, 86, 20);
-		add(txtDni);
 
 		txtEmail = new JTextField();
 		txtEmail.setColumns(10);
-		txtEmail.setBounds(367, 325, 126, 20);
-		add(txtEmail);
 
 		txtDireccion = new JTextField();
 		txtDireccion.setColumns(10);
-		txtDireccion.setBounds(158, 323, 117, 20);
-		add(txtDireccion);
 
 		txtNombre = new JTextField();
 		txtNombre.setToolTipText("");
 		txtNombre.setColumns(10);
-		txtNombre.setBounds(158, 286, 117, 20);
-		add(txtNombre);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(84, 41, 549, 210);
-		add(scrollPane);
 
 		tableClientes = new JTable();
 		scrollPane.setViewportView(tableClientes);
@@ -161,34 +142,128 @@ public class Clientes extends JPanel {
 		cargarTabla();
 
 		JLabel lblNombre = new JLabel("Nombre: ");
-		lblNombre.setBounds(94, 288, 65, 17);
-		add(lblNombre);
 
 		JLabel lblDni = new JLabel("DNI:");
-		lblDni.setBounds(322, 286, 32, 20);
-		add(lblDni);
 
 		JLabel lblEmail = new JLabel("Email:");
-		lblEmail.setBounds(322, 325, 40, 20);
-		add(lblEmail);
 
 		JLabel lblDireccion = new JLabel("Direccion:");
-		lblDireccion.setBounds(94, 326, 63, 14);
-		add(lblDireccion);
 
 		JLabel lblTel = new JLabel("Telefono:");
-		lblTel.setBounds(474, 289, 55, 14);
-		add(lblTel);
 
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setIcon(new ImageIcon("img/diwi.png"));
-		lblLogo.setBounds(494, 394, 199, 54);
-		add(lblLogo);
 
 		JLabel lblFondo = new JLabel("");
 		lblFondo.setIcon(new ImageIcon("img\\fondo.jpg"));
-		lblFondo.setBounds(0, 0, 723, 507);
-		add(lblFondo);
+		GroupLayout groupLayout = new GroupLayout(this);
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(322)
+					.addComponent(lblDni, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(94)
+					.addComponent(lblDireccion, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+					.addGap(210)
+					.addComponent(txtEmail, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(494)
+					.addComponent(lblLogo, GroupLayout.PREFERRED_SIZE, 199, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(315)
+					.addComponent(btnModificar, GroupLayout.PREFERRED_SIZE, 89, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(84)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 549, Short.MAX_VALUE)
+					.addGap(90))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(158)
+					.addComponent(txtDireccion, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(429)
+					.addComponent(btnEliminar, GroupLayout.PREFERRED_SIZE, 89, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(367)
+					.addComponent(txtDni, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(270, Short.MAX_VALUE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(158)
+					.addComponent(txtNombre, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(448, Short.MAX_VALUE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(539)
+					.addComponent(txtTelefono, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(322)
+					.addComponent(lblEmail, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(199)
+					.addComponent(btnInsert, GroupLayout.PREFERRED_SIZE, 89, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(474)
+					.addComponent(lblTel, GroupLayout.PREFERRED_SIZE, 55, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(94)
+					.addComponent(lblNombre, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(22)
+					.addComponent(btnRefresh, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE))
+				.addComponent(lblFondo, GroupLayout.PREFERRED_SIZE, 723, GroupLayout.PREFERRED_SIZE)
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(286)
+					.addComponent(lblDni, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
+					.addGap(19)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(1)
+							.addComponent(lblDireccion))
+						.addComponent(txtEmail, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(394)
+					.addComponent(lblLogo, GroupLayout.PREFERRED_SIZE, 54, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(381)
+					.addComponent(btnModificar))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(41)
+					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 210, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(323)
+					.addComponent(txtDireccion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(381)
+					.addComponent(btnEliminar))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(286)
+					.addComponent(txtDni, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(286)
+					.addComponent(txtNombre, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(286)
+					.addComponent(txtTelefono, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(325)
+					.addComponent(lblEmail, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(381)
+					.addComponent(btnInsert))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(289)
+					.addComponent(lblTel))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(288)
+					.addComponent(lblNombre, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(11)
+					.addComponent(btnRefresh, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE))
+				.addComponent(lblFondo, GroupLayout.PREFERRED_SIZE, 507, GroupLayout.PREFERRED_SIZE)
+		);
+		setLayout(groupLayout);
 
 		ListSelectionModel model = tableClientes.getSelectionModel();
 		model.addListSelectionListener(new ListSelectionListener() {

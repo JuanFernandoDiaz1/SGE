@@ -14,6 +14,8 @@ import javax.swing.JTable;
 import modelo.Cliente;
 import modelo.Compras;
 import modelo.Escandallo;
+import modelo.Material;
+import modelo.OrdenesFavM;
 import modelo.Personal;
 import modelo.Productos;
 import modelo.Proveedor;
@@ -874,6 +876,126 @@ public class GestionBBDD {
 		}
 	}
 
+	public void borrarEscandalloMaterial(JTable tableEscandallos) {
+		Connection conexion;
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
 
+			int valor = consulta.executeUpdate(
+					"delete from escandallos_materiales where id_escandallo ='" + tableEscandallos.getValueAt(tableEscandallos.getSelectedRow(), 0).toString() + "'");
+
+			if (valor == 1) {
+				JOptionPane.showMessageDialog(null, "Escandallo borrado correctamente");
+			} else {
+				JOptionPane.showMessageDialog(null, "No existe el escandallo", "Error", JOptionPane.WARNING_MESSAGE);
+			}
+
+			conexion.close();
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
+			e.printStackTrace();
+		}		
+	}
+	public ArrayList<Material> consultaMateriales() {
+		ArrayList<Material> materiales = new ArrayList<>();
+		Material materia;
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			ResultSet registro = consulta.executeQuery("SELECT nombre, stock FROM materiales");
+
+
+			while (registro.next()) {
+				materia = new Material();
+				
+				materia.setNombre(registro.getString("nombre"));
+				materia.setStock(registro.getInt("stock"));
+				
+				materiales.add(materia);
+
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		return materiales;
+	}
+
+	public void insertarMaterial(Material mat) {
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+
+			Statement consulta = conexion.createStatement();
+			int valor = consulta.executeUpdate("insert into materiales (nombre, stock) values ('" + mat.getNombre() + "', "
+					+ mat.getStock() + ")");
+			if(valor == 1) {
+				JOptionPane.showMessageDialog(null, "Material insertado correctamente");
+			}else {
+				JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la insercion", "Error",
+						JOptionPane.WARNING_MESSAGE);
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+	}
+
+	public void borrarMaterial(JTable tableMateriales) {
+		Connection conexion;
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			int valor = consulta.executeUpdate(
+					"delete from materiales where nombre ='" + tableMateriales.getValueAt(tableMateriales.getSelectedRow(), 0).toString() + "'");
+
+			if (valor == 1) {
+				JOptionPane.showMessageDialog(null, "Material borrado correctamente");
+			} else {
+				JOptionPane.showMessageDialog(null, "No existe el material", "Error", JOptionPane.WARNING_MESSAGE);
+			}
+
+			conexion.close();
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
+			e.printStackTrace();
+		}
+	}
+
+	public ArrayList<OrdenesFavM> consultaOrdenesFav() {
+		
+			ArrayList<OrdenesFavM> ordenes = new ArrayList<>();
+			try {
+				Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+				Statement consulta = conexion.createStatement();
+				// guarda los regsitros de la tabla que vamos a consultar
+				ResultSet registro = consulta.executeQuery("SELECT Id_Escandallo, unidades ,personal.nombre, fechaInicio, fechaFin, Estado "
+						+ "FROM ordenesfabrica inner join personal on ordenesfabrica.ID_Personal = personal.ID_Personal");
+
+				// si existe lo que estamos buscando
+				while (registro.next()) {
+					OrdenesFavM orden = new OrdenesFavM();
+					orden.setEscandallo(registro.getInt("id_escandallo"));
+					orden.setUnidades(registro.getInt("unidades"));
+					orden.setPersonal(registro.getString("personal.nombre"));
+					orden.setFechaInicio(registro.getDate("fechaInicio"));
+					orden.setFechaFin(registro.getDate("fechaFin"));
+					orden.setEstado(registro.getString("estado"));
+					// añadimos modelos al arrayList
+					ordenes.add(orden);
+
+				}
+				conexion.close();
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+						JOptionPane.WARNING_MESSAGE);
+			}
+			return ordenes;
+	}
 
 }

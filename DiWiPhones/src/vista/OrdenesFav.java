@@ -14,9 +14,9 @@ import javax.swing.table.DefaultTableModel;
 
 import controlador.GestionBBDD;
 import modelo.Escandallo;
-import modelo.Venta;
+import modelo.OrdenesFavM;
 
-public class Escandallos extends JPanel {
+public class OrdenesFav extends JPanel {
 
 	private JTable tableEscandallos;
 	DefaultTableModel modeloTabla = new DefaultTableModel();
@@ -25,15 +25,15 @@ public class Escandallos extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public Escandallos() {
+	public OrdenesFav() {
 		setLayout(null);
 		setBounds(0, 0, 723, 507);
 
 		JButton btnInsert = new JButton("Insertar");
 		btnInsert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				InsertarEscandallo ie = new InsertarEscandallo();
-				nuevoPanel(ie);
+				//InsertarEscandallo ie = new InsertarEscandallo();
+				//nuevoPanel(ie);
 			}
 		});
 		btnInsert.setBounds(199, 381, 89, 23);
@@ -50,10 +50,10 @@ public class Escandallos extends JPanel {
 		JButton btnEliminar = new JButton("Eliminar");
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Eliminar el Escandallo?");
+				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere eliminar la Orden?");
 				if (JOptionPane.OK_OPTION == valor) {
 					if(tableEscandallos.getSelectedRow()==-1) {
-						JOptionPane.showMessageDialog(null, "Selecciona una escandallo para eliminar", "Error", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Selecciona una Orden para eliminar", "Error", JOptionPane.WARNING_MESSAGE);
 					}else {
 						gestor.borrarEscandalloMaterial(tableEscandallos);
 						gestor.borrarEscandallo(tableEscandallos);
@@ -75,7 +75,7 @@ public class Escandallos extends JPanel {
 		tableEscandallos = new JTable();
 		scrollPane.setViewportView(tableEscandallos);
 
-		modeloTabla.setColumnIdentifiers(new Object[] { "Escandallo", "Producto"});
+		modeloTabla.setColumnIdentifiers(new Object[] { "Escandallo", "Unidades","Personal", "FechaIncio", "FechaFin", "Estado" });
 		tableEscandallos.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 		cargarTabla();
@@ -94,9 +94,9 @@ public class Escandallos extends JPanel {
 	}
 	public void cargarTabla() {
 		modeloTabla.setRowCount(0);
-		for (Escandallo e : gestor.consultaEscandallo()) {
+		for (OrdenesFavM o : gestor.consultaOrdenesFav()) {
 			modeloTabla.addRow(
-					new Object[] { e.getIdEscandallo(), e.getProducto()});
+					new Object[] { o.getEscandallo(), o.getUnidades(), o.getPersonal(), o.getFechaInicio(), o.getFechaFin(), o.getEstado()});
 		}
 	}
 	
@@ -107,5 +107,4 @@ public class Escandallos extends JPanel {
 		revalidate();
 		
 	}
-
 }

@@ -39,11 +39,11 @@ public class Fabrica extends JPanel {
 						Escandallos escandallo = new Escandallos();
 						nuevoPanel(escandallo);
 					}else if(comboFabrica.getSelectedIndex()==2){
-						/*OrdenensFav ordenes = new OrdenesFav();
-						nuevoPanel(ordenes);*/
+						OrdenesFav ordenes = new OrdenesFav();
+						nuevoPanel(ordenes);
 					}else if(comboFabrica.getSelectedIndex()==3) {
-						/*Materiales materiales = new Materiales();
-						nuevoPanel(materiales);*/
+						Materiales materiales = new Materiales();
+						nuevoPanel(materiales);
 					}
 				}
 			});
@@ -72,7 +72,6 @@ public class Fabrica extends JPanel {
 			add(panelActual);
 			repaint();
 			revalidate();
-			
 		}
 
 }

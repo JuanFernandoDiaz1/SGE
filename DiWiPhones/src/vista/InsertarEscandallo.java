@@ -106,12 +106,9 @@ public class InsertarEscandallo extends JPanel {
 				} else {
 					insertEscandallo();
 					if (valid == true) {
-						//insertProductosCompras();
-						
-						
-						
+						insertMaterialesEscandallo();							
 					}
-					JOptionPane.showMessageDialog(null, "Compra Añadida");
+					JOptionPane.showMessageDialog(null, "Escandallo Añadido");
 					Escandallos cv = new Escandallos();
 					nuevoPanel(cv);
 				}
@@ -236,7 +233,8 @@ public class InsertarEscandallo extends JPanel {
 				Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 
 				Statement consulta = conexion.createStatement();
-				consulta.executeUpdate("insert into escandallos_materiales (id_escandallo, id_material, unidadesMaterial) values( )");
+				consulta.executeUpdate("insert into escandallos_materiales (id_escandallo, id_material, unidadesMaterial) values("+recogerEscandallo()+
+						", (Select id_material from materiales where nombre = '"+tableProductos.getValueAt(x, 0)+"'), "+tableProductos.getValueAt(x, 1)+")");
 				conexion.close();
 
 			} catch (SQLException e) {
@@ -245,6 +243,29 @@ public class InsertarEscandallo extends JPanel {
 		}
 
 	}
+	public int recogerEscandallo() {
+		int id = 0;
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("select id_escandallo from escandallo order by id_escandallo desc limit 1");
+
+			// si existe lo que estamos buscando
+			if (registro.next()) {
+				id = registro.getInt("id_escandallo");
+			} else {
+				System.out.println("Error");
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		return id;
+	}
+
 
 
 	

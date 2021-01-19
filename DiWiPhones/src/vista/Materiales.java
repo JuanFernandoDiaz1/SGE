@@ -13,27 +13,39 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import controlador.GestionBBDD;
+import modelo.Cliente;
 import modelo.Escandallo;
-import modelo.Venta;
+import modelo.Material;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-public class Escandallos extends JPanel {
-
-	private JTable tableEscandallos;
-	DefaultTableModel modeloTabla = new DefaultTableModel();
-	GestionBBDD gestor = new GestionBBDD();
+public class Materiales extends JPanel {
 
 	/**
 	 * Create the panel.
 	 */
-	public Escandallos() {
+	private JTable tableMateriales;
+	DefaultTableModel modeloTabla = new DefaultTableModel();
+	GestionBBDD gestor = new GestionBBDD();
+	private JTextField textNombre;
+	private JTextField textStock;
+
+	/**
+	 * Create the panel.
+	 */
+	public Materiales() {
 		setLayout(null);
 		setBounds(0, 0, 723, 507);
 
 		JButton btnInsert = new JButton("Insertar");
 		btnInsert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				InsertarEscandallo ie = new InsertarEscandallo();
-				nuevoPanel(ie);
+				Material mat = new Material();
+				mat = recogerDatos();
+				gestor.insertarMaterial(mat);
+				cargarTabla();
 			}
 		});
 		btnInsert.setBounds(199, 381, 89, 23);
@@ -50,18 +62,35 @@ public class Escandallos extends JPanel {
 		JButton btnEliminar = new JButton("Eliminar");
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Eliminar el Escandallo?");
+				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Eliminar el Material?");
 				if (JOptionPane.OK_OPTION == valor) {
-					if(tableEscandallos.getSelectedRow()==-1) {
-						JOptionPane.showMessageDialog(null, "Selecciona una escandallo para eliminar", "Error", JOptionPane.WARNING_MESSAGE);
+					if(tableMateriales.getSelectedRow()==-1) {
+						JOptionPane.showMessageDialog(null, "Selecciona un material para eliminar", "Error", JOptionPane.WARNING_MESSAGE);
 					}else {
-						gestor.borrarEscandalloMaterial(tableEscandallos);
-						gestor.borrarEscandallo(tableEscandallos);
+						gestor.borrarMaterial(tableMateriales);
 						cargarTabla();
 					}
 				}
 			}
 		});
+		JLabel lblNombre = new JLabel("Nombre");
+		lblNombre.setBounds(146, 326, 46, 14);
+		add(lblNombre);
+		
+		textNombre = new JTextField();
+		textNombre.setBounds(199, 323, 86, 20);
+		add(textNombre);
+		textNombre.setColumns(10);
+		
+		JLabel lblStock = new JLabel("Stock");
+		lblStock.setBounds(378, 326, 46, 14);
+		add(lblStock);
+		
+		textStock = new JTextField();
+		textStock.setBounds(434, 323, 86, 20);
+		add(textStock);
+		textStock.setColumns(10);
+		
 		btnEliminar.setBounds(429, 381, 89, 23);
 		add(btnEliminar);
 		btnRefresh.setIcon(new ImageIcon("img/actualizado.png"));
@@ -69,14 +98,14 @@ public class Escandallos extends JPanel {
 		add(btnRefresh);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(84, 41, 549, 311);
+		scrollPane.setBounds(84, 41, 549, 252);
 		add(scrollPane);
 
-		tableEscandallos = new JTable();
-		scrollPane.setViewportView(tableEscandallos);
+		tableMateriales = new JTable();
+		scrollPane.setViewportView(tableMateriales);
 
-		modeloTabla.setColumnIdentifiers(new Object[] { "Escandallo", "Producto"});
-		tableEscandallos.setModel(modeloTabla);
+		modeloTabla.setColumnIdentifiers(new Object[] { "Nombre", "Stock"});
+		tableMateriales.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 		cargarTabla();
 
@@ -89,14 +118,14 @@ public class Escandallos extends JPanel {
 		lblFondo.setIcon(new ImageIcon("img\\fondo.jpg"));
 		lblFondo.setBounds(0, 0, 723, 507);
 		add(lblFondo);
-
+		
 	
 	}
 	public void cargarTabla() {
 		modeloTabla.setRowCount(0);
-		for (Escandallo e : gestor.consultaEscandallo()) {
+		for (Material m : gestor.consultaMateriales()) {
 			modeloTabla.addRow(
-					new Object[] { e.getIdEscandallo(), e.getProducto()});
+					new Object[] { m.getNombre(), m.getStock()});
 		}
 	}
 	
@@ -107,5 +136,12 @@ public class Escandallos extends JPanel {
 		revalidate();
 		
 	}
-
+	public Material recogerDatos() {
+		Material mat = new Material();
+		mat.setNombre(textNombre.getText());
+		mat.setStock(Integer.parseInt(textStock.getText()));
+		return mat;
+	}
+	
+	
 }

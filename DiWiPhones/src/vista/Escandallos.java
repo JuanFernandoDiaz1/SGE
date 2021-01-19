@@ -18,7 +18,7 @@ import modelo.Venta;
 
 public class Escandallos extends JPanel {
 
-	private JTable tableVentas;
+	private JTable tableEscandallos;
 	DefaultTableModel modeloTabla = new DefaultTableModel();
 	GestionBBDD gestor = new GestionBBDD();
 
@@ -52,10 +52,10 @@ public class Escandallos extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Eliminar el Escandallo?");
 				if (JOptionPane.OK_OPTION == valor) {
-					if(tableVentas.getSelectedRow()==-1) {
+					if(tableEscandallos.getSelectedRow()==-1) {
 						JOptionPane.showMessageDialog(null, "Selecciona una escandallo para eliminar", "Error", JOptionPane.WARNING_MESSAGE);
 					}else {
-						//sumarStock(eliminarEscandallo());
+						gestor.borrarEscandallo(tableEscandallos);
 						cargarTabla();
 					}
 				}
@@ -71,11 +71,11 @@ public class Escandallos extends JPanel {
 		scrollPane.setBounds(84, 41, 549, 311);
 		add(scrollPane);
 
-		tableVentas = new JTable();
-		scrollPane.setViewportView(tableVentas);
+		tableEscandallos = new JTable();
+		scrollPane.setViewportView(tableEscandallos);
 
 		modeloTabla.setColumnIdentifiers(new Object[] { "Escandallo", "Producto"});
-		tableVentas.setModel(modeloTabla);
+		tableEscandallos.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 		cargarTabla();
 

@@ -3,7 +3,16 @@ package modelo;
 public class Escandallo {
 	private int idEscandallo;
 	private String Producto;
+	private int unidades;
 	
+	
+	
+	public int getUnidades() {
+		return unidades;
+	}
+	public void setUnidades(int unidades) {
+		this.unidades = unidades;
+	}
 	public int getIdEscandallo() {
 		return idEscandallo;
 	}

@@ -850,6 +850,30 @@ public class GestionBBDD {
 
 		return escandallos;
 	}
+	
+	public void borrarEscandallo(JTable tabla) {
+		Connection conexion;
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			int valor = consulta.executeUpdate(
+					"delete from escandallo where id_escandallo ='" + tabla.getValueAt(tabla.getSelectedRow(), 0).toString() + "'");
+
+			if (valor == 1) {
+				JOptionPane.showMessageDialog(null, "Escandallo borrado correctamente");
+			} else {
+				JOptionPane.showMessageDialog(null, "No existe el escandallo", "Error", JOptionPane.WARNING_MESSAGE);
+			}
+
+			conexion.close();
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
+			e.printStackTrace();
+		}
+	}
+
 
 
 }

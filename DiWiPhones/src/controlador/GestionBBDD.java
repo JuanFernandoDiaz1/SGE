@@ -997,5 +997,32 @@ public class GestionBBDD {
 			}
 			return ordenes;
 	}
+	public ArrayList<Escandallo> consultaVerEscandallo(int id_escandallo) {
+		ArrayList<Escandallo> escandallo = new ArrayList<Escandallo>();
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("select Materiales.Nombre, unidadesMaterial From escandallos_materiales "
+					+ "Inner JOIN materiales on Escandallos_materiales.id_material = Materiales.id_material where id_escandallo = "+id_escandallo);
 
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				Escandallo esc = new Escandallo();
+				// guardamos los campos en el objeto modelo
+				esc.setProducto(registro.getString("Materiales.nombre"));
+				esc.setUnidades(registro.getInt("unidadesMaterial"));
+				// añadimos modelos al arrayList
+				escandallo.add(esc);
+
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			e.printStackTrace();
+		}
+		return escandallo;
+	}
 }

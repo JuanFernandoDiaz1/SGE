@@ -38,6 +38,17 @@ public class Escandallos extends JPanel {
 		});
 		btnInsert.setBounds(199, 381, 89, 23);
 		add(btnInsert);
+		
+		JButton btnNewButton = new JButton("Ver Escandallo");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				VerEscandallo ve = new VerEscandallo();
+				ve.setEscanda(pideDatos());
+				nuevoPanel(ve);
+			}
+		});
+		btnNewButton.setBounds(315, 381, 89, 23);
+		add(btnNewButton);
 
 
 		JButton btnRefresh = new JButton("");
@@ -89,6 +100,8 @@ public class Escandallos extends JPanel {
 		lblFondo.setIcon(new ImageIcon("img\\fondo.jpg"));
 		lblFondo.setBounds(0, 0, 723, 507);
 		add(lblFondo);
+		
+		
 
 	
 	}
@@ -107,5 +120,9 @@ public class Escandallos extends JPanel {
 		revalidate();
 		
 	}
-
+	public Escandallo pideDatos() {
+		Escandallo escandallo = new Escandallo();
+		escandallo.setIdEscandallo(Integer.parseInt(tableEscandallos.getValueAt(tableEscandallos.getSelectedRow(), 0).toString())); 
+		return escandallo;
+	}
 }

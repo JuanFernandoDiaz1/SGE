@@ -42,6 +42,16 @@ public class VerEscandallo extends JPanel {
 		modeloTabla.setColumnIdentifiers(new Object[] { "Nombre", "Unidades"});
 		tableVerEscandallo.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
+		
+		JButton btnVolver = new JButton("Volver");
+		btnVolver.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Escandallos esc = new Escandallos();
+				nuevoPanel(esc);
+			}
+		});
+		btnVolver.setBounds(313, 383, 106, 23);
+		add(btnVolver);
 
 
 		JLabel lblLogo = new JLabel("");
@@ -75,5 +85,12 @@ public class VerEscandallo extends JPanel {
 					new Object[] { e.getProducto(), e.getUnidades()});
 		}
 	}
-
+	
+	public void nuevoPanel(JPanel panelActual) {
+		removeAll();
+		add(panelActual);
+		repaint();
+		revalidate();
+		
+	}
 }

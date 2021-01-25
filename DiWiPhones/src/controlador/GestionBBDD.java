@@ -864,9 +864,7 @@ public class GestionBBDD {
 
 			if (valor == 1) {
 				JOptionPane.showMessageDialog(null, "Escandallo borrado correctamente");
-			} else {
-				JOptionPane.showMessageDialog(null, "No existe el escandallo", "Error", JOptionPane.WARNING_MESSAGE);
-			}
+			} 
 
 			conexion.close();
 
@@ -884,12 +882,6 @@ public class GestionBBDD {
 
 			int valor = consulta.executeUpdate(
 					"delete from escandallos_materiales where id_escandallo ='" + tableEscandallos.getValueAt(tableEscandallos.getSelectedRow(), 0).toString() + "'");
-
-			if (valor == 1) {
-				JOptionPane.showMessageDialog(null, "Escandallo borrado correctamente");
-			} else {
-				JOptionPane.showMessageDialog(null, "No existe el escandallo", "Error", JOptionPane.WARNING_MESSAGE);
-			}
 
 			conexion.close();
 

@@ -42,9 +42,14 @@ public class Escandallos extends JPanel {
 		JButton btnNewButton = new JButton("Ver Escandallo");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				VerEscandallo ve = new VerEscandallo();
-				ve.setEscanda(pideDatos());
-				nuevoPanel(ve);
+				if(tableEscandallos.getSelectedRow()==-1) {
+					JOptionPane.showMessageDialog(null, "Selecciona un escandallo para ver", "Error", JOptionPane.WARNING_MESSAGE);
+				}else {
+					VerEscandallo ve = new VerEscandallo();
+					ve.setEscanda(pideDatos());
+					nuevoPanel(ve);
+				}
+				
 			}
 		});
 		btnNewButton.setBounds(315, 381, 89, 23);
@@ -64,7 +69,7 @@ public class Escandallos extends JPanel {
 				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere Eliminar el Escandallo?");
 				if (JOptionPane.OK_OPTION == valor) {
 					if(tableEscandallos.getSelectedRow()==-1) {
-						JOptionPane.showMessageDialog(null, "Selecciona una escandallo para eliminar", "Error", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Selecciona un escandallo para eliminar", "Error", JOptionPane.WARNING_MESSAGE);
 					}else {
 						gestor.borrarEscandalloMaterial(tableEscandallos);
 						gestor.borrarEscandallo(tableEscandallos);

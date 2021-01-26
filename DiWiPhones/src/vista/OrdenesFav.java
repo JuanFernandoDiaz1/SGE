@@ -32,8 +32,8 @@ public class OrdenesFav extends JPanel {
 		JButton btnInsert = new JButton("Insertar");
 		btnInsert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//InsertarEscandallo ie = new InsertarEscandallo();
-				//nuevoPanel(ie);
+				InsertarOrdenes io = new InsertarOrdenes();
+				nuevoPanel(io);
 			}
 		});
 		btnInsert.setBounds(199, 381, 89, 23);

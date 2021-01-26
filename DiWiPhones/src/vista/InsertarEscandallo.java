@@ -79,8 +79,18 @@ public class InsertarEscandallo extends JPanel {
 		
 		cmbProducto = new JComboBox();
 		cmbProducto.setModel(cargaProductos());
-		cmbProducto.setBounds(286, 365, 144, 20);
+		cmbProducto.setBounds(170, 364, 144, 20);
 		add(cmbProducto);
+		
+		JButton btnInsertNuevoP = new JButton("Nuevo Producto");
+		btnInsertNuevoP.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ProductosVista prod = new ProductosVista();
+				nuevoPanel(prod);
+			}
+		});
+		btnInsertNuevoP.setBounds(405, 363, 144, 23);
+		add(btnInsertNuevoP);
 
 		comboBox = new JComboBox();
 		comboBox.setModel(cargaMateriales());
@@ -101,9 +111,12 @@ public class InsertarEscandallo extends JPanel {
 		btnInsert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (escandallos.size() < 1) {
-					JOptionPane.showMessageDialog(null, "Selecciona productos vendidos", "Error",
+					JOptionPane.showMessageDialog(null, "Selecciona los materiales que componen el escandallo", "Error",
 							JOptionPane.WARNING_MESSAGE);
-				} else {
+				} else if(cmbProducto.getSelectedIndex()==0){
+					JOptionPane.showMessageDialog(null, "Selecciona producto resultante del escandallo", "Error",
+							JOptionPane.WARNING_MESSAGE);
+				}else {
 					insertEscandallo();
 					if (valid == true) {
 						insertMaterialesEscandallo();							

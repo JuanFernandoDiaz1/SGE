@@ -7,7 +7,16 @@ public class Productos {
 	private int precioVenta;
 	private int Stock;
 	private String Proveedor;
+	private String tipo;
 	
+	
+	
+	public String getTipo() {
+		return tipo;
+	}
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
 	public int getPrecioVenta() {
 		return precioVenta;
 	}

@@ -149,7 +149,7 @@ public class GestionBBDD {
 			// guarda los regsitros de la tabla que vamos a consultar
 			ResultSet registro = consulta.executeQuery(
 					"select distinct productos.nombre, productos.descripcion, productos.precio, productos.precioVenta,"
-							+ " productos.stock, proveedores.Nif  from productos inner join proveedores on productos.ID_Proveedor= proveedores.ID_Proveedor");
+							+ " productos.stock, proveedores.Nif, productos.tipo  from productos inner join proveedores on productos.ID_Proveedor= proveedores.ID_Proveedor");
 
 			// si existe lo que estamos buscando
 			while (registro.next()) {
@@ -161,6 +161,7 @@ public class GestionBBDD {
 				producto.setPrecioVenta(registro.getInt("PrecioVenta"));
 				producto.setStock(registro.getInt("Stock"));
 				producto.setProveedor(registro.getString("NIF"));
+				producto.setTipo(registro.getString("tipo"));
 				// añadimos modelos al arrayList
 				productos.add(producto);
 
@@ -873,6 +874,27 @@ public class GestionBBDD {
 			e.printStackTrace();
 		}
 	}
+	
+	public void borrarOrdenes(JTable tabla) {
+		Connection conexion;
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			int valor = consulta.executeUpdate(
+					"delete from ordenesfabrica where id_orden ='" + tabla.getValueAt(tabla.getSelectedRow(), 0).toString() + "'");
+
+			if (valor == 1) {
+				JOptionPane.showMessageDialog(null, "orden borrado correctamente");
+			} 
+
+			conexion.close();
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
+			e.printStackTrace();
+		}
+	}
 
 	public void borrarEscandalloMaterial(JTable tableEscandallos) {
 		Connection conexion;
@@ -966,17 +988,18 @@ public class GestionBBDD {
 				Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 				Statement consulta = conexion.createStatement();
 				// guarda los regsitros de la tabla que vamos a consultar
-				ResultSet registro = consulta.executeQuery("SELECT Id_Escandallo, unidades ,personal.nombre, fechaInicio, fechaFin, Estado "
+				ResultSet registro = consulta.executeQuery("SELECT id_orden, Id_Escandallo, unidades ,personal.nombre, fechaInicio, fechaFin, Estado "
 						+ "FROM ordenesfabrica inner join personal on ordenesfabrica.ID_Personal = personal.ID_Personal");
 
 				// si existe lo que estamos buscando
 				while (registro.next()) {
 					OrdenesFavM orden = new OrdenesFavM();
+					orden.setIdOrden(registro.getInt("id_orden"));
 					orden.setEscandallo(registro.getInt("id_escandallo"));
 					orden.setUnidades(registro.getInt("unidades"));
 					orden.setPersonal(registro.getString("personal.nombre"));
-					orden.setFechaInicio(registro.getDate("fechaInicio"));
-					orden.setFechaFin(registro.getDate("fechaFin"));
+					orden.setFechaInicio(registro.getDate("fechaInicio").toString());
+					orden.setFechaFin(registro.getDate("fechaFin").toString());
 					orden.setEstado(registro.getString("estado"));
 					// añadimos modelos al arrayList
 					ordenes.add(orden);
@@ -1016,5 +1039,17 @@ public class GestionBBDD {
 			e.printStackTrace();
 		}
 		return escandallo;
+	}
+	public void insertOrdenes(OrdenesFavM ordenes) {
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+
+			Statement consulta = conexion.createStatement();
+			consulta.executeUpdate("insert into ordenesfabrica (id_escandallo, unidades, id_personal, fechaInicio, fechaFin, Estado) values (" + ordenes.getEscandallo() + ", "
+					+ ordenes.getUnidades() + ", (Select id_personal from personal where dni = '"+ordenes.getPersonal()+"'), '" + ordenes.getFechaInicio() + "', '"+ordenes.getFechaFin()+"', '"+ordenes.getEstado()+"')");
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

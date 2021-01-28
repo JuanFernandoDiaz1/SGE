@@ -55,8 +55,7 @@ public class OrdenesFav extends JPanel {
 					if(tableEscandallos.getSelectedRow()==-1) {
 						JOptionPane.showMessageDialog(null, "Selecciona una Orden para eliminar", "Error", JOptionPane.WARNING_MESSAGE);
 					}else {
-						gestor.borrarEscandalloMaterial(tableEscandallos);
-						gestor.borrarEscandallo(tableEscandallos);
+						gestor.borrarOrdenes(tableEscandallos);
 						cargarTabla();
 					}
 				}
@@ -75,7 +74,7 @@ public class OrdenesFav extends JPanel {
 		tableEscandallos = new JTable();
 		scrollPane.setViewportView(tableEscandallos);
 
-		modeloTabla.setColumnIdentifiers(new Object[] { "Escandallo", "Unidades","Personal", "FechaIncio", "FechaFin", "Estado" });
+		modeloTabla.setColumnIdentifiers(new Object[] { "Orden", "Escandallo", "Unidades","Personal", "FechaIncio", "FechaFin", "Estado" });
 		tableEscandallos.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 		cargarTabla();
@@ -96,7 +95,7 @@ public class OrdenesFav extends JPanel {
 		modeloTabla.setRowCount(0);
 		for (OrdenesFavM o : gestor.consultaOrdenesFav()) {
 			modeloTabla.addRow(
-					new Object[] { o.getEscandallo(), o.getUnidades(), o.getPersonal(), o.getFechaInicio(), o.getFechaFin(), o.getEstado()});
+					new Object[] {o.getIdOrden(), o.getEscandallo(), o.getUnidades(), o.getPersonal(), o.getFechaInicio(), o.getFechaFin(), o.getEstado()});
 		}
 	}
 	
@@ -105,6 +104,5 @@ public class OrdenesFav extends JPanel {
 		add(panelActual);
 		repaint();
 		revalidate();
-		
 	}
 }

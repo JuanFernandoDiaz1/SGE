@@ -2,7 +2,13 @@ package vista;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -31,6 +37,7 @@ public class ProductosVista extends JPanel {
 	private JTextField txtPrecio;
 	private JTextField txtStock;
 	private JComboBox comboBox;
+	private JComboBox cmbTipo;
 	GestionBBDD gestor = new GestionBBDD();
 	private JTextField txtPrecioVenta;
 
@@ -51,8 +58,8 @@ public class ProductosVista extends JPanel {
 				} else if (productos.getPrecio() <= 0 || productos.getStock() <= 0) {
 					JOptionPane.showMessageDialog(null, "Los campos Precio y Stock no pueden ser 0 o negativos",
 							"Error", JOptionPane.WARNING_MESSAGE);
-				}else if (comboBox.getSelectedIndex() == 0) {
-					JOptionPane.showMessageDialog(null, "Selecciona un proveedor valido", "Error", JOptionPane.WARNING_MESSAGE);
+				}else if (comboBox.getSelectedIndex() == 0 || cmbTipo.getSelectedIndex()==0) {
+					JOptionPane.showMessageDialog(null, "Selecciona un campos valido", "Error", JOptionPane.WARNING_MESSAGE);
 				}else {
 					gestor.comprobarProductos(productos);
 					cargarTabla();
@@ -146,7 +153,7 @@ public class ProductosVista extends JPanel {
 		tableProductos = new JTable();
 		scrollPane.setViewportView(tableProductos);
 
-		modeloTabla.setColumnIdentifiers(new Object[] { "Nombre", "Descripcion", "Precio Compra","Precio Venta", "Stock", "Proveedor" });
+		modeloTabla.setColumnIdentifiers(new Object[] { "Nombre", "Descripcion", "Precio Compra","Precio Venta", "Stock", "Proveedor", "tipo" });
 		tableProductos.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 		cargarTabla();
@@ -177,9 +184,14 @@ public class ProductosVista extends JPanel {
 		add(lblPrecioVenta);
 
 		comboBox = new JComboBox();
-		comboBox.setBounds(516, 286, 126, 21);
+		comboBox.setBounds(506, 286, 126, 21);
 		add(comboBox);
 		comboBox.setModel(gestor.cargaProveedores());
+		
+		cmbTipo = new JComboBox();
+		cmbTipo.setBounds(551, 354, 126, 21);
+		add(cmbTipo);
+		cmbTipo.setModel(cargaTipo());
 
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setIcon(new ImageIcon("img/diwi.png"));
@@ -203,6 +215,7 @@ public class ProductosVista extends JPanel {
 					txtPrecioVenta.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 3).toString());
 					txtStock.setText(tableProductos.getValueAt(tableProductos.getSelectedRow(), 4).toString());
 					comboBox.setSelectedItem(tableProductos.getValueAt(tableProductos.getSelectedRow(), 5).toString());
+					cmbTipo.setSelectedItem(tableProductos.getValueAt(tableProductos.getSelectedRow(), 6).toString());
 				}
 			}
 		});
@@ -211,6 +224,7 @@ public class ProductosVista extends JPanel {
 	public Productos recogerDatos() {
 		Productos productos = new Productos();
 		productos.setProveedor((String) comboBox.getSelectedItem());
+		productos.setTipo((String) cmbTipo.getSelectedItem());
 		productos.setNombre(txtNombre.getText());
 		productos.setDescripcion(txtDescripcion.getText());
 		try {
@@ -228,7 +242,18 @@ public class ProductosVista extends JPanel {
 		modeloTabla.setRowCount(0);
 		for (Productos p : gestor.consultaProductos()) {
 			modeloTabla.addRow(
-					new Object[] { p.getNombre(), p.getDescripcion(), p.getPrecio(),p.getPrecioVenta(), p.getStock(), p.getProveedor() });
+					new Object[] { p.getNombre(), p.getDescripcion(), p.getPrecio(),p.getPrecioVenta(), p.getStock(), p.getProveedor(), p.getTipo() });
 		}
+	}
+	
+	public DefaultComboBoxModel cargaTipo() {
+		Connection conexion;
+		DefaultComboBoxModel listaModelo = new DefaultComboBoxModel();
+		listaModelo.addElement("-Productos-");
+		listaModelo.addElement("Simple");
+		listaModelo.addElement("Compuesto");
+
+
+		return listaModelo;
 	}
 }

@@ -177,7 +177,7 @@ public class InsertarEscandallo extends JPanel {
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
-			ResultSet registro = consulta.executeQuery("Select nombre from materiales");
+			ResultSet registro = consulta.executeQuery("Select nombre from productos where tipo='simple'");
 			while (registro.next()) {
 				listaModelo.addElement(registro.getString("nombre"));
 			}
@@ -297,7 +297,7 @@ public class InsertarEscandallo extends JPanel {
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
-			ResultSet registro = consulta.executeQuery("Select nombre from productos");
+			ResultSet registro = consulta.executeQuery("Select nombre from productos where tipo='compuesto'");
 			while (registro.next()) {
 				listaModelo.addElement(registro.getString("nombre"));
 			}

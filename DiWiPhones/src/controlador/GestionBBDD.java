@@ -11,6 +11,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
+import modelo.BuscarProductoM;
 import modelo.Cliente;
 import modelo.Compras;
 import modelo.Escandallo;
@@ -304,10 +305,10 @@ public class GestionBBDD {
 
 			Statement consulta = conexion.createStatement();
 			consulta.executeUpdate(
-					"insert into productos (nombre, descripcion, precio,precioVenta, stock, id_proveedor) "
+					"insert into productos (nombre, descripcion, precio,precioVenta, stock, id_proveedor, tipo) "
 							+ "values ('" + p.getNombre() + "', '" + p.getDescripcion() + "', " + p.getPrecio() + ", "
 							+ p.getPrecioVenta() + ", " + p.getStock()
-							+ ", (Select id_proveedor from proveedores where NIF ='" + p.getProveedor() + "'))");
+							+ " , (Select id_proveedor from proveedores where NIF ='" + p.getProveedor() + "'), '"+p.getTipo() +"')");
 			conexion.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -546,7 +547,7 @@ public class GestionBBDD {
 					"update productos set nombre = '" + p.getNombre() + "', descripcion = '" + p.getDescripcion()
 							+ "' , precio = " + p.getPrecio() + " , precioVenta = " + p.getPrecioVenta() + ", Stock = "
 							+ p.getStock() + ", id_proveedor =  (Select id_proveedor from proveedores " + "where NIF ='"
-							+ p.getProveedor() + "') where nombre='" + tabla.getValueAt(tabla.getSelectedRow(), 0)
+							+ p.getProveedor() + "'), tipo= '"+ p.getTipo() +"' where nombre='" + tabla.getValueAt(tabla.getSelectedRow(), 0)
 							+ "' and descripcion='" + tabla.getValueAt(tabla.getSelectedRow(), 1) + "'");
 
 			if (valor == 1) {
@@ -853,6 +854,92 @@ public class GestionBBDD {
 
 		return escandallos;
 	}
+	public ArrayList<BuscarProductoM> consultaBuscarProducto() {
+		ArrayList<BuscarProductoM> productos = new ArrayList<>();
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("SELECT compra.fecha, proveedores.Nombre, productos_compra.Unidades, productos.Precio, productos.Stock "
+					+ "from compra inner join proveedores on proveedores.ID_Proveedor = compra.id_proveedor inner join productos_compra on compra.Factura = "
+					+ "productos_compra.Id_compra INNER JOIN productos on productos_compra.id_producto =  productos.ID_Producto where productos.Nombre='raton' order by 1");
+
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				BuscarProductoM producto = new BuscarProductoM();
+				producto.setFecha(registro.getString("compra.fecha"));
+				producto.setPersonal(registro.getString("proveedores.Nombre"));
+				producto.setUnidades(registro.getInt("productos_compra.Unidades"));
+				producto.setPrecio(registro.getInt("productos.Precio"));
+				producto.setStock(registro.getInt("productos.Stock"));
+				productos.add(producto);
+
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+
+		return productos;
+	}
+	public void consultaBuscarProductoC(ArrayList<BuscarProductoM> productos, String productoT) {
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("SELECT compra.fecha, proveedores.Nombre, productos_compra.Unidades, (productos.Precio*productos_compra.Unidades) as precio, productos.Stock "
+					+ "from compra inner join proveedores on proveedores.ID_Proveedor = compra.id_proveedor inner join productos_compra on compra.Factura = "
+					+ "productos_compra.Id_compra INNER JOIN productos on productos_compra.id_producto =  productos.ID_Producto where productos.Nombre='"+productoT+"' order by 1");
+
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				BuscarProductoM producto = new BuscarProductoM();
+				producto.setFecha(registro.getString("compra.fecha"));
+				producto.setPersonal(registro.getString("proveedores.Nombre"));
+				producto.setUnidades(registro.getInt("productos_compra.Unidades"));
+				producto.setPrecio(registro.getInt("precio"));
+				producto.setStock(registro.getInt("productos.Stock"));
+				producto.setTipo("Compra");
+				productos.add(producto);
+
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+
+	}
+	public ArrayList<BuscarProductoM> consultaBuscarProductoV(String productoT) {
+		ArrayList<BuscarProductoM> productos = new ArrayList<>();
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("select venta.fecha, clientes.Nombre, productos_ventas.Unidades, (productos.PrecioVenta* productos_ventas.Unidades) as precio, productos.Stock "
+					+ "from venta inner join clientes on clientes.ID_Cliente = venta.Id_cliente inner join productos_ventas on venta.Factura = productos_ventas.ID_Venta"
+					+ " INNER JOIN productos on productos_ventas.id_producto =  productos.ID_Producto where productos.Nombre='"+productoT+"' order by 1");
+
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				BuscarProductoM producto = new BuscarProductoM();
+				producto.setFecha(registro.getString("venta.fecha"));
+				producto.setPersonal(registro.getString("clientes.Nombre"));
+				producto.setUnidades(registro.getInt("productos_ventas.Unidades"));
+				producto.setPrecio(registro.getInt("precio"));
+				producto.setStock(registro.getInt("productos.Stock"));
+				producto.setTipo("Venta");
+				productos.add(producto);
+
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return productos;
+	}
 	
 	public void borrarEscandallo(JTable tabla) {
 		Connection conexion;
@@ -1049,6 +1136,24 @@ public class GestionBBDD {
 					+ ordenes.getUnidades() + ", (Select id_personal from personal where dni = '"+ordenes.getPersonal()+"'), '" + ordenes.getFechaInicio() + "', '"+ordenes.getFechaFin()+"', '"+ordenes.getEstado()+"')");
 			conexion.close();
 		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void acabarOrden(int recogerDatos) {
+		Connection conexion;
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			int valor = consulta.executeUpdate(
+					"update ordenesfabrica set Estado = 'Acabado' where id_orden ='"+recogerDatos+"'");
+			JOptionPane.showMessageDialog(null, "Estado modificado correctamente");
+
+			conexion.close();
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la base de datos", "Error", JOptionPane.WARNING_MESSAGE);
 			e.printStackTrace();
 		}
 	}

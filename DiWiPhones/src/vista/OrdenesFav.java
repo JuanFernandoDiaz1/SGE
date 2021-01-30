@@ -38,6 +38,22 @@ public class OrdenesFav extends JPanel {
 		});
 		btnInsert.setBounds(199, 381, 89, 23);
 		add(btnInsert);
+		
+		JButton btnCambiarEstado = new JButton("Finalizar");
+		btnCambiarEstado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(tableEscandallos.getSelectedRow()==-1) {
+					JOptionPane.showMessageDialog(null, "Selecciona una Orden para Finalizar", "Error", JOptionPane.WARNING_MESSAGE);
+				}else if(tableEscandallos.getValueAt(tableEscandallos.getSelectedRow(), 6).toString().compareToIgnoreCase("Acabado")==0) {
+					JOptionPane.showMessageDialog(null, "Esta orden ya esta finalizada", "Error", JOptionPane.WARNING_MESSAGE);			
+				}else {
+					gestor.acabarOrden(recogerDatos());
+					cargarTabla();
+				}
+			}
+		});
+		btnCambiarEstado.setBounds(317, 381, 89, 23);
+		add(btnCambiarEstado);
 
 
 		JButton btnRefresh = new JButton("");
@@ -88,6 +104,8 @@ public class OrdenesFav extends JPanel {
 		lblFondo.setIcon(new ImageIcon("img\\fondo.jpg"));
 		lblFondo.setBounds(0, 0, 723, 507);
 		add(lblFondo);
+		
+		
 
 	
 	}
@@ -104,5 +122,10 @@ public class OrdenesFav extends JPanel {
 		add(panelActual);
 		repaint();
 		revalidate();
+	}
+	public int recogerDatos() {
+		int idOrden;
+		idOrden=(Integer.parseInt(tableEscandallos.getValueAt(tableEscandallos.getSelectedRow(), 0).toString()));
+		return idOrden;
 	}
 }

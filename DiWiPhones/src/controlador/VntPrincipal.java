@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import vista.ConsultaStock;
 import vista.Fabrica;
 import vista.Operaciones;
 import vista.Tablas;
@@ -93,6 +94,15 @@ public class VntPrincipal extends JFrame {
 			}
 		});
 		menu.add(menuFabrica);
+		
+		JMenuItem menuStock = new JMenuItem("Consulta Stock");
+		menuStock.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ConsultaStock stock = new ConsultaStock();
+				nuevoPanel(stock);
+			}
+		});
+		menu.add(menuStock);
 		
 		JLabel labelDiwi = new JLabel("");
 		labelDiwi.setIcon(new ImageIcon("img\\diwi.png"));

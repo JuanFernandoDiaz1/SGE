@@ -72,10 +72,37 @@ public class ConsultaStock extends JPanel {
 	
 	}
 	public void cargarTabla() {
+		ArrayList<BuscarProductoM> productos = new ArrayList<>();
+		productos = calculos();
+		int stock=productos.get(productos.size()-1).getStock();
+		int unidades = productos.get(productos.size()-1).getUnidades();
+		for(int i = productos.size()-1;i>=0;i--) {
+			
+			if(i==0 && productos.get(1).getTipo().compareToIgnoreCase("compra")==0) {
+				productos.get(i).setStock(stock-=productos.get(i+1).getUnidades());
+			}else if(i==0 && productos.get(1).getTipo().compareToIgnoreCase("venta")==0) {
+				productos.get(i).setStock(stock+=productos.get(i+1).getUnidades());
+			}else if(productos.get(i-1).getTipo().compareToIgnoreCase("compra")==0 && i<productos.size()-1){
+				productos.get(i).setStock(stock-=productos.get(i+1).getUnidades());
+			}else if(productos.get(i-1).getTipo().compareToIgnoreCase("venta")==0 && i<productos.size()-1){
+				productos.get(i).setStock(stock+=productos.get(i+1).getUnidades());
+			}
+			/*else if(productos.get(i).getTipo().compareToIgnoreCase("compra")==0&&i<productos.size()-1) {
+				stock+=unidades;
+				productos.get(i).setStock(stock);
+			}else if(productos.get(i).getTipo().compareToIgnoreCase("venta")==0&&i<productos.size()-1) {
+				stock-=unidades;
+				productos.get(i).setStock(stock);
+			}*/
+			unidades=productos.get(i).getUnidades();
+		}
+		int x=0;
 		modeloTabla.setRowCount(0);
 		for (BuscarProductoM e : calculos()) {
+			
 			modeloTabla.addRow(
-					new Object[] {e.getTipo(), e.getFecha(), e.getPersonal(), e.getUnidades(), e.getPrecio(), e.getStock()});
+					new Object[] {e.getTipo(), e.getFecha(), e.getPersonal(), e.getUnidades(), e.getPrecio(), productos.get(x).getStock()});
+			x++;
 		}
 	}
 	

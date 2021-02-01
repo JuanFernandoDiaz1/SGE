@@ -1157,4 +1157,28 @@ public class GestionBBDD {
 			e.printStackTrace();
 		}
 	}
+	
+	public Productos consultaProducto(String productoT) {
+		Productos p = new Productos();
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("select tipo from productos where nombre='"+productoT+"'");
+
+			if(registro.next()) {
+				p.setNombre(productoT);
+				p.setTipo(registro.getString("tipo"));
+			}
+			
+			
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		return p;
+	}
+	
 }

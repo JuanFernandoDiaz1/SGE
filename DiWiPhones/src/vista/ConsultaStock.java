@@ -16,6 +16,8 @@ import javax.swing.table.DefaultTableModel;
 import controlador.GestionBBDD;
 import modelo.BuscarProductoM;
 import modelo.Escandallo;
+import modelo.Productos;
+
 import javax.swing.JTextField;
 
 public class ConsultaStock extends JPanel {
@@ -36,16 +38,15 @@ public class ConsultaStock extends JPanel {
 		tableConsultaStock = new JTable();
 		scrollPane.setViewportView(tableConsultaStock);
 
-		modeloTabla.setColumnIdentifiers(new Object[] { "Tipo", "Fecha", "Personal", "Unidades", "Precio", "Stock"});
+		modeloTabla.setColumnIdentifiers(new Object[] { "Tipo", "Fecha", "Personal", "Unidades", "Precio", "Stock" });
 		tableConsultaStock.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 
-		
 		txtBuscar = new JTextField();
 		txtBuscar.setBounds(133, 62, 179, 20);
 		add(txtBuscar);
 		txtBuscar.setColumns(10);
-		
+
 		JButton btnBuscar = new JButton("Buscar");
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -64,50 +65,57 @@ public class ConsultaStock extends JPanel {
 		lblFondo.setIcon(new ImageIcon("img\\fondo.jpg"));
 		lblFondo.setBounds(0, 0, 723, 507);
 		add(lblFondo);
-		
-		
-		
-		
 
-	
 	}
+
 	public void cargarTabla() {
 		ArrayList<BuscarProductoM> productos = new ArrayList<>();
 		productos = calculos();
-		int stock=0;
-		
+		Productos p = gestor.consultaProducto(txtBuscar.getText().toString());
+		int stock = 0;
+
 		modeloTabla.setRowCount(0);
-		for (BuscarProductoM e : calculos()) {
-			if(e.getTipo().compareTo("Compra")==0) {
-				stock+=e.getUnidades();
-			}else if(e.getTipo().compareTo("Venta")==0) {
-				stock-=e.getUnidades();
+
+		if (p.getTipo().compareToIgnoreCase("simple") == 0) {
+			for (BuscarProductoM e : calculos()) {
+				if (e.getTipo().compareTo("Compra") == 0) {
+					stock += e.getUnidades();
+				} else if (e.getTipo().compareTo("Venta") == 0) {
+					stock -= e.getUnidades();
+				}
+				modeloTabla.addRow(new Object[] { e.getTipo(), e.getFecha(), e.getPersonal(), e.getUnidades(),
+						e.getPrecio(), stock });
 			}
-			modeloTabla.addRow(
-					new Object[] {e.getTipo(), e.getFecha(), e.getPersonal(), e.getUnidades(), e.getPrecio(), stock});
+		} else if (p.getTipo().compareToIgnoreCase("compuesto") == 0) {
+				System.out.println("compuestoooooo");
+			
 		}
+
 	}
-	
+
 	public void nuevoPanel(JPanel panelActual) {
 		removeAll();
 		add(panelActual);
 		repaint();
 		revalidate();
-		
+
 	}
+
 	public Escandallo pideDatos() {
 		Escandallo escandallo = new Escandallo();
-		escandallo.setIdEscandallo(Integer.parseInt(tableConsultaStock.getValueAt(tableConsultaStock.getSelectedRow(), 0).toString())); 
+		escandallo.setIdEscandallo(
+				Integer.parseInt(tableConsultaStock.getValueAt(tableConsultaStock.getSelectedRow(), 0).toString()));
 		return escandallo;
 	}
+
 	public ArrayList<BuscarProductoM> calculos() {
 		GestionBBDD gestor = new GestionBBDD();
 		OrdenarProductos ordenar = new OrdenarProductos();
-		ArrayList <BuscarProductoM> productosC = gestor.consultaBuscarProductoV(txtBuscar.getText().toString());
+		ArrayList<BuscarProductoM> productosC = gestor.consultaBuscarProductoV(txtBuscar.getText().toString());
 		gestor.consultaBuscarProductoC(productosC, txtBuscar.getText().toString());
-		
+
 		ordenar.getOrdenarArrrayList(productosC);
-		
+
 		return productosC;
 	}
 }

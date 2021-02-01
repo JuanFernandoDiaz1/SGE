@@ -55,8 +55,8 @@ public class ProductosVista extends JPanel {
 				if (productos.getNombre().compareTo("") == 0 || productos.getDescripcion().compareTo("") == 0) {
 					JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error",
 							JOptionPane.WARNING_MESSAGE);
-				} else if (productos.getPrecio() <= 0 || productos.getStock() <= 0) {
-					JOptionPane.showMessageDialog(null, "Los campos Precio y Stock no pueden ser 0 o negativos",
+				} else if (productos.getPrecio() <= 0) {
+					JOptionPane.showMessageDialog(null, "Los campos Precio no pueden ser 0 o negativos",
 							"Error", JOptionPane.WARNING_MESSAGE);
 				}else if (comboBox.getSelectedIndex() == 0 || cmbTipo.getSelectedIndex()==0) {
 					JOptionPane.showMessageDialog(null, "Selecciona un campos valido", "Error", JOptionPane.WARNING_MESSAGE);
@@ -79,7 +79,7 @@ public class ProductosVista extends JPanel {
 					if (productos.getNombre().compareTo("") == 0 || productos.getDescripcion().compareTo("") == 0) {
 						JOptionPane.showMessageDialog(null, "Introduce todos los campos", "Error",
 								JOptionPane.WARNING_MESSAGE);
-					} else if (productos.getPrecio() <= 0 || productos.getStock() <= 0|| productos.getPrecioVenta() <= 0) {
+					} else if (productos.getPrecio() <= 0 || productos.getStock() < 0|| productos.getPrecioVenta() <= 0) {
 						JOptionPane.showMessageDialog(null, "Los campos Precio y Stock no pueden ser 0 o negativos",
 								"Error", JOptionPane.WARNING_MESSAGE);
 					}else if (comboBox.getSelectedIndex() == 0) {

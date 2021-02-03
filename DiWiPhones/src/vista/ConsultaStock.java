@@ -38,7 +38,7 @@ public class ConsultaStock extends JPanel {
 		tableConsultaStock = new JTable();
 		scrollPane.setViewportView(tableConsultaStock);
 
-		modeloTabla.setColumnIdentifiers(new Object[] { "Tipo", "Fecha", "Personal", "Unidades", "Precio", "Stock" });
+		modeloTabla.setColumnIdentifiers(new Object[] { "Tipo", "Fecha", "Proveedor/Cliente", "Unidades", "Precio", "Stock" });
 		tableConsultaStock.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 
@@ -88,7 +88,15 @@ public class ConsultaStock extends JPanel {
 			}
 		} else if (p.getTipo().compareToIgnoreCase("compuesto") == 0) {
 				System.out.println("compuestoooooo");
-			
+				for (BuscarProductoM e : calculosCompuestos()) {
+					if (e.getTipo().compareTo("Fabrica") == 0) {
+						stock += e.getUnidades();
+					} else if (e.getTipo().compareTo("Venta") == 0) {
+						stock -= e.getUnidades();
+					}
+					modeloTabla.addRow(new Object[] { e.getTipo(), e.getFecha(), e.getPersonal(), e.getUnidades(),
+							e.getPrecio(), stock });
+				}
 		}
 
 	}
@@ -118,4 +126,16 @@ public class ConsultaStock extends JPanel {
 
 		return productosC;
 	}
+	
+	public ArrayList<BuscarProductoM> calculosCompuestos() {
+		GestionBBDD gestor = new GestionBBDD();
+		OrdenarProductos ordenar = new OrdenarProductos();
+		ArrayList<BuscarProductoM> productosC = gestor.consultaBuscarProductoFabrica(txtBuscar.getText().toString());
+		gestor.consultaBuscarProductoVenta(productosC, txtBuscar.getText().toString());
+
+		ordenar.getOrdenarArrrayList(productosC);
+
+		return productosC;
+	}
+	
 }

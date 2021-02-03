@@ -1181,4 +1181,61 @@ public class GestionBBDD {
 		return p;
 	}
 	
+	public ArrayList<BuscarProductoM> consultaBuscarProductoFabrica(String productoT) {
+		ArrayList<BuscarProductoM> productos = new ArrayList<>();
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("select fechafin, unidades, productos.Precio from ordenesfabrica inner JOIN "
+					+ "escandallo on ordenesfabrica.ID_Escandallo = escandallo.ID_Escandallo inner join productos on escandallo.ID_Producto = "
+					+ "productos.ID_Producto where productos.nombre ='"+productoT+"' order by 1");
+
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				BuscarProductoM producto = new BuscarProductoM();
+				producto.setFecha(registro.getString("fechafin"));
+				producto.setPersonal("DiWi Phones");
+				producto.setUnidades(registro.getInt("unidades"));
+				producto.setPrecio(registro.getInt("productos.precio")*producto.getUnidades());
+				producto.setTipo("Fabrica");
+				productos.add(producto);
+
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return productos;
+	}
+	
+	public void consultaBuscarProductoVenta(ArrayList<BuscarProductoM> productos, String productoT) {
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("select venta.fecha, clientes.Nombre, productos_ventas.Unidades, productos.PrecioVenta from venta "
+					+ "inner join clientes on clientes.ID_Cliente = venta.Id_cliente INNER join productos_ventas on venta.factura = productos_ventas.ID_Venta "
+					+ "INNER join productos on productos_ventas.ID_Producto = productos.ID_Producto where productos.nombre='"+productoT+"' order by 1");
+
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				BuscarProductoM producto = new BuscarProductoM();
+				producto.setFecha(registro.getString("venta.fecha"));
+				producto.setPersonal(registro.getString("clientes.Nombre"));
+				producto.setUnidades(registro.getInt("productos_ventas.Unidades"));
+				producto.setPrecio(registro.getInt("productos.PrecioVenta")*producto.getUnidades());
+				producto.setTipo("Venta");
+				productos.add(producto);
+
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+
+	}
+	
 }

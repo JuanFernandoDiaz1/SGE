@@ -38,7 +38,7 @@ public class ConsultaStock extends JPanel {
 		tableConsultaStock = new JTable();
 		scrollPane.setViewportView(tableConsultaStock);
 
-		modeloTabla.setColumnIdentifiers(new Object[] { "Tipo", "Fecha", "Personal", "Unidades", "Precio", "Stock" });
+		modeloTabla.setColumnIdentifiers(new Object[] { "Tipo", "Fecha", "Proveedor/Cliente", "Unidades", "Precio", "Stock" });
 		tableConsultaStock.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 

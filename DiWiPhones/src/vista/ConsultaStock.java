@@ -38,7 +38,8 @@ public class ConsultaStock extends JPanel {
 		tableConsultaStock = new JTable();
 		scrollPane.setViewportView(tableConsultaStock);
 
-		modeloTabla.setColumnIdentifiers(new Object[] { "Tipo", "Fecha", "Proveedor/Cliente", "Unidades", "Precio", "Stock" });
+		modeloTabla.setColumnIdentifiers(
+				new Object[] { "Tipo", "Fecha", "Proveedor/Cliente", "Unidades", "Precio", "Stock" });
 		tableConsultaStock.setModel(modeloTabla);
 		modeloTabla.setRowCount(0);
 
@@ -74,20 +75,29 @@ public class ConsultaStock extends JPanel {
 		Productos p = gestor.consultaProducto(txtBuscar.getText().toString());
 		int stock = 0;
 
+		System.out.println(p.getTipo());
+		System.out.println(p.getNombre());
+		
 		modeloTabla.setRowCount(0);
 
-		if (p.getTipo().compareToIgnoreCase("simple") == 0) {
-			for (BuscarProductoM e : calculos()) {
-				if (e.getTipo().compareTo("Compra") == 0) {
-					stock += e.getUnidades();
-				} else if (e.getTipo().compareTo("Venta") == 0) {
-					stock -= e.getUnidades();
+		if (txtBuscar.getText().toString().length() == 0) {
+			JOptionPane.showMessageDialog(null, "Introduce un nombre valido", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		} else if (p.getNombre() == null) {
+			JOptionPane.showMessageDialog(null, "No hay registro del producto", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		} else {
+			if (p.getTipo().compareToIgnoreCase("simple") == 0) {
+				for (BuscarProductoM e : calculos()) {
+					if (e.getTipo().compareTo("Compra") == 0) {
+						stock += e.getUnidades();
+					} else if (e.getTipo().compareTo("Venta") == 0) {
+						stock -= e.getUnidades();
+					}
+					modeloTabla.addRow(new Object[] { e.getTipo(), e.getFecha(), e.getPersonal(), e.getUnidades(),
+							e.getPrecio(), stock });
 				}
-				modeloTabla.addRow(new Object[] { e.getTipo(), e.getFecha(), e.getPersonal(), e.getUnidades(),
-						e.getPrecio(), stock });
-			}
-		} else if (p.getTipo().compareToIgnoreCase("compuesto") == 0) {
-				System.out.println("compuestoooooo");
+			} else if (p.getTipo().compareToIgnoreCase("compuesto") == 0) {
 				for (BuscarProductoM e : calculosCompuestos()) {
 					if (e.getTipo().compareTo("Fabrica") == 0) {
 						stock += e.getUnidades();
@@ -97,6 +107,7 @@ public class ConsultaStock extends JPanel {
 					modeloTabla.addRow(new Object[] { e.getTipo(), e.getFecha(), e.getPersonal(), e.getUnidades(),
 							e.getPrecio(), stock });
 				}
+			}
 		}
 
 	}
@@ -126,7 +137,7 @@ public class ConsultaStock extends JPanel {
 
 		return productosC;
 	}
-	
+
 	public ArrayList<BuscarProductoM> calculosCompuestos() {
 		GestionBBDD gestor = new GestionBBDD();
 		OrdenarProductos ordenar = new OrdenarProductos();
@@ -137,5 +148,5 @@ public class ConsultaStock extends JPanel {
 
 		return productosC;
 	}
-	
+
 }

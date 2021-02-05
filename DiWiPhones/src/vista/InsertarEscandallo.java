@@ -34,6 +34,7 @@ public class InsertarEscandallo extends JPanel {
 	private JComboBox comboBox;
 	private JComboBox cmbProducto;
 	private JTextField txtUnidades;
+	GestionBBDD gest = new GestionBBDD();
 	ArrayList<Escandallo> escandallos = new ArrayList<>();
 	private boolean valid = false;
 	/**
@@ -119,7 +120,12 @@ public class InsertarEscandallo extends JPanel {
 				}else {
 					insertEscandallo();
 					if (valid == true) {
-						insertMaterialesEscandallo();							
+						insertMaterialesEscandallo();
+						ArrayList<Escandallo> escandallos = new ArrayList<>();
+						escandallos = gest.consultaVerEscandallo(recogerEscandallo());
+						for (int i = 0; i < escandallos.size(); i++) {
+							gest.restarStock(escandallos.get(i).getProducto(), escandallos.get(i).getUnidades());
+						}
 					}
 					JOptionPane.showMessageDialog(null, "Escandallo Añadido");
 					Escandallos cv = new Escandallos();
@@ -247,7 +253,7 @@ public class InsertarEscandallo extends JPanel {
 
 				Statement consulta = conexion.createStatement();
 				consulta.executeUpdate("insert into escandallos_materiales (id_escandallo, id_material, unidadesMaterial) values("+recogerEscandallo()+
-						", (Select id_material from materiales where nombre = '"+tableProductos.getValueAt(x, 0)+"'), "+tableProductos.getValueAt(x, 1)+")");
+						", (Select id_producto from productos where nombre = '"+tableProductos.getValueAt(x, 0)+"'), "+tableProductos.getValueAt(x, 1)+")");
 				conexion.close();
 
 			} catch (SQLException e) {

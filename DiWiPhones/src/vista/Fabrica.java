@@ -25,7 +25,7 @@ public class Fabrica extends JPanel {
 			setLayout(null);
 			setBounds(0, 0, 729, 535);
 			comboFabrica = new JComboBox();
-			comboFabrica.setModel(new DefaultComboBoxModel(new String[] {"-Fabrica-", "Escandallo", "OrdenesFav", "Materiales"}));
+			comboFabrica.setModel(new DefaultComboBoxModel(new String[] {"-Fabrica-", "Escandallo", "OrdenesFav"}));
 			comboFabrica.setBounds(234, 248, 262, 38);
 			add(comboFabrica);
 			
@@ -41,9 +41,6 @@ public class Fabrica extends JPanel {
 					}else if(comboFabrica.getSelectedIndex()==2){
 						OrdenesFav ordenes = new OrdenesFav();
 						nuevoPanel(ordenes);
-					}else if(comboFabrica.getSelectedIndex()==3) {
-						Materiales materiales = new Materiales();
-						nuevoPanel(materiales);
 					}
 				}
 			});

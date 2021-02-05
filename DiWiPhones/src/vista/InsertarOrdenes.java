@@ -85,6 +85,7 @@ public class InsertarOrdenes extends JPanel {
 					JOptionPane.showMessageDialog(null, "Selecciona unas unidades validas", "Error", JOptionPane.WARNING_MESSAGE);
 				}else {
 					gestor.insertOrdenes(ordenes);
+					gestor.sumarStock(ordenes.getUnidades(), ordenes.getEscandallo());
 					OrdenesFav ord = new OrdenesFav();
 					nuevoPanel(ord);
 				}

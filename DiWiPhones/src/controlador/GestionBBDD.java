@@ -1105,14 +1105,14 @@ public class GestionBBDD {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 			// guarda los regsitros de la tabla que vamos a consultar
-			ResultSet registro = consulta.executeQuery("select Materiales.Nombre, unidadesMaterial From escandallos_materiales "
-					+ "Inner JOIN materiales on Escandallos_materiales.id_material = Materiales.id_material where id_escandallo = "+id_escandallo);
+			ResultSet registro = consulta.executeQuery("select productos.Nombre, unidadesMaterial From escandallos_materiales "
+					+ "Inner JOIN productos on Escandallos_materiales.id_material = productos.id_producto where id_escandallo = "+id_escandallo);
 
 			// si existe lo que estamos buscando
 			while (registro.next()) {
 				Escandallo esc = new Escandallo();
 				// guardamos los campos en el objeto modelo
-				esc.setProducto(registro.getString("Materiales.nombre"));
+				esc.setProducto(registro.getString("productos.nombre"));
 				esc.setUnidades(registro.getInt("unidadesMaterial"));
 				// añadimos modelos al arrayList
 				escandallo.add(esc);
@@ -1237,5 +1237,42 @@ public class GestionBBDD {
 
 
 	}
+	
+
+	public void sumarStock(int stock, int id) {
+		
+			try {
+				Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+				Statement consulta = conexion.createStatement();
+
+				consulta.executeUpdate("update productos set stock = (select stock from productos where ID_Producto = (select ID_Producto from escandallo where id_escandallo="+id+"))+"+stock+" where ID_Producto=(select ID_Producto from escandallo where id_escandallo="+id+")");
+
+			
+
+				conexion.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		
+	}
+	
+	public void restarStock(String nombreProducto, int unidades) {
+		
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+
+			consulta.executeUpdate("update productos set stock = (select stock from "
+					+ "productos where nombre = '"+nombreProducto+"')-"+unidades+" where nombre='"+nombreProducto+"'");
+
+			
+
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	
+}
+
 	
 }

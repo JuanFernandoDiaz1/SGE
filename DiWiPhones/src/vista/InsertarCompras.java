@@ -179,7 +179,7 @@ public class InsertarCompras extends JPanel {
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
-			ResultSet registro = consulta.executeQuery("Select nombre from productos");
+			ResultSet registro = consulta.executeQuery("Select nombre from productos where tipo='simple'");
 			while (registro.next()) {
 				listaModelo.addElement(registro.getString("nombre"));
 			}

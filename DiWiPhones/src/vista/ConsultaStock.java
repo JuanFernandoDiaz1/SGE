@@ -93,6 +93,8 @@ public class ConsultaStock extends JPanel {
 						stock += e.getUnidades();
 					} else if (e.getTipo().compareTo("Venta") == 0) {
 						stock -= e.getUnidades();
+					} else if(e.getTipo().compareTo("Fabrica")==0) {
+						stock -= e.getUnidades();
 					}
 					modeloTabla.addRow(new Object[] { e.getTipo(), e.getFecha(), e.getPersonal(), e.getUnidades(),
 							e.getPrecio(), stock });
@@ -132,7 +134,7 @@ public class ConsultaStock extends JPanel {
 		OrdenarProductos ordenar = new OrdenarProductos();
 		ArrayList<BuscarProductoM> productosC = gestor.consultaBuscarProductoV(txtBuscar.getText().toString());
 		gestor.consultaBuscarProductoC(productosC, txtBuscar.getText().toString());
-
+		gestor.stockFabricaSimple(productosC, txtBuscar.getText().toString());
 		ordenar.getOrdenarArrrayList(productosC);
 
 		return productosC;

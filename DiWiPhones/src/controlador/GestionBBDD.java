@@ -15,6 +15,7 @@ import modelo.BuscarProductoM;
 import modelo.Cliente;
 import modelo.Compras;
 import modelo.Escandallo;
+import modelo.EscandalloMaterial;
 import modelo.Material;
 import modelo.OrdenesFavM;
 import modelo.Personal;
@@ -1298,6 +1299,63 @@ public class GestionBBDD {
 		}
 		return nombre;
 	}
+	
+	
+	public void stockFabricaSimple(ArrayList<BuscarProductoM> productos, String productoT) {
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("select ordenesfabrica.fechainicio, ordenesfabrica.unidades, escandallos_materiales.unidadesmaterial, productos.Precio "
+					+ "from ordenesfabrica inner join escandallo on ordenesfabrica.ID_Escandallo = escandallo.ID_Escandallo inner join escandallos_materiales "
+					+ "on escandallo.ID_Escandallo = escandallos_materiales.ID_Escandallo inner join productos on productos.ID_Producto = "
+					+ "escandallos_materiales.ID_Material where productos.nombre='"+productoT+"'");
 
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				BuscarProductoM producto = new BuscarProductoM();
+				producto.setFecha(registro.getString("ordenesfabrica.fechainicio"));
+				producto.setPersonal("DiWi Phones");
+				producto.setUnidades(registro.getInt("escandallos_materiales.unidadesmaterial")*registro.getInt("ordenesfabrica.unidades"));
+				producto.setPrecio(registro.getInt("productos.Precio"));
+				producto.setTipo("Fabrica");
+				productos.add(producto);
+
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+
+	}
+	
+	public ArrayList<EscandalloMaterial> restarStockMateriales(int idOrden) {
+		ArrayList<EscandalloMaterial> materiales = new ArrayList<>();
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("select productos.nombre, sum(escandallos_materiales.UnidadesMaterial * ordenesfabrica.Unidades) "
+					+ "from productos inner join escandallos_materiales on productos.ID_Producto = escandallos_materiales.ID_Material inner join "
+					+ "escandallo on escandallos_materiales.ID_Escandallo = escandallo.ID_Escandallo inner join "
+					+ "ordenesfabrica on ordenesfabrica.ID_Escandallo = escandallo.ID_Escandallo where ordenesfabrica.ID_orden="+ idOrden+" "
+					+ "GROUP by productos.Nombre ");
+
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				EscandalloMaterial producto = new EscandalloMaterial();
+				producto.setNombre(registro.getString(1));
+				producto.setUnidades(registro.getInt(2));
+				materiales.add(producto);
+
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return materiales;
+	}
 	
 }

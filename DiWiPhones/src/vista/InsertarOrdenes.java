@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -22,6 +23,7 @@ import javax.swing.JTextField;
 import com.toedter.calendar.JCalendar;
 
 import controlador.GestionBBDD;
+import modelo.EscandalloMaterial;
 import modelo.OrdenesFavM;
 
 import javax.swing.DefaultComboBoxModel;
@@ -86,6 +88,7 @@ public class InsertarOrdenes extends JPanel {
 				}else {
 					gestor.insertOrdenes(ordenes);
 					gestor.sumarStock(ordenes.getUnidades(), ordenes.getEscandallo());
+					//ArrayList<EscandalloMaterial> materiales;
 					OrdenesFav ord = new OrdenesFav();
 					nuevoPanel(ord);
 				}

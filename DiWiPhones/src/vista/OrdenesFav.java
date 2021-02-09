@@ -71,7 +71,10 @@ public class OrdenesFav extends JPanel {
 					if(tableEscandallos.getSelectedRow()==-1) {
 						JOptionPane.showMessageDialog(null, "Selecciona una Orden para eliminar", "Error", JOptionPane.WARNING_MESSAGE);
 					}else {
+						String nombre = gestor.nombreEscandallo(Integer.parseInt(tableEscandallos.getValueAt(tableEscandallos.getSelectedRow(), 1).toString()));
+						gestor.restarStock(nombre, Integer.parseInt(tableEscandallos.getValueAt(tableEscandallos.getSelectedRow(), 2).toString()));
 						gestor.borrarOrdenes(tableEscandallos);
+						
 						cargarTabla();
 					}
 				}

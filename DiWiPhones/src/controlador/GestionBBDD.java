@@ -1273,6 +1273,31 @@ public class GestionBBDD {
 		}
 	
 }
+	
+	public String nombreEscandallo(int id) {
+		String nombre=null;
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("select nombre from productos inner join escandallo on productos.id_producto = escandallo.id_producto where"
+					+ " id_escandallo= " + id);
+
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				
+				nombre=registro.getString("nombre");
+				
+
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+		}
+		return nombre;
+	}
 
 	
 }

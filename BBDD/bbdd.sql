@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-01-2021 a las 19:43:25
--- Versión del servidor: 10.4.11-MariaDB
--- Versión de PHP: 7.4.6
+-- Tiempo de generación: 09-02-2021 a las 16:22:38
+-- Versión del servidor: 10.4.14-MariaDB
+-- Versión de PHP: 7.4.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `bbdd`
 --
+CREATE DATABASE IF NOT EXISTS `bbdd` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `bbdd`;
 
 -- --------------------------------------------------------
 
@@ -61,8 +63,8 @@ CREATE TABLE `compra` (
 --
 
 INSERT INTO `compra` (`Factura`, `fecha`, `id_personal`, `id_proveedor`, `PrecioCompra`) VALUES
-(13, '2020-12-11', 6, 4, 150),
-(14, '2020-12-21', 6, 4, 15);
+(17, '2019-01-01', 6, 4, 475),
+(18, '2019-12-09', 6, 4, 4750);
 
 -- --------------------------------------------------------
 
@@ -74,6 +76,13 @@ CREATE TABLE `escandallo` (
   `ID_Escandallo` int(11) NOT NULL,
   `ID_Producto` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `escandallo`
+--
+
+INSERT INTO `escandallo` (`ID_Escandallo`, `ID_Producto`) VALUES
+(7, 24);
 
 -- --------------------------------------------------------
 
@@ -87,6 +96,16 @@ CREATE TABLE `escandallos_materiales` (
   `UnidadesMaterial` int(11) NOT NULL,
   `ID_Escandallo_materiales` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `escandallos_materiales`
+--
+
+INSERT INTO `escandallos_materiales` (`ID_Escandallo`, `ID_Material`, `UnidadesMaterial`, `ID_Escandallo_materiales`) VALUES
+(7, 20, 1, 14),
+(7, 21, 1, 15),
+(7, 22, 1, 16),
+(7, 23, 1, 17);
 
 -- --------------------------------------------------------
 
@@ -115,6 +134,14 @@ CREATE TABLE `ordenesfabrica` (
   `FechaFin` date NOT NULL,
   `Estado` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `ordenesfabrica`
+--
+
+INSERT INTO `ordenesfabrica` (`Unidades`, `ID_Escandallo`, `ID_orden`, `ID_Personal`, `FechaInicio`, `FechaFin`, `Estado`) VALUES
+(2, 7, 8, 6, '2019-02-13', '2019-02-25', 'Acabado'),
+(4, 7, 9, 6, '2020-02-09', '2020-02-15', 'Acabado');
 
 -- --------------------------------------------------------
 
@@ -150,15 +177,20 @@ CREATE TABLE `productos` (
   `PrecioVenta` int(11) NOT NULL,
   `Stock` int(11) NOT NULL,
   `ID_Producto` int(11) NOT NULL,
-  `ID_Proveedor` int(11) NOT NULL
+  `ID_Proveedor` int(11) NOT NULL,
+  `tipo` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `productos`
 --
 
-INSERT INTO `productos` (`Nombre`, `Descripcion`, `Precio`, `PrecioVenta`, `Stock`, `ID_Producto`, `ID_Proveedor`) VALUES
-('Raton', 'raton gaming', 15, 20, -5, 18, 4);
+INSERT INTO `productos` (`Nombre`, `Descripcion`, `Precio`, `PrecioVenta`, `Stock`, `ID_Producto`, `ID_Proveedor`, `tipo`) VALUES
+('placa base', 'placa', 100, 150, 9, 20, 5, 'Simple'),
+('procesador', 'pro', 200, 250, 9, 21, 5, 'Simple'),
+('memoria ram', 'mr', 160, 210, 9, 22, 5, 'Simple'),
+('raton', 'ra', 15, 25, 11, 23, 5, 'Simple'),
+('pc', 'pc flamigero', 460, 900, 5, 24, 5, 'Compuesto');
 
 -- --------------------------------------------------------
 
@@ -178,8 +210,14 @@ CREATE TABLE `productos_compra` (
 --
 
 INSERT INTO `productos_compra` (`ID`, `id_producto`, `Id_compra`, `Unidades`) VALUES
-(33, 18, 13, 10),
-(35, 18, 14, 1);
+(44, 22, 17, 1),
+(45, 20, 17, 1),
+(46, 21, 17, 1),
+(47, 23, 17, 1),
+(48, 22, 18, 10),
+(49, 20, 18, 10),
+(50, 21, 18, 10),
+(51, 23, 18, 10);
 
 -- --------------------------------------------------------
 
@@ -199,9 +237,13 @@ CREATE TABLE `productos_ventas` (
 --
 
 INSERT INTO `productos_ventas` (`ID`, `ID_Producto`, `ID_Venta`, `Unidades`) VALUES
-(24, 18, 22, 30),
-(25, 18, 23, 31),
-(26, 18, 24, 5);
+(31, 22, 28, 1),
+(32, 20, 28, 1),
+(33, 21, 28, 1),
+(34, 20, 29, 1),
+(35, 21, 29, 1),
+(36, 22, 29, 1),
+(37, 24, 30, 1);
 
 -- --------------------------------------------------------
 
@@ -222,7 +264,8 @@ CREATE TABLE `proveedores` (
 --
 
 INSERT INTO `proveedores` (`Nombre`, `NIF`, `Direccion`, `Email`, `ID_Proveedor`) VALUES
-('Agustin', '012012012X', 'Calle 1', 'jordan@gmail.com', 4);
+('Agustin', '012012012X', 'Calle 1', 'jordan@gmail.com', 4),
+('DiWi phones', '123123123123A', 'Calle marioooATM', 'diwi@phones.kipas', 5);
 
 -- --------------------------------------------------------
 
@@ -280,9 +323,9 @@ CREATE TABLE `venta` (
 --
 
 INSERT INTO `venta` (`factura`, `fecha`, `Id_cliente`, `Id_personal`, `PrecioVenta`) VALUES
-(22, '2020-12-20', 27, 6, 600),
-(23, '2020-12-21', 27, 6, 620),
-(24, '2020-12-21', 27, 6, 100);
+(28, '2019-02-15', 27, 6, 610),
+(29, '2019-12-31', 27, 6, 610),
+(30, '2019-02-28', 27, 6, 900);
 
 --
 -- Índices para tablas volcadas
@@ -406,19 +449,19 @@ ALTER TABLE `clientes`
 -- AUTO_INCREMENT de la tabla `compra`
 --
 ALTER TABLE `compra`
-  MODIFY `Factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `Factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `escandallo`
 --
 ALTER TABLE `escandallo`
-  MODIFY `ID_Escandallo` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID_Escandallo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `escandallos_materiales`
 --
 ALTER TABLE `escandallos_materiales`
-  MODIFY `ID_Escandallo_materiales` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID_Escandallo_materiales` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `materiales`
@@ -430,7 +473,7 @@ ALTER TABLE `materiales`
 -- AUTO_INCREMENT de la tabla `ordenesfabrica`
 --
 ALTER TABLE `ordenesfabrica`
-  MODIFY `ID_orden` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID_orden` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `personal`
@@ -442,25 +485,25 @@ ALTER TABLE `personal`
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `ID_Producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `ID_Producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `productos_compra`
 --
 ALTER TABLE `productos_compra`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT de la tabla `productos_ventas`
 --
 ALTER TABLE `productos_ventas`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores`
 --
 ALTER TABLE `proveedores`
-  MODIFY `ID_Proveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ID_Proveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores_productos`
@@ -478,7 +521,7 @@ ALTER TABLE `telefonos`
 -- AUTO_INCREMENT de la tabla `venta`
 --
 ALTER TABLE `venta`
-  MODIFY `factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- Restricciones para tablas volcadas
@@ -502,7 +545,7 @@ ALTER TABLE `escandallo`
 --
 ALTER TABLE `escandallos_materiales`
   ADD CONSTRAINT `fk_escandallo_materiales` FOREIGN KEY (`ID_Escandallo`) REFERENCES `escandallo` (`ID_Escandallo`),
-  ADD CONSTRAINT `fk_materiales_escandallo` FOREIGN KEY (`ID_Material`) REFERENCES `materiales` (`ID_Material`);
+  ADD CONSTRAINT `fk_materiales_escandallo` FOREIGN KEY (`ID_Material`) REFERENCES `productos` (`ID_Producto`);
 
 --
 -- Filtros para la tabla `ordenesfabrica`

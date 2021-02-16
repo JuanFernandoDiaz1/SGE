@@ -34,7 +34,7 @@ public class PruebaReport extends JPanel {
 				Prueba p = new Prueba();
 				p.setNombre(txtNombre.getText());
 				JasperReport reporte;
-				String path = "reportes\\Reporte1.jasper";
+				String path = "reportes\\Reporte1.jrxml";
 				List<Prueba> lista = new ArrayList<>(); 
 				lista.add(p);
 				try {

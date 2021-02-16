@@ -8,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 import vista.ConsultaStock;
 import vista.Fabrica;
 import vista.Operaciones;
+import vista.PruebaReport;
 import vista.Tablas;
 
 import java.awt.Toolkit;
@@ -103,6 +104,15 @@ public class VntPrincipal extends JFrame {
 			}
 		});
 		menu.add(menuStock);
+		
+		JMenuItem menuInformeStock = new JMenuItem("Informe de stock");
+		menuInformeStock.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PruebaReport p = new PruebaReport();
+				nuevoPanel(p);
+			}
+		});
+		menu.add(menuInformeStock);
 		
 		JLabel labelDiwi = new JLabel("");
 		labelDiwi.setIcon(new ImageIcon("img\\diwi.png"));

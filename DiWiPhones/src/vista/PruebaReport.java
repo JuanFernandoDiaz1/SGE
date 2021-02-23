@@ -1,6 +1,7 @@
 package vista;
 
 import javax.swing.JPanel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 
@@ -22,18 +23,20 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 
 import controlador.GestionBBDD;
 import modelo.BuscarProductoM;
-
+import modelo.Productos;
 
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
 
 public class PruebaReport extends JPanel {
 	private JTextField txtNombre;
 	private static final Font categoryFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
     private static final Font subcategoryFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD);
+    private GestionBBDD gest = new GestionBBDD();
     
 
 	/**
@@ -42,20 +45,38 @@ public class PruebaReport extends JPanel {
 	public PruebaReport() {
 		setBounds(0, 0, 723, 507);
 		
-		JButton boton = new JButton("New button");
+		JButton boton = new JButton("GenerarPDF");
 		boton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				crearPDF(calculos());
-				abrirPDF();
+				Productos p = gest.consultaProducto(txtNombre.getText().toString());
+				if(p.getTipo().compareToIgnoreCase("Simple")==0) {
+					crearPDF(calculos());
+					abrirPDF();
+				}else if(p.getTipo().compareToIgnoreCase("Compuesto")==0) {
+					crearPDF(calculosCompuestos());
+					abrirPDF();
+				}
+				
 			}
 		});
-		boton.setBounds(180, 146, 89, 23);
+		setLayout(null);
+		boton.setBounds(244, 213, 118, 23);
 		add(boton);
 		
 		txtNombre = new JTextField();
-		txtNombre.setBounds(183, 80, 86, 20);
+		txtNombre.setBounds(223, 182, 151, 20);
 		add(txtNombre);
 		txtNombre.setColumns(10);
+		
+		JLabel lblLogo = new JLabel("");
+		lblLogo.setIcon(new ImageIcon("img/diwi.png"));
+		lblLogo.setBounds(0, 0, 199, 54);
+		add(lblLogo);
+		
+		JLabel lblFondo = new JLabel("");
+		lblFondo.setIcon(new ImageIcon("img\\fondo.jpg"));
+		lblFondo.setBounds(0, 0, 723, 507);
+		add(lblFondo);
 		
 		
 
@@ -105,7 +126,9 @@ public class PruebaReport extends JPanel {
 			table.addCell(columnHeader);
 			
 			table.setHeaderRows(1);
-			                
+			int stock = 0;
+			Productos p = gest.consultaProducto(txtNombre.getText().toString());
+			System.out.println(p.getTipo());
 			for (int fila = 0; fila < array.size(); fila++) {
 			    for (int column = 0; column < 6; column++) {
 			    	switch(column) {
@@ -125,7 +148,22 @@ public class PruebaReport extends JPanel {
 			    			table.addCell(array.get(fila).getPrecio()+"");
 			    			break;
 			    		case 5:
-			    			table.addCell(array.get(fila).getStock()+"");
+			    			if(p.getTipo().compareToIgnoreCase("simple") == 0) {
+			    				if (array.get(fila).getTipo().compareTo("Compra") == 0) {
+									stock += array.get(fila).getUnidades();
+								} else if (array.get(fila).getTipo().compareTo("Venta") == 0) {
+									stock -= array.get(fila).getUnidades();
+								} else if(array.get(fila).getTipo().compareTo("Fabrica")==0) {
+									stock -= array.get(fila).getUnidades();
+								}
+			    			}else if(p.getTipo().compareToIgnoreCase("compuesto") == 0) {
+			    				if (array.get(fila).getTipo().compareTo("Fabrica") == 0) {
+									stock += array.get(fila).getUnidades();
+								} else if (array.get(fila).getTipo().compareTo("Venta") == 0) {
+									stock -= array.get(fila).getUnidades();
+								}
+			    			}
+			    			table.addCell(stock+"");
 			    			break;
 			    	}
 			        
@@ -148,6 +186,17 @@ public class PruebaReport extends JPanel {
 		ArrayList<BuscarProductoM> productosC = gestor.consultaBuscarProductoV(txtNombre.getText().toString());
 		gestor.consultaBuscarProductoC(productosC, txtNombre.getText().toString());
 		gestor.stockFabricaSimple(productosC, txtNombre.getText().toString());
+		ordenar.getOrdenarArrrayList(productosC);
+
+		return productosC;
+	}
+	
+	public ArrayList<BuscarProductoM> calculosCompuestos() {
+		GestionBBDD gestor = new GestionBBDD();
+		OrdenarProductos ordenar = new OrdenarProductos();
+		ArrayList<BuscarProductoM> productosC = gestor.consultaBuscarProductoFabrica(txtNombre.getText().toString());
+		gestor.consultaBuscarProductoVenta(productosC, txtNombre.getText().toString());
+
 		ordenar.getOrdenarArrrayList(productosC);
 
 		return productosC;

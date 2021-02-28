@@ -1,6 +1,14 @@
 package vista;
 
 import javax.swing.JPanel;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JTextField;
@@ -34,11 +42,13 @@ import modelo.BuscarProductoM;
 import modelo.Productos;
 
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 
@@ -47,6 +57,7 @@ public class PruebaReport extends JPanel {
 	private static final Font categoryFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
 	private static final Font subcategoryFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD);
 	private GestionBBDD gest = new GestionBBDD();
+	private JTextField textCorreo;
 
 	/**
 	 * Create the panel.
@@ -76,6 +87,20 @@ public class PruebaReport extends JPanel {
 		txtNombre.setBounds(223, 182, 151, 20);
 		add(txtNombre);
 		txtNombre.setColumns(10);
+		
+		textCorreo = new JTextField();
+		textCorreo.setBounds(223, 270, 151, 20);
+		add(textCorreo);
+		textCorreo.setColumns(10);
+		
+		JButton btnEnviar = new JButton("Enviar por Correo");
+		btnEnviar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				enviarCorreo(textCorreo.getText());
+			}
+		});
+		btnEnviar.setBounds(244, 317, 118, 23);
+		add(btnEnviar);
 
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setIcon(new ImageIcon("img/diwi.png"));
@@ -86,6 +111,8 @@ public class PruebaReport extends JPanel {
 		lblFondo.setIcon(new ImageIcon("img\\fondo.jpg"));
 		lblFondo.setBounds(0, 0, 723, 507);
 		add(lblFondo);
+		
+
 
 	}
 
@@ -234,5 +261,50 @@ public class PruebaReport extends JPanel {
 			e.printStackTrace();
 		}
 	}
+	public void enviarCorreo(String correo){
+		String[] archivoAdjunto;
+        File fichero = new File("reporteSupremo.pdf");
 
+        final String username = "mario.jimenez@juanxxiii.net";
+        final String password = "remedios69";
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+        Session session = Session.getInstance(props,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("mario.jimenez@juanxxiii.net"));
+            message.setRecipients(Message.RecipientType.TO,
+                    InternetAddress.parse(correo));
+            message.setSubject("Adjunto Pdf DiwisPhones");
+
+            MimeBodyPart textBodyPart = new MimeBodyPart();
+            textBodyPart.setText("Buenos dias, se le adjunta el pdf solicictado.");
+
+            MimeBodyPart attachmentBodyPart= new MimeBodyPart();
+            DataSource source = new FileDataSource("reporteSupremo.pdf");
+            attachmentBodyPart.setDataHandler(new DataHandler(source));
+            attachmentBodyPart.setFileName("archivoAdjunto.pdf");
+
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(textBodyPart);
+            multipart.addBodyPart(attachmentBodyPart);
+
+            message.setContent(multipart);
+
+            Transport.send(message);
+            System.out.println("Correcto!");
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+	}
 }

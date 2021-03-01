@@ -1,5 +1,6 @@
 package vista;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -34,13 +35,19 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
+import com.itextpdf.awt.geom.Rectangle;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
@@ -50,16 +57,11 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.toedter.calendar.JCalendar;
 
 import controlador.GestionBBDD;
-import modelo.BuscarProductoM;
 import modelo.Compras;
-import modelo.Productos;
 import modelo.Proveedor;
 
-import javax.swing.JSlider;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-
-public class InformesCompra extends JPanel {
+public class InformeFactura extends JPanel{
+	
 	private static final Font categoryFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
 	private static final Font subcategoryFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD);
 	private GestionBBDD gest = new GestionBBDD();
@@ -75,7 +77,7 @@ public class InformesCompra extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public InformesCompra() {
+	public InformeFactura() {
 		setBounds(0, 0, 723, 507);
 
 		JButton boton = new JButton("GenerarPDF");
@@ -195,87 +197,69 @@ public class InformesCompra extends JPanel {
 
 			documento.add(Chunk.NEWLINE);
 			documento.add(Chunk.NEWLINE);
-			documento.add(new Paragraph("                  Informe de compras"));
 			documento.add(Chunk.NEWLINE);
-
-			PdfPTable table = new PdfPTable(7);
-
+			documento.add(new Paragraph("Factura",
+					FontFactory.getFont("arial",   // fuente
+					30,                            // tamaño
+					Font.BOLDITALIC,               // estilo
+					BaseColor.BLUE))); 
+			documento.add(Chunk.NEWLINE);
+			
+			PdfPTable table = new PdfPTable(4);
+			table.getDefaultCell().setBorder(0);
 			PdfPCell columnHeader;
+			
 			// Fill table rows (rellenamos las filas de la tabla).
 
-			columnHeader = new PdfPCell(new Phrase("Factura"));
-			columnHeader.setHorizontalAlignment(Element.ALIGN_CENTER);
-			table.addCell(columnHeader);
-
-			columnHeader = new PdfPCell(new Phrase("Fecha"));
-			columnHeader.setHorizontalAlignment(Element.ALIGN_CENTER);
-			table.addCell(columnHeader);
-
-			columnHeader = new PdfPCell(new Phrase("Proveedor"));
-			columnHeader.setHorizontalAlignment(Element.ALIGN_CENTER);
-			table.addCell(columnHeader);
-
-			columnHeader = new PdfPCell(new Phrase("NIF"));
-			columnHeader.setHorizontalAlignment(Element.ALIGN_CENTER);
-			table.addCell(columnHeader);
-
-			columnHeader = new PdfPCell(new Phrase("Precio Sin IVA"));
-			columnHeader.setHorizontalAlignment(Element.ALIGN_CENTER);
-			table.addCell(columnHeader);
-
-			columnHeader = new PdfPCell(new Phrase("IVA"));
-			columnHeader.setHorizontalAlignment(Element.ALIGN_CENTER);
-			table.addCell(columnHeader);
 			
-			columnHeader = new PdfPCell(new Phrase("precio total"));
-			columnHeader.setHorizontalAlignment(Element.ALIGN_CENTER);
+			columnHeader = new PdfPCell(new Phrase("FACTURAR A"));
+			columnHeader.setHorizontalAlignment(Element.ALIGN_LEFT);
+			columnHeader.setBorder(0);
+			table.addCell(columnHeader);
+
+			columnHeader = new PdfPCell(new Phrase("ENVIAR A"));
+			columnHeader.setHorizontalAlignment(Element.ALIGN_LEFT);
+			columnHeader.setBorder(0);
+			table.addCell(columnHeader);
+
+			columnHeader = new PdfPCell(new Phrase("Nº FACTURA"));
+			columnHeader.setHorizontalAlignment(Element.ALIGN_LEFT);
+			columnHeader.setBorder(0);
+			table.addCell(columnHeader);
+
+			columnHeader = new PdfPCell(new Phrase("FECHA"));
+			columnHeader.setHorizontalAlignment(Element.ALIGN_LEFT);
+			columnHeader.setBorder(0);
 			table.addCell(columnHeader);
 			
 
+			
+			
+			
 			table.setHeaderRows(1);
-			int stock = 0;
-			for (int fila = 0; fila < array.size(); fila++) {
-				for (int column = 0; column <7; column++) {
+			for (int fila = 0; fila < 1; fila++) {
+				for (int column = 0; column < 4; column++) {
 					switch (column) {
 					case 0:
-						table.addCell(array.get(fila).getFactura()+"");
-						System.out.println(array.get(fila).getFactura());
+						table.addCell(new Phrase("juan"));
 						break;
 					case 1:
-						table.addCell(array.get(fila).getFechaTotal()+"");
-						System.out.println(array.get(fila).getFechaTotal());
+						table.addCell(new Phrase("mario"));
 						break;
 					case 2:
-						table.addCell(array.get(fila).getProveedor());
-						System.out.println(array.get(fila).getProveedor());
+						table.addCell(new Phrase("1"));
 						break;
 					case 3:
-						table.addCell(array.get(fila).getNifProveedor());
-						System.out.println(array.get(fila).getNifProveedor());
+						table.addCell(new Phrase("21/01/2012"));
 						break;
-					case 4:
-						
-						double precioSinIVA=(array.get(fila).getPrecioTotal()/1.21);
-						table.addCell(String.format("%.2f", precioSinIVA) + "€");
-						System.out.println(precioSinIVA+ "");
-						break;
-					case 5:
-						double precioSinIVA2=(array.get(fila).getPrecioTotal()/1.21);
-						double iva = (precioSinIVA2*21)/100;
-						table.addCell(String.format("%.2f", iva)  + "€");
-						System.out.println(iva+ "iva");
-						break;
-					case 6:
-						table.addCell(array.get(fila).getPrecioTotal() + "€");
-						System.out.println(array.get(fila).getPrecioTotal() + "total");
-						break;
+					
 					}
 
 				}
 			}
 
 			documento.add(table);
-			documento.close();
+			
 
 			documento.close();
 		} catch (FileNotFoundException | DocumentException e) {
@@ -384,7 +368,5 @@ public class InformesCompra extends JPanel {
             e.printStackTrace();
         }
 	}
+
 }
-
-
-

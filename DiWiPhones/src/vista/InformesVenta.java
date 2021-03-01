@@ -187,6 +187,10 @@ public class InformesVenta extends JPanel{
 			Image img = Image.getInstance("img\\\\diwi.png");
 			img.scaleToFit(100, 100);
 			documento.add(img);
+			documento.add(new Paragraph("DiWi phones S.L"));
+			documento.add(new Paragraph("Calle Falsa 123"));
+			documento.add(new Paragraph("21021 Alcorcon, Madrid"));
+			
 
 			documento.add(Chunk.NEWLINE);
 			documento.add(Chunk.NEWLINE);

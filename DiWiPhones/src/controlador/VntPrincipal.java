@@ -7,6 +7,7 @@ import javax.swing.border.EmptyBorder;
 
 import vista.ConsultaStock;
 import vista.Fabrica;
+import vista.InformeFactura;
 import vista.InformesCompra;
 import vista.InformesVenta;
 import vista.Operaciones;
@@ -136,6 +137,15 @@ public class VntPrincipal extends JFrame {
 			}
 		});
 		mnNewMenu.add(menuInformeVentas);
+		
+		JMenuItem menuInformeFacturas = new JMenuItem("Informe factura");
+		menuInformeFacturas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				InformeFactura ifa = new InformeFactura();
+				nuevoPanel(ifa);
+			}
+		});
+		mnNewMenu.add(menuInformeFacturas);
 		
 		JLabel labelDiwi = new JLabel("");
 		labelDiwi.setIcon(new ImageIcon("img\\diwi.png"));

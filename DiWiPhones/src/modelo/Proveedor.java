@@ -1,11 +1,20 @@
 package modelo;
 
 public class Proveedor {
+	private int id;
 	private String nombre;
 	private String direccion;
 	private String email;
 	private int telefono;
 	private String nif;
+	
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public String getNombre() {
 		return nombre;
 	}

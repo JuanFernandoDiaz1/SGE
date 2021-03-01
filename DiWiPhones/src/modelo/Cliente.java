@@ -1,6 +1,7 @@
 package modelo;
 
 public class Cliente {
+	private int id;
 	private String dni;
 	private String nombre;
 	private String email;
@@ -8,12 +9,27 @@ public class Cliente {
 	private int telefono;
 	
 	public Cliente() {
-		String dni="";
-		String nombre="";
-		String email="";
-		String direccion="";
-		int telefono=0;
+		this.dni="";
+		this.id=0;
+		this.nombre="";
+		this.email="";
+		this.direccion="";
+		this.telefono=0;
 	}
+	
+	
+
+	public int getId() {
+		return id;
+	}
+
+
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+
 
 	public int getTelefono() {
 		return telefono;

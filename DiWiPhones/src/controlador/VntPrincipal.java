@@ -7,6 +7,8 @@ import javax.swing.border.EmptyBorder;
 
 import vista.ConsultaStock;
 import vista.Fabrica;
+import vista.InformesCompra;
+import vista.InformesVenta;
 import vista.Operaciones;
 import vista.PruebaReport;
 import vista.Tablas;
@@ -105,6 +107,9 @@ public class VntPrincipal extends JFrame {
 		});
 		menu.add(menuStock);
 		
+		JMenu mnNewMenu = new JMenu("Informes");
+		menuBar.add(mnNewMenu);
+		
 		JMenuItem menuInformeStock = new JMenuItem("Informe de stock");
 		menuInformeStock.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -112,7 +117,25 @@ public class VntPrincipal extends JFrame {
 				nuevoPanel(p);
 			}
 		});
-		menu.add(menuInformeStock);
+		mnNewMenu.add(menuInformeStock);
+		
+		JMenuItem menuInformeCompras = new JMenuItem("Informe compras");
+		menuInformeCompras.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				InformesCompra ic = new InformesCompra();
+				nuevoPanel(ic);
+			}
+		});
+		mnNewMenu.add(menuInformeCompras);
+		
+		JMenuItem menuInformeVentas = new JMenuItem("Informe ventas");
+		menuInformeVentas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				InformesVenta iv = new InformesVenta();
+				nuevoPanel(iv);
+			}
+		});
+		mnNewMenu.add(menuInformeVentas);
 		
 		JLabel labelDiwi = new JLabel("");
 		labelDiwi.setIcon(new ImageIcon("img\\diwi.png"));

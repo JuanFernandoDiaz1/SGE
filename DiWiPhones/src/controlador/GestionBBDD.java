@@ -32,13 +32,14 @@ public class GestionBBDD {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 			// guarda los regsitros de la tabla que vamos a consultar
-			ResultSet registro = consulta.executeQuery("select distinct dni, nombre, direccion, email, numero "
-					+ "from clientes left join telefonos on telefonos.id_cliente = clientes.id_cliente group by dni");
+			ResultSet registro = consulta.executeQuery("select distinct clientes.id_cliente, dni, nombre, direccion, email, numero "
+					+ "from clientes left join telefonos on telefonos.id_cliente = clientes.id_cliente group by dni order by 1");
 
 			// si existe lo que estamos buscando
 			while (registro.next()) {
 				Cliente c1 = new Cliente();
 				// guardamos los campos en el objeto modelo
+				c1.setId(registro.getInt("clientes.id_cliente"));
 				c1.setDni(registro.getString("DNI"));
 				c1.setNombre(registro.getString("Nombre"));
 				c1.setDireccion(registro.getString("Direccion"));
@@ -90,12 +91,13 @@ public class GestionBBDD {
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
-			ResultSet registro = consulta.executeQuery("select distinct nombre, nif, direccion, email, numero "
+			ResultSet registro = consulta.executeQuery("select distinct proveedores.id_proveedor, nombre, nif, direccion, email, numero "
 					+ "from proveedores left join telefonos on "
-					+ "telefonos.id_proveedor = proveedores.id_proveedor group by nif");
+					+ "telefonos.id_proveedor = proveedores.id_proveedor group by nif order by 1");
 
 			while (registro.next()) {
 				Proveedor proveedor = new Proveedor();
+				proveedor.setId(registro.getInt("proveedores.id_proveedor"));
 				proveedor.setNombre(registro.getString("Nombre"));
 				proveedor.setNif(registro.getString("nif"));
 				proveedor.setDireccion(registro.getString("Direccion"));
@@ -109,6 +111,7 @@ public class GestionBBDD {
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
 					JOptionPane.WARNING_MESSAGE);
+			e.printStackTrace();
 		}
 		return proveedores;
 	}

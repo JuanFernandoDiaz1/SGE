@@ -54,21 +54,19 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 import com.toedter.calendar.JCalendar;
 
 import controlador.GestionBBDD;
+import modelo.Cliente;
 import modelo.Compras;
 import modelo.Proveedor;
 
-public class InformeFactura extends JPanel{
+public class InformeFacturaC extends JPanel{
 	
 	private static final Font categoryFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
 	private static final Font subcategoryFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD);
 	private GestionBBDD gest = new GestionBBDD();
-	private JCalendar calendario;
-	private JCalendar calendario2;
-	private JSlider sliderI;
-	private JSlider sliderf;
 	private JLabel labelSlider1; 
 	private JLabel labelSlider2;
 	
@@ -77,7 +75,7 @@ public class InformeFactura extends JPanel{
 	/**
 	 * Create the panel.
 	 */
-	public InformeFactura() {
+	public InformeFacturaC() {
 		setBounds(0, 0, 723, 507);
 
 		JButton boton = new JButton("GenerarPDF");
@@ -102,14 +100,6 @@ public class InformeFactura extends JPanel{
 		btnEnviar.setBounds(426, 421, 118, 23);
 		add(btnEnviar);
 		
-		calendario = new JCalendar();
-		calendario.setBounds(91, 143, 230, 136);
-		add(calendario);
-		
-		calendario2 = new JCalendar();
-		calendario2.setBounds(408, 143, 230, 136);
-		add(calendario2);
-		
 		labelSlider2 = new JLabel("");
 		labelSlider2.setBounds(648, 339, 46, 23);
 		add(labelSlider2);
@@ -118,45 +108,10 @@ public class InformeFactura extends JPanel{
 		labelSlider1.setBounds(301, 336, 46, 26);
 		add(labelSlider1);
 		
-		sliderI = new JSlider();
-		sliderI.setValue(0);
-		sliderI.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent arg0) {
-				labelSlider1.setText(sliderI.getValue()+"");
-			}
-		});
-		sliderI.setBounds(91, 336, 200, 26);
-		sliderI.setMaximum(proveedores.get(proveedores.size()-1).getId());
-		add(sliderI);
-		
-		
-		sliderf = new JSlider();
-		sliderf.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				labelSlider2.setText(sliderf.getValue()+"");
-			}
-		});
-		sliderf.setBounds(427, 336, 200, 26);
-		sliderf.setValue(0);
-		sliderf.setMaximum(proveedores.get(proveedores.size()-1).getId());
-		add(sliderf);
-		
 		textCorreo = new JTextField();
 		textCorreo.setBounds(402, 390, 169, 20);
 		add(textCorreo);
 		textCorreo.setColumns(10);
-		
-		JLabel lblpr = new JLabel("Rango Proveedores");
-		lblpr.setBounds(301, 300, 214, 14);
-		add(lblpr);
-		
-		JLabel lblfi = new JLabel("Fecha inicio: ");
-		lblfi.setBounds(91, 118, 94, 14);
-		add(lblfi);
-		
-		JLabel lblff = new JLabel("Fecha fin: ");
-		lblff.setBounds(408, 118, 103, 14);
-		add(lblff);
 		
 		
 
@@ -172,20 +127,11 @@ public class InformeFactura extends JPanel{
 
 	}
 
-	public void crearPDF(ArrayList<Compras> array) {
+	public void crearPDF() {
 		Document documento = new Document();
 		try {
 			PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream("reporteSupremo.pdf"));
-
 			documento.open();
-			/*
-			 * Anchor anchor = new
-			 * Anchor("Tabla de los movmientos de "+txtNombre.getText().toUpperCase(),
-			 * categoryFont);
-			 * 
-			 * DottedLineSeparator dottedline = new DottedLineSeparator();
-			 * dottedline.setOffset(-2); dottedline.setGap(2f); anchor.add(dottedline);
-			 */
 
 			Image img = Image.getInstance("img\\\\diwi.png");
 			img.scaleToFit(100, 100);
@@ -193,24 +139,30 @@ public class InformeFactura extends JPanel{
 			documento.add(new Paragraph("DiWi phones S.L"));
 			documento.add(new Paragraph("Calle Falsa 123"));
 			documento.add(new Paragraph("21021 Alcorcon, Madrid"));
+			documento.add(Chunk.NEWLINE);
+	
 			
+			PdfPTable table2 = new PdfPTable(3);
+			table2.setWidthPercentage(100);
+			table2.addCell(getCell("Facturar a", PdfPCell.ALIGN_LEFT));
+			table2.addCell(getCell("Enviar a", PdfPCell.ALIGN_CENTER));
+			table2.addCell(getCell("Nª de factura ", PdfPCell.ALIGN_RIGHT));
+			table2.addCell(getCell("Text to the left", PdfPCell.ALIGN_LEFT));
+			table2.addCell(getCell("Text in the middle", PdfPCell.ALIGN_CENTER));
+			table2.addCell(getCell("Text to the right", PdfPCell.ALIGN_RIGHT));
+			documento.add(table2);
 
 			documento.add(Chunk.NEWLINE);
 			documento.add(Chunk.NEWLINE);
 			documento.add(Chunk.NEWLINE);
-			documento.add(new Paragraph("Factura",
-					FontFactory.getFont("arial",   // fuente
-					30,                            // tamaño
-					Font.BOLDITALIC,               // estilo
-					BaseColor.BLUE))); 
+			documento.add(new Paragraph("Enviar a")); 
+			documento.add(new Paragraph("Paco"));
+			documento.add(new Paragraph("Alcorcon"));
 			documento.add(Chunk.NEWLINE);
 			
 			PdfPTable table = new PdfPTable(4);
 			table.getDefaultCell().setBorder(0);
 			PdfPCell columnHeader;
-			
-			// Fill table rows (rellenamos las filas de la tabla).
-
 			
 			columnHeader = new PdfPCell(new Phrase("FACTURAR A"));
 			columnHeader.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -232,10 +184,6 @@ public class InformeFactura extends JPanel{
 			columnHeader.setBorder(0);
 			table.addCell(columnHeader);
 			
-
-			
-			
-			
 			table.setHeaderRows(1);
 			for (int fila = 0; fila < 1; fila++) {
 				for (int column = 0; column < 4; column++) {
@@ -252,9 +200,7 @@ public class InformeFactura extends JPanel{
 					case 3:
 						table.addCell(new Phrase("21/01/2012"));
 						break;
-					
 					}
-
 				}
 			}
 
@@ -367,6 +313,13 @@ public class InformeFactura extends JPanel{
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+	}
+	public PdfPCell getCell(String text, int alignment) {
+	    PdfPCell cell = new PdfPCell(new Phrase(text));
+	    cell.setPadding(0);
+	    cell.setHorizontalAlignment(alignment);
+	    cell.setBorder(PdfPCell.NO_BORDER);
+	    return cell;
 	}
 
 }

@@ -7,7 +7,8 @@ import javax.swing.border.EmptyBorder;
 
 import vista.ConsultaStock;
 import vista.Fabrica;
-import vista.InformeFactura;
+import vista.InformeFacturaC;
+import vista.InformeFacturasOriginal;
 import vista.InformesCompra;
 import vista.InformesVenta;
 import vista.Operaciones;
@@ -141,7 +142,7 @@ public class VntPrincipal extends JFrame {
 		JMenuItem menuInformeFacturas = new JMenuItem("Informe factura");
 		menuInformeFacturas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				InformeFactura ifa = new InformeFactura();
+				InformeFacturasOriginal ifa = new InformeFacturasOriginal();
 				nuevoPanel(ifa);
 			}
 		});

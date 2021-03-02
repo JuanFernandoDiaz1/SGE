@@ -250,6 +250,40 @@ public class GestionBBDD {
 		}
 		return compras;
 	}
+	public Compras consultaCompra(int factura) {
+		Compras compra=null;
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("select factura, fecha, proveedores.nombre, proveedores.nif,"
+					+ " personal.nombre, personal.dni, precioCompra from compra inner join proveedores on proveedores.ID_proveedor = compra.ID_proveedor"
+					+ " inner join personal on compra.ID_Personal = personal.ID_Personal where factura = "+factura);
+
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				compra = new Compras();
+				// guardamos los campos en el objeto modelo
+				compra.setFactura(registro.getInt("Factura"));
+				compra.setFechaTotal(registro.getString("Fecha"));
+				compra.setProveedor(registro.getString("proveedores.Nombre"));
+				compra.setNifProveedor(registro.getString("proveedores.NIF"));
+				compra.setPersonal(registro.getString("personal.nombre"));
+				compra.setDniPersonal(registro.getString("personal.DNI"));
+				compra.setPrecioTotal(registro.getInt("precioCompra"));
+				// añadimos modelos al arrayList
+
+
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			e.printStackTrace();
+		}
+		return compra;
+	}
 
 	public void insertCliente(String nombre, String dni, String direccion, String email) {
 		try {

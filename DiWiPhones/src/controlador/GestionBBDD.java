@@ -284,6 +284,7 @@ public class GestionBBDD {
 		}
 		return compra;
 	}
+	
 
 	public void insertCliente(String nombre, String dni, String direccion, String email) {
 		try {

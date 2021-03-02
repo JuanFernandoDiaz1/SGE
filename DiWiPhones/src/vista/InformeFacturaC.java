@@ -39,6 +39,7 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableModel;
 
 import com.itextpdf.awt.geom.Rectangle;
 import com.itextpdf.text.BaseColor;
@@ -60,7 +61,10 @@ import com.toedter.calendar.JCalendar;
 import controlador.GestionBBDD;
 import modelo.Cliente;
 import modelo.Compras;
+import modelo.Personal;
 import modelo.Proveedor;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 public class InformeFacturaC extends JPanel{
 	
@@ -72,6 +76,9 @@ public class InformeFacturaC extends JPanel{
 	
 	ArrayList<Proveedor> proveedores = gest.consultaProveedor();
 	private JTextField textCorreo;
+	private JTable table_1;
+	DefaultTableModel modeloTabla = new DefaultTableModel();
+	GestionBBDD gestor = new GestionBBDD();
 	/**
 	 * Create the panel.
 	 */
@@ -81,9 +88,13 @@ public class InformeFacturaC extends JPanel{
 		JButton boton = new JButton("GenerarPDF");
 		boton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				crearPDF(consultaCompras());
-				abrirPDF();
+				if(table_1.getSelectedRow()==-1) {
+					JOptionPane.showMessageDialog(null, "Selecciona una compra para eliminar", "Error", JOptionPane.WARNING_MESSAGE);
+				}else {
+					crearPDF(consultaProveedor((int)table_1.getValueAt(table_1.getSelectedRow(), 0)),table_1);
+					abrirPDF();
+				}
+				
 
 			}
 		});
@@ -113,7 +124,17 @@ public class InformeFacturaC extends JPanel{
 		add(textCorreo);
 		textCorreo.setColumns(10);
 		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(88, 97, 522, 245);
+		add(scrollPane);
 		
+		table_1 = new JTable();
+		scrollPane.setViewportView(table_1);
+		
+		modeloTabla.setColumnIdentifiers(new Object[] { "Factura", "Fecha", "Proveedor", "NIF Proveedor", "Personal", "DNI Personal","Precio Compra"});
+		table_1.setModel(modeloTabla);
+		modeloTabla.setRowCount(0);
+		cargarTabla();
 
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setIcon(new ImageIcon("img/diwi.png"));
@@ -124,10 +145,12 @@ public class InformeFacturaC extends JPanel{
 		lblFondo.setIcon(new ImageIcon("img\\fondo.jpg"));
 		lblFondo.setBounds(0, 0, 723, 507);
 		add(lblFondo);
+		
+		
 
 	}
 
-	public void crearPDF() {
+	public void crearPDF(Proveedor p, JTable tabla) {
 		Document documento = new Document();
 		try {
 			PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream("reporteSupremo.pdf"));
@@ -146,40 +169,44 @@ public class InformeFacturaC extends JPanel{
 			table2.setWidthPercentage(100);
 			table2.addCell(getCell("Facturar a", PdfPCell.ALIGN_LEFT));
 			table2.addCell(getCell("Enviar a", PdfPCell.ALIGN_CENTER));
-			table2.addCell(getCell("Nª de factura ", PdfPCell.ALIGN_RIGHT));
-			table2.addCell(getCell("Text to the left", PdfPCell.ALIGN_LEFT));
-			table2.addCell(getCell("Text in the middle", PdfPCell.ALIGN_CENTER));
-			table2.addCell(getCell("Text to the right", PdfPCell.ALIGN_RIGHT));
+			table2.addCell(getCell("Nª de factura   "+tabla.getValueAt(tabla.getSelectedRow(), 0).toString(), PdfPCell.ALIGN_RIGHT));
+			table2.addCell(getCell("Alcorcon", PdfPCell.ALIGN_LEFT));
+			table2.addCell(getCell(p.getNombre(), PdfPCell.ALIGN_CENTER));
+			table2.addCell(getCell("Fecha   "+tabla.getValueAt(tabla.getSelectedRow(), 1).toString(), PdfPCell.ALIGN_RIGHT));
+			table2.addCell(getCell("Sapopeta 34", PdfPCell.ALIGN_LEFT));
+			table2.addCell(getCell(p.getDireccion(), PdfPCell.ALIGN_CENTER));
+			table2.addCell(getCell("", PdfPCell.ALIGN_RIGHT));
+			table2.addCell(getCell("28921", PdfPCell.ALIGN_LEFT));
+			table2.addCell(getCell(p.getNif(), PdfPCell.ALIGN_CENTER));
+			table2.addCell(getCell("", PdfPCell.ALIGN_RIGHT));
+			
 			documento.add(table2);
 
 			documento.add(Chunk.NEWLINE);
 			documento.add(Chunk.NEWLINE);
 			documento.add(Chunk.NEWLINE);
-			documento.add(new Paragraph("Enviar a")); 
-			documento.add(new Paragraph("Paco"));
-			documento.add(new Paragraph("Alcorcon"));
 			documento.add(Chunk.NEWLINE);
 			
 			PdfPTable table = new PdfPTable(4);
 			table.getDefaultCell().setBorder(0);
 			PdfPCell columnHeader;
 			
-			columnHeader = new PdfPCell(new Phrase("FACTURAR A"));
+			columnHeader = new PdfPCell(new Phrase("Cantidad"));
 			columnHeader.setHorizontalAlignment(Element.ALIGN_LEFT);
 			columnHeader.setBorder(0);
 			table.addCell(columnHeader);
 
-			columnHeader = new PdfPCell(new Phrase("ENVIAR A"));
+			columnHeader = new PdfPCell(new Phrase("Descripcion"));
 			columnHeader.setHorizontalAlignment(Element.ALIGN_LEFT);
 			columnHeader.setBorder(0);
 			table.addCell(columnHeader);
 
-			columnHeader = new PdfPCell(new Phrase("Nº FACTURA"));
+			columnHeader = new PdfPCell(new Phrase("Precio Unitario"));
 			columnHeader.setHorizontalAlignment(Element.ALIGN_LEFT);
 			columnHeader.setBorder(0);
 			table.addCell(columnHeader);
 
-			columnHeader = new PdfPCell(new Phrase("FECHA"));
+			columnHeader = new PdfPCell(new Phrase("Importe"));
 			columnHeader.setHorizontalAlignment(Element.ALIGN_LEFT);
 			columnHeader.setBorder(0);
 			table.addCell(columnHeader);
@@ -231,7 +258,7 @@ public class InformeFacturaC extends JPanel{
 	
 	
 	
-	public ArrayList<Compras> consultaCompras() {
+	/*public ArrayList<Compras> consultaCompras() {
 		ArrayList<Compras> compras = new ArrayList<Compras>();
 		SimpleDateFormat dFormat = new SimpleDateFormat("yyyy/MM/dd");
 		String fechaInicio = dFormat.format(calendario.getDate());
@@ -266,7 +293,7 @@ public class InformeFacturaC extends JPanel{
 			e.printStackTrace();
 		}
 		return compras;
-	}
+	}*/
 	
 	public void enviarCorreo(String correo){
 		String[] archivoAdjunto;
@@ -321,5 +348,41 @@ public class InformeFacturaC extends JPanel{
 	    cell.setBorder(PdfPCell.NO_BORDER);
 	    return cell;
 	}
+	public void cargarTabla() {
+		modeloTabla.setRowCount(0);
+		for (Compras v : gestor.consultaCompras()) {
+			modeloTabla.addRow(
+					new Object[] { v.getFactura(), v.getFechaTotal(), v.getProveedor(), v.getNifProveedor(), v.getPersonal(), v.getDniPersonal(),v.getPrecioTotal() });
+		}
+	}
+	public Proveedor consultaProveedor(int factura) {
+		Proveedor p = new Proveedor();
+		int id_Personal=0;
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("select id_Proveedor from compra where factura = "+factura);
 
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				 id_Personal = registro.getInt("id_Proveedor");
+			}
+			ResultSet registro2 = consulta.executeQuery("select nombre, Nif, direccion, email from Proveedores where id_Proveedor = "+id_Personal);
+			while (registro2.next()) {
+				 p.setNombre(registro2.getString("nombre"));
+				 p.setNif(registro2.getString("Nif"));
+				 p.setDireccion(registro2.getString("direccion"));
+				 p.setEmail(registro2.getString("email"));
+			}
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			e.printStackTrace();
+		}
+		return p;
+	}
+	
+	
 }

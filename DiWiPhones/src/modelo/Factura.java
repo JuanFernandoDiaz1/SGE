@@ -3,7 +3,6 @@ package modelo;
 public class Factura {
 	int cantidad;
 	String descripcion;
-	int precioUnico;
 	int importe;
 	int importeTotal;
 	
@@ -18,12 +17,6 @@ public class Factura {
 	}
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
-	}
-	public int getPrecioUnico() {
-		return precioUnico;
-	}
-	public void setPrecioUnico(int precioUnico) {
-		this.precioUnico = precioUnico;
 	}
 	public int getImporte() {
 		return importe;

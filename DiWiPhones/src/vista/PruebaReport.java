@@ -80,16 +80,16 @@ public class PruebaReport extends JPanel {
 			}
 		});
 		setLayout(null);
-		boton.setBounds(397, 213, 118, 23);
+		boton.setBounds(244, 213, 118, 23);
 		add(boton);
 
 		txtNombre = new JTextField();
-		txtNombre.setBounds(216, 214, 151, 20);
+		txtNombre.setBounds(223, 182, 151, 20);
 		add(txtNombre);
 		txtNombre.setColumns(10);
 		
 		textCorreo = new JTextField();
-		textCorreo.setBounds(279, 270, 151, 20);
+		textCorreo.setBounds(223, 270, 151, 20);
 		add(textCorreo);
 		textCorreo.setColumns(10);
 		
@@ -99,16 +99,8 @@ public class PruebaReport extends JPanel {
 				enviarCorreo(textCorreo.getText());
 			}
 		});
-		btnEnviar.setBounds(298, 312, 118, 23);
+		btnEnviar.setBounds(244, 317, 118, 23);
 		add(btnEnviar);
-		
-		JLabel lblNewLabel_1 = new JLabel("Email");
-		lblNewLabel_1.setBounds(223, 273, 46, 14);
-		add(lblNewLabel_1);
-		
-		JLabel lblNewLabel = new JLabel("Producto");
-		lblNewLabel.setBounds(141, 217, 65, 14);
-		add(lblNewLabel);
 
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setIcon(new ImageIcon("img/diwi.png"));

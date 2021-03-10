@@ -194,7 +194,7 @@ public class InformesVenta extends JPanel{
 
 			documento.add(Chunk.NEWLINE);
 			documento.add(Chunk.NEWLINE);
-			documento.add(new Paragraph("                  Informe de ventas"));
+			documento.add(new Paragraph("                  Informe de compras"));
 			documento.add(Chunk.NEWLINE);
 
 			PdfPTable table = new PdfPTable(7);

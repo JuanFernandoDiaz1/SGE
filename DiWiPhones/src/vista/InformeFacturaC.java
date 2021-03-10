@@ -61,6 +61,7 @@ import com.toedter.calendar.JCalendar;
 import controlador.GestionBBDD;
 import modelo.Cliente;
 import modelo.Compras;
+import modelo.Factura;
 import modelo.Personal;
 import modelo.Proveedor;
 import javax.swing.JScrollPane;
@@ -91,7 +92,7 @@ public class InformeFacturaC extends JPanel{
 				if(table_1.getSelectedRow()==-1) {
 					JOptionPane.showMessageDialog(null, "Selecciona una compra para eliminar", "Error", JOptionPane.WARNING_MESSAGE);
 				}else {
-					crearPDF(consultaProveedor((int)table_1.getValueAt(table_1.getSelectedRow(), 0)),table_1);
+					crearPDF(consultaProveedor((int)table_1.getValueAt(table_1.getSelectedRow(), 0)),table_1,gestor.consultaFacturaCompra((int)table_1.getValueAt(table_1.getSelectedRow(), 0)));
 					abrirPDF();
 				}
 				
@@ -150,13 +151,14 @@ public class InformeFacturaC extends JPanel{
 
 	}
 
-	public void crearPDF(Proveedor p, JTable tabla) {
+	public void crearPDF(Proveedor p, JTable tabla, ArrayList<Factura> facts) {
 		Document documento = new Document();
+		int contTotal=0;
 		try {
 			PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream("reporteSupremo.pdf"));
 			documento.open();
 
-			Image img = Image.getInstance("img\\\\diwi.png");
+			Image img = Image.getInstance("img\\diwi.png");
 			img.scaleToFit(100, 100);
 			documento.add(img);
 			documento.add(new Paragraph("DiWi phones S.L"));
@@ -173,7 +175,7 @@ public class InformeFacturaC extends JPanel{
 			table2.addCell(getCell("Alcorcon", PdfPCell.ALIGN_LEFT));
 			table2.addCell(getCell(p.getNombre(), PdfPCell.ALIGN_CENTER));
 			table2.addCell(getCell("Fecha   "+tabla.getValueAt(tabla.getSelectedRow(), 1).toString(), PdfPCell.ALIGN_RIGHT));
-			table2.addCell(getCell("Sapopeta 34", PdfPCell.ALIGN_LEFT));
+			table2.addCell(getCell("Alcala 34", PdfPCell.ALIGN_LEFT));
 			table2.addCell(getCell(p.getDireccion(), PdfPCell.ALIGN_CENTER));
 			table2.addCell(getCell("", PdfPCell.ALIGN_RIGHT));
 			table2.addCell(getCell("28921", PdfPCell.ALIGN_LEFT));
@@ -212,25 +214,41 @@ public class InformeFacturaC extends JPanel{
 			table.addCell(columnHeader);
 			
 			table.setHeaderRows(1);
-			for (int fila = 0; fila < 1; fila++) {
+			for (int fila = 0; fila < facts.size(); fila++) {
 				for (int column = 0; column < 4; column++) {
 					switch (column) {
 					case 0:
-						table.addCell(new Phrase("juan"));
+						table.addCell(new Phrase(facts.get(fila).getCantidad()+""));
 						break;
 					case 1:
-						table.addCell(new Phrase("mario"));
+						table.addCell(new Phrase(facts.get(fila).getDescripcion()+""));
 						break;
 					case 2:
-						table.addCell(new Phrase("1"));
+						table.addCell(new Phrase(facts.get(fila).getImporte()+""));
 						break;
 					case 3:
-						table.addCell(new Phrase("21/01/2012"));
+						table.addCell(new Phrase(facts.get(fila).getImporteTotal()+""));
 						break;
 					}
 				}
+				contTotal+=facts.get(fila).getImporteTotal();
 			}
-
+			table.addCell(new Phrase(""));
+			table.addCell(new Phrase(""));
+			table.addCell(new Phrase(""));
+			table.addCell(new Phrase(""));
+			table.addCell(new Phrase(""));
+			table.addCell(new Phrase(""));
+			table.addCell(new Phrase("Subtotal "));
+			table.addCell(new Phrase(contTotal+""));
+			table.addCell(new Phrase(""));
+			table.addCell(new Phrase(""));
+			table.addCell(new Phrase("Iva 21% "));
+			table.addCell(new Phrase((contTotal*0.21)+""));
+			table.addCell(new Phrase(""));
+			table.addCell(new Phrase(""));
+			table.addCell(new Phrase("Total "));
+			table.addCell(new Phrase((contTotal*1.21)+""));
 			documento.add(table);
 			
 
@@ -257,43 +275,7 @@ public class InformeFacturaC extends JPanel{
 	}
 	
 	
-	
-	/*public ArrayList<Compras> consultaCompras() {
-		ArrayList<Compras> compras = new ArrayList<Compras>();
-		SimpleDateFormat dFormat = new SimpleDateFormat("yyyy/MM/dd");
-		String fechaInicio = dFormat.format(calendario.getDate());
-		String fechaFin = dFormat.format(calendario2.getDate());
-		System.out.println(fechaInicio + " " + fechaFin);
-		try {
-			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
-			Statement consulta = conexion.createStatement();
-			// guarda los regsitros de la tabla que vamos a consultar
-			ResultSet registro = consulta.executeQuery("SELECT Factura, fecha, proveedores.Nombre, proveedores.nif, PrecioCompra from compra inner join proveedores "
-					+ "on compra.id_proveedor=proveedores.ID_Proveedor where (fecha BETWEEN '"+dFormat.format(calendario.getDate())+"' and '"+dFormat.format(calendario2.getDate())+"') and (compra.id_proveedor BETWEEN "+sliderI.getValue() +" and " +sliderf.getValue()+") "
-					+ "order by 2");
 
-			// si existe lo que estamos buscando
-			while (registro.next()) {
-				Compras compra = new Compras();
-				// guardamos los campos en el objeto modelo
-				compra.setFactura(registro.getInt("Factura"));
-				compra.setFechaTotal(registro.getString("Fecha"));
-				compra.setProveedor(registro.getString("proveedores.Nombre"));
-				compra.setNifProveedor(registro.getString("proveedores.NIF"));
-				compra.setPrecioTotal(registro.getInt("precioCompra"));
-				// añadimos modelos al arrayList
-				compras.add(compra);
-
-			}
-
-			conexion.close();
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			e.printStackTrace();
-		}
-		return compras;
-	}*/
 	
 	public void enviarCorreo(String correo){
 		String[] archivoAdjunto;

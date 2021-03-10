@@ -16,6 +16,7 @@ import modelo.Cliente;
 import modelo.Compras;
 import modelo.Escandallo;
 import modelo.EscandalloMaterial;
+import modelo.Factura;
 import modelo.Material;
 import modelo.OrdenesFavM;
 import modelo.Personal;
@@ -215,6 +216,7 @@ public class GestionBBDD {
 		}
 		return ventas;
 	}
+	
 
 	public ArrayList<Compras> consultaCompras() {
 		ArrayList<Compras> compras = new ArrayList<Compras>();
@@ -250,30 +252,24 @@ public class GestionBBDD {
 		}
 		return compras;
 	}
-	public Compras consultaCompra(int factura) {
-		Compras compra=null;
+	public ArrayList<Factura> consultaFacturaCompra(int factura) {
+		ArrayList<Factura> facturas= new ArrayList<>();
 		try {
 			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
 			Statement consulta = conexion.createStatement();
 			// guarda los regsitros de la tabla que vamos a consultar
-			ResultSet registro = consulta.executeQuery("select factura, fecha, proveedores.nombre, proveedores.nif,"
-					+ " personal.nombre, personal.dni, precioCompra from compra inner join proveedores on proveedores.ID_proveedor = compra.ID_proveedor"
-					+ " inner join personal on compra.ID_Personal = personal.ID_Personal where factura = "+factura);
+			ResultSet registro = consulta.executeQuery("Select productos_compra.Unidades, productos.Descripcion,"
+					+ " productos.Precio, (productos_compra.Unidades*productos.Precio) as importe from productos_compra"
+					+ " INNER JOIN productos on productos_compra.id_producto= productos.ID_Producto where id_compra ="+factura);
 
 			// si existe lo que estamos buscando
 			while (registro.next()) {
-				compra = new Compras();
-				// guardamos los campos en el objeto modelo
-				compra.setFactura(registro.getInt("Factura"));
-				compra.setFechaTotal(registro.getString("Fecha"));
-				compra.setProveedor(registro.getString("proveedores.Nombre"));
-				compra.setNifProveedor(registro.getString("proveedores.NIF"));
-				compra.setPersonal(registro.getString("personal.nombre"));
-				compra.setDniPersonal(registro.getString("personal.DNI"));
-				compra.setPrecioTotal(registro.getInt("precioCompra"));
-				// añadimos modelos al arrayList
-
-
+				Factura f = new Factura();
+				f.setCantidad(registro.getInt("productos_compra.Unidades"));
+				f.setDescripcion(registro.getString("productos.Descripcion"));
+				f.setImporte(registro.getInt("productos.Precio"));
+				f.setImporteTotal(registro.getInt("importe"));
+				facturas.add(f);
 			}
 
 			conexion.close();
@@ -282,9 +278,39 @@ public class GestionBBDD {
 					JOptionPane.WARNING_MESSAGE);
 			e.printStackTrace();
 		}
-		return compra;
+		
+		return facturas;
 	}
-	
+	public ArrayList<Factura> consultaFacturaVenta(int factura) {
+		ArrayList<Factura> facturas= new ArrayList<>();
+		try {
+			Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/bbdd", "root", "");
+			Statement consulta = conexion.createStatement();
+			// guarda los regsitros de la tabla que vamos a consultar
+			ResultSet registro = consulta.executeQuery("Select productos_ventas.Unidades, productos.Descripcion,"
+					+ " productos.PrecioVenta, (productos_ventas.Unidades*productos.PrecioVenta) as importe from"
+					+ " productos_ventas INNER JOIN productos on productos_ventas.id_producto= productos.ID_Producto"
+					+ " where id_venta = "+factura);
+
+			// si existe lo que estamos buscando
+			while (registro.next()) {
+				Factura f = new Factura();
+				f.setCantidad(registro.getInt("productos_ventas.Unidades"));
+				f.setDescripcion(registro.getString("productos.Descripcion"));
+				f.setImporte(registro.getInt("productos.PrecioVenta"));
+				f.setImporteTotal(registro.getInt("importe"));
+				facturas.add(f);
+			}
+
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error en la BBDD al realizar la consulta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			e.printStackTrace();
+		}
+		
+		return facturas;
+	}
 
 	public void insertCliente(String nombre, String dni, String direccion, String email) {
 		try {
